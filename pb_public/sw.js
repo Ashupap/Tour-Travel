@@ -1,0 +1,105 @@
+// pb_public/sw.js
+// Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
+
+const CACHE_NAME = "bharatyatra-cache-v1";
+const STATIC_ASSETS = [
+  "/agent/dashboard",
+  "/manifest.json",
+  "/css/tailwind.css",
+  "/js/dexie.min.js",
+  "/js/alpine.min.js",
+  "/js/htmx.min.js",
+  "/offline-store.js",
+  "/agent/receipt.js",
+  "/icons/icon-192.svg",
+  "/icons/icon-512.svg"
+];
+
+// Install: Pre-cache static app shell
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("[SW] Pre-caching offline application shell...");
+      return cache.addAll(STATIC_ASSETS).catch((err) => {
+        console.warn("[SW] Some assets failed to pre-cache (harmless on first start):", err);
+      });
+    })
+  );
+  self.skipWaiting();
+});
+
+// Activate: Clean old caches
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log("[SW] Removing old cache:", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+// Fetch: Cache-First for static files, Network-First for APIs
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // For API endpoints: Network-first
+  if (url.pathname.startsWith("/api/")) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return new Response(
+          JSON.stringify({ error: "Offline: Network unavailable" }),
+          { status: 503, headers: { "Content-Type": "application/json" } }
+        );
+      })
+    );
+    return;
+  }
+
+  // For HTML, JS, CSS, images: Cache-First with network fallback
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Fetch fresh copy in background to update cache
+        fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse);
+            });
+          }
+        }).catch(() => {});
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      });
+    })
+  );
+});
+
+// Background Sync: sync-installments event (PWA-03)
+self.addEventListener("sync", (event) => {
+  if (event.tag === "sync-installments") {
+    console.log("[SW] Background sync triggered: sync-installments");
+    event.waitUntil(
+      self.clients.matchAll().then((clients) => {
+        // Post message to active client window to trigger outbox flush with active auth token
+        clients.forEach((client) => {
+          client.postMessage({ type: "BACKGROUND_SYNC_TRIGGER" });
+        });
+      })
+    );
+  }
+});
