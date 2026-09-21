@@ -9,10 +9,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-21)
 
 ## Current Status
 
-**Phase:** 2 of 4
-**Phase name:** Agent PWA Core
-**Status:** Complete
-**Last action:** Phase 2 completed & verified (29/29 integration tests passed)
+**Phase:** 3 of 4
+**Phase name:** Public Landing & Distributor
+**Status:** Planned
+**Last action:** Phase 3 plans generated (5 plans across 4 waves)
 
 ## Roadmap Progress
 
@@ -20,18 +20,18 @@ See: `.planning/PROJECT.md` (updated 2026-09-21)
 |-------|------|--------|
 | 1 | Foundation & Data | Complete |
 | 2 | Agent PWA Core | Complete |
-| 3 | Public Landing & Distributor | Planned / Ready to Start |
+| 3 | Public Landing & Distributor | Planned |
 | 4 | Admin Dashboard & Production Polish | Not started |
 
-## Phase 2 Plans
+## Phase 3 Plans
 
 | Plan | Wave | Description | Requirements | Status |
 |------|------|-------------|--------------|--------|
-| 02-01 | 1 | Custom agent API routes (manifest sync & batch sync) | API-01, API-02, SEC-04 | Completed |
-| 02-02 | 2 | PWA engine & Dexie.js offline persistence store | PWA-01..05 | Completed |
-| 02-03 | 3 | Agent dashboard layout & collection workflows | AGNT-01..03 | Completed |
-| 02-04 | 3 | Thermal receipt preview & WhatsApp sharing | AGNT-04, AGNT-05 | Completed |
-| 02-05 | 4 | Cash handover workflow & Phase 2 verification | API-03, API-04, SEC-04 | Completed |
+| 03-01 | 1 | Three.js hero 3D bus experience & public landing shell | LAND-01 | Planned |
+| 03-02 | 2 | Package catalog with Vanilla-Tilt 3D cards & dynamic EMI calculator | LAND-02, LAND-03 | Planned |
+| 03-03 | 2 | Public booking status lookup & golden Travel Eligibility Pass | LAND-04, LAND-05 | Planned |
+| 03-04 | 3 | Distributor dashboard: territory analytics, agent roster & delinquency warnings | DIST-01, DIST-03, DIST-04, SEC-04 | Planned |
+| 03-05 | 4 | Distributor handover verification panel & Phase 3 verification suite | DIST-02, LAND-01..05, DIST-01..04, SEC-04 | Planned |
 
 ## Config
 
