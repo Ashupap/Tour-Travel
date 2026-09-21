@@ -1,38 +1,56 @@
 // pb_hooks/04_agent_api.pb.js
 // Custom API routes for Agent Manifest Sync and Atomic Batch Sync (API-01, API-02, SEC-04)
 
-function getAgentAuth(c) {
-  // Check authRecord from request info
-  const info = $apis.requestInfo(c);
-  let authRecord = info.authRecord;
-
-  // Fallback: parse Authorization header token if authRecord wasn't automatically populated
-  if (!authRecord) {
-    const authHeader = c.request().header.get("Authorization");
-    if (authHeader) {
-      const token = authHeader.replace(/^Bearer\s+/i, "").trim();
-      if (token) {
-        try {
-          authRecord = $app.dao().findAuthRecordByToken(token, $app.settings().recordAuthToken.secret);
-        } catch (e) {}
-      }
-    }
-  }
-
-  if (!authRecord) {
-    throw new UnauthorizedError("Authentication required. Please provide a valid agent Bearer token.");
-  }
-
-  if (authRecord.getString("role") !== "agent") {
-    throw new ForbiddenError("Forbidden: Access restricted to field agents.");
-  }
-
-  return authRecord;
-}
-
 // 1. GET /api/agent/sync-manifest (API-02)
 routerAdd("GET", "/api/agent/sync-manifest", (c) => {
-  const agent = getAgentAuth(c);
+  // Helper defined in handler scope for Goja VM pool safety
+  function getAgent(c) {
+    let authRecord = null;
+    try {
+      const info = $apis.requestInfo(c);
+      authRecord = info.authRecord;
+    } catch (e) {}
+
+    if (!authRecord) {
+      try {
+        let authHeader = "";
+        const req = c.request();
+        if (req) {
+          if (req.header && typeof req.header.get === "function") {
+            authHeader = req.header.get("Authorization") || req.header.get("authorization") || "";
+          } else if (req.Header && typeof req.Header.Get === "function") {
+            authHeader = req.Header.Get("Authorization") || req.Header.Get("authorization") || "";
+          }
+        }
+        if (!authHeader) {
+          const info = $apis.requestInfo(c);
+          if (info && info.headers) {
+            authHeader = info.headers["authorization"] || info.headers["Authorization"] || "";
+          }
+        }
+        if (authHeader) {
+          const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+          if (token) {
+            authRecord = $app.dao().findAuthRecordByToken(token, $app.settings().recordAuthToken.secret);
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (!authRecord) {
+      return { error: c.json(401, { code: 401, message: "Authentication required. Please provide a valid agent Bearer token." }) };
+    }
+
+    if (authRecord.getString("role") !== "agent") {
+      return { error: c.json(403, { code: 403, message: "Forbidden: Access restricted to field agents." }) };
+    }
+
+    return { agent: authRecord };
+  }
+
+  const auth = getAgent(c);
+  if (auth.error) return auth.error;
+  const agent = auth.agent;
 
   // Fetch subscriptions assigned to this agent
   const subscriptions = $app.dao().findRecordsByExpr(
@@ -104,7 +122,54 @@ routerAdd("GET", "/api/agent/sync-manifest", (c) => {
 
 // 2. POST /api/agent/batch-sync (API-01, HOOK-03)
 routerAdd("POST", "/api/agent/batch-sync", (c) => {
-  const agent = getAgentAuth(c);
+  // Helper defined in handler scope for Goja VM pool safety
+  function getAgent(c) {
+    let authRecord = null;
+    try {
+      const info = $apis.requestInfo(c);
+      authRecord = info.authRecord;
+    } catch (e) {}
+
+    if (!authRecord) {
+      try {
+        let authHeader = "";
+        const req = c.request();
+        if (req) {
+          if (req.header && typeof req.header.get === "function") {
+            authHeader = req.header.get("Authorization") || req.header.get("authorization") || "";
+          } else if (req.Header && typeof req.Header.Get === "function") {
+            authHeader = req.Header.Get("Authorization") || req.Header.Get("authorization") || "";
+          }
+        }
+        if (!authHeader) {
+          const info = $apis.requestInfo(c);
+          if (info && info.headers) {
+            authHeader = info.headers["authorization"] || info.headers["Authorization"] || "";
+          }
+        }
+        if (authHeader) {
+          const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+          if (token) {
+            authRecord = $app.dao().findAuthRecordByToken(token, $app.settings().recordAuthToken.secret);
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (!authRecord) {
+      return { error: c.json(401, { code: 401, message: "Authentication required. Please provide a valid agent Bearer token." }) };
+    }
+
+    if (authRecord.getString("role") !== "agent") {
+      return { error: c.json(403, { code: 403, message: "Forbidden: Access restricted to field agents." }) };
+    }
+
+    return { agent: authRecord };
+  }
+
+  const auth = getAgent(c);
+  if (auth.error) return auth.error;
+  const agent = auth.agent;
   const data = $apis.requestInfo(c).data;
   const items = (data && data.items) ? data.items : [];
 
@@ -168,17 +233,22 @@ routerAdd("POST", "/api/agent/batch-sync", (c) => {
 
       txDao.saveRecord(installment);
       processedCount++;
+
       results.push({
-        installment_id: item.installment_id,
-        status: "processed",
-        receipt_slip_id: installment.getString("receipt_slip_id")
+        installment_id: installment.id,
+        status: "synced",
+        receipt_slip_id: installment.getString("receipt_slip_id"),
+        idempotency_key: key
       });
     }
   });
 
   return c.json(200, {
     success: true,
+    total_items: items.length,
+    processed: processedCount,
     processed_count: processedCount,
+    skipped: skippedCount,
     skipped_count: skippedCount,
     results: results
   });
