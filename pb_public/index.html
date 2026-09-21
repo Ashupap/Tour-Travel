@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BharatYatra — Luxury Bus Tourism in Easy Micro-EMIs</title>
+  <meta name="description" content="Explore India's sacred dhams and iconic heritage in 5-star AC sleeper coaches. Pay in micro-EMIs via village agents. Travel unlocks after just 2 payments!">
+  
+  <!-- Standalone Vendor CSS & PWA Manifest -->
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#D97706">
+
+  <!-- Core Scripts -->
+  <script src="/js/htmx.min.js"></script>
+  <script src="/js/three.min.js"></script>
+  <script src="/js/vanilla-tilt.min.js"></script>
+  <script src="/js/landing.js"></script>
+  <script defer src="/js/alpine.min.js"></script>
+</head>
+<body class="flex min-h-full flex-col font-sans" x-data="landingApp()">
+
+  <!-- 1. Header Navigation -->
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-600 via-amber-500 to-yellow-400 font-black text-black shadow-lg shadow-amber-500/20">
+          BY
+        </div>
+        <div>
+          <div class="text-lg font-black tracking-tight text-white flex items-center gap-1.5">
+            Bharat<span class="text-amber-500">Yatra</span>
+            <span class="rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-bold text-amber-400 border border-amber-500/30 uppercase">Micro-EMI</span>
+          </div>
+          <div class="text-[10px] font-medium text-slate-400 tracking-wider">HAR GAON SE CHAR DHAM</div>
+        </div>
+      </a>
+
+      <!-- Quick Nav & Action Buttons -->
+      <div class="flex items-center gap-2.5 sm:gap-4">
+        <button 
+          @click="statusModalOpen = true"
+          class="flex items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3.5 py-2 text-xs font-bold text-amber-300 transition hover:bg-amber-500/20 hover:border-amber-400 active:scale-95">
+          <svg class="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span class="hidden sm:inline">Check</span> Travel Pass
+        </button>
+
+        <a 
+          href="/agent/dashboard" 
+          class="rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 px-3.5 py-2 text-xs font-bold text-black shadow-md shadow-amber-600/30 transition hover:from-amber-400 hover:to-amber-500 active:scale-95">
+          Agent PWA
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <!-- 2. Hero Section with 3D Bus Canvas (LAND-01) -->
+    <section class="relative overflow-hidden border-b border-slate-800/60 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 pt-8 pb-16 sm:pt-14 sm:pb-24">
+      <!-- Glow ambient background -->
+      <div class="pointer-events-none absolute -top-40 left-1/2 -z-10 h-96 w-[700px] -translate-x-1/2 rounded-full bg-amber-500/15 blur-3xl"></div>
+
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+          
+          <!-- Text CTA Column -->
+          <div class="lg:col-span-6 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-semibold text-amber-300">
+              <span class="relative flex h-2 w-2">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
+              </span>
+              India's 1st Offline Micro-EMI Tourism System
+            </div>
+
+            <h1 class="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Travel Bharat in <span class="bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-500 bg-clip-text text-transparent">Luxury Sleeper Coaches</span>
+            </h1>
+
+            <p class="mt-4 text-base leading-relaxed text-slate-300 sm:text-lg">
+              Visit Kedarnath, Vaishno Devi, Ayodhya, and Puri with zero upfront burden. Pay easy monthly micro-EMIs (as low as ₹2,000/mo) to your trusted village agent.
+            </p>
+
+            <div class="mt-4 flex items-center justify-center lg:justify-start gap-2 text-xs font-bold text-amber-400">
+              <svg class="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Travel Unlocks After Just 2 EMIs • Fully Insured • No Bank CIBIL Needed</span>
+            </div>
+
+            <!-- CTAs -->
+            <div class="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3.5">
+              <a 
+                href="#packages-section" 
+                class="rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 px-6 py-3.5 text-sm font-black text-black shadow-lg shadow-amber-500/30 transition hover:brightness-110 active:scale-95">
+                Explore Tour Packages
+              </a>
+              <button 
+                @click="statusModalOpen = true"
+                class="rounded-xl border border-slate-700 bg-slate-900/80 px-6 py-3.5 text-sm font-bold text-slate-200 transition hover:bg-slate-800 hover:text-white active:scale-95">
+                Check My Travel Pass
+              </button>
+            </div>
+          </div>
+
+          <!-- 3D Bus Canvas Column (LAND-01) -->
+          <div class="lg:col-span-6 relative">
+            <div class="relative mx-auto h-[380px] sm:h-[460px] w-full rounded-3xl border border-amber-500/20 bg-gradient-to-b from-slate-900/90 to-slate-950 p-2 shadow-2xl shadow-amber-500/10 backdrop-blur-md overflow-hidden">
+              <!-- Three.js Canvas Mount -->
+              <div id="hero-bus-canvas-container" class="h-full w-full cursor-grab active:cursor-grabbing"></div>
+
+              <!-- Interactive Hint Badge -->
+              <div class="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-amber-500/30 bg-slate-950/80 px-4 py-1.5 text-[11px] font-semibold text-amber-300/90 backdrop-blur-md flex items-center gap-2">
+                <svg class="h-3.5 w-3.5 animate-bounce text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+                <span>Scroll down to drive along highway</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Tour Package Catalog with 3D Tilt Cards (LAND-03) -->
+    <section id="packages-section" class="py-16 sm:py-24 border-b border-slate-800/60 bg-slate-950">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto">
+          <h2 class="text-xs font-bold tracking-widest text-amber-400 uppercase">OFFICIAL TOUR PACKAGES</h2>
+          <p class="mt-2 text-3xl font-extrabold text-white sm:text-4xl">Curated Sacred & Heritage Circuits</p>
+          <p class="mt-3 text-sm text-slate-400">All tours include 5-star AC sleeper coach travel, hotel accommodation, satvik meals, and guided pilgrimage darshan.</p>
+        </div>
+
+        <!-- 3D Tilt Grid (LAND-03) -->
+        <div class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <template x-for="pkg in packages" :key="pkg.id">
+            <div 
+              class="package-tilt-card group relative flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-xl transition-all duration-300 hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 cursor-pointer"
+              @click="selectPackage(pkg)">
+              
+              <div>
+                <!-- Top Badge & Duration -->
+                <div class="flex items-center justify-between">
+                  <span class="rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-bold text-amber-300 border border-amber-500/30" x-text="pkg.badge"></span>
+                  <span class="text-xs font-bold text-slate-400 flex items-center gap-1">
+                    <svg class="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span x-text="pkg.duration_days + ' Days'"></span>
+                  </span>
+                </div>
+
+                <!-- Title & Destination -->
+                <h3 class="mt-4 text-xl font-black text-white group-hover:text-amber-300 transition" x-text="pkg.title"></h3>
+                <p class="mt-1 text-xs text-slate-400 line-clamp-2" x-text="pkg.destination"></p>
+
+                <!-- Pricing & Early Travel Milestone -->
+                <div class="mt-6 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                  <div class="flex items-baseline justify-between">
+                    <div>
+                      <div class="text-[10px] uppercase font-bold text-slate-400">Total Tour Price</div>
+                      <div class="text-2xl font-black text-white">₹<span x-text="pkg.total_price.toLocaleString('en-IN')"></span></div>
+                    </div>
+                    <div class="text-right">
+                      <div class="text-[10px] uppercase font-bold text-amber-400">Travel Unlocks At</div>
+                      <div class="text-sm font-black text-amber-300">EMI #<span x-text="pkg.min_emis_to_travel"></span></div>
+                    </div>
+                  </div>
+
+                  <!-- Available Tenures -->
+                  <div class="mt-3 flex items-center gap-1.5 pt-3 border-t border-slate-800/80">
+                    <span class="text-[10px] text-slate-400">Tenures:</span>
+                    <template x-for="t in pkg.allowed_tenures" :key="t">
+                      <span class="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300" x-text="t + 'M'"></span>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card Action Button -->
+              <div class="mt-6">
+                <button 
+                  class="w-full rounded-xl border border-amber-500/30 bg-amber-500/10 py-2.5 text-xs font-bold text-amber-300 transition group-hover:bg-amber-500 group-hover:text-black">
+                  Calculate EMI & Book →
+                </button>
+              </div>
+
+            </div>
+          </template>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. Dynamic EMI Calculator Section (LAND-02) -->
+    <section id="emi-calculator-section" class="py-16 sm:py-24 border-b border-slate-800/60 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center max-w-2xl mx-auto">
+          <h2 class="text-xs font-bold tracking-widest text-amber-400 uppercase">TRANSPARENT RECOVERY PLAN</h2>
+          <p class="mt-2 text-3xl font-extrabold text-white sm:text-4xl">Interactive Micro-EMI Calculator</p>
+          <p class="mt-3 text-sm text-slate-400">Select your destination and preferred monthly tenure. No hidden fees, no compounding interest.</p>
+        </div>
+
+        <div class="mt-12 rounded-3xl border-2 border-amber-500/40 bg-slate-900/90 p-6 sm:p-10 shadow-2xl shadow-amber-500/10 backdrop-blur-xl">
+          <div class="grid grid-cols-1 gap-8 md:grid-cols-12 items-center">
+            
+            <!-- Controls (Left 7 Cols) -->
+            <div class="md:col-span-7 space-y-6">
+              <!-- Select Package -->
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Choose Destination Package</label>
+                <div class="mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <template x-for="p in packages" :key="p.id">
+                    <button 
+                      type="button"
+                      @click="selectPackage(p)"
+                      :class="selectedPackage.id === p.id ? 'border-amber-500 bg-amber-500/15 text-white shadow-md shadow-amber-500/10' : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'"
+                      class="flex flex-col items-start rounded-xl border p-3 text-left transition active:scale-95">
+                      <span class="text-xs font-bold" x-text="p.title"></span>
+                      <span class="text-[10px] text-amber-400/90 font-mono mt-0.5">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Select Tenure -->
+              <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Select Monthly Tenure</label>
+                <div class="mt-2.5 flex flex-wrap gap-2.5">
+                  <template x-for="t in selectedPackage.allowed_tenures" :key="t">
+                    <button 
+                      type="button"
+                      @click="selectedTenure = t"
+                      :class="selectedTenure === t ? 'border-amber-400 bg-amber-500 text-black font-black' : 'border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 font-bold'"
+                      class="rounded-xl border px-4 py-2.5 text-xs transition active:scale-95">
+                      <span x-text="t + ' Months'"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Notice Badge -->
+              <div class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-300 flex items-start gap-2.5">
+                <svg class="h-5 w-5 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <div>
+                  <span class="font-bold">Bharat Trust Guarantee:</span> Cash receipts printed on the spot via thermal printer. WhatsApp confirmation delivered directly to your mobile.
+                </div>
+              </div>
+            </div>
+
+            <!-- Calculation Output (Right 5 Cols) -->
+            <div class="md:col-span-5 rounded-2xl border-2 border-amber-500/50 bg-gradient-to-b from-amber-950/40 to-black p-6 text-center shadow-xl">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Monthly Micro-Installment</div>
+              <div class="mt-2 text-4xl sm:text-5xl font-black text-amber-200">
+                ₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span><span class="text-sm font-semibold text-slate-400">/mo</span>
+              </div>
+
+              <!-- Travel Unlock Milestone Card -->
+              <div class="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-left">
+                <div class="flex items-center gap-2">
+                  <div class="flex h-6 w-6 items-center justify-center rounded-full bg-amber-400 font-black text-black text-xs">
+                    ✓
+                  </div>
+                  <div class="text-xs font-bold text-amber-300">Early Travel Clearance</div>
+                </div>
+                <p class="mt-1 text-[11px] leading-relaxed text-amber-200/80">
+                  You board the bus after paying only <strong class="text-amber-100" x-text="minEmis"></strong> EMIs (Total <strong class="text-amber-100">₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span></strong>). Remaining EMIs are collected comfortably after your pilgrimage!
+                </p>
+              </div>
+
+              <div class="mt-6 text-xs text-slate-400 border-t border-slate-800 pt-4 flex justify-between">
+                <span>Total Tour Cost:</span>
+                <span class="font-bold text-white">₹<span x-text="selectedPackage.total_price.toLocaleString('en-IN')"></span></span>
+              </div>
+
+              <button 
+                @click="statusModalOpen = true"
+                class="mt-6 w-full rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 py-3 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95">
+                Book Through Village Agent
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- 5. "Check Booking Status" Modal with Golden Travel Pass (LAND-04, LAND-05) -->
+  <div 
+    x-show="statusModalOpen" 
+    x-cloak
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-md"
+    @keydown.escape.window="statusModalOpen = false">
+    
+    <div 
+      class="relative w-full max-w-xl rounded-3xl border border-amber-500/40 bg-slate-900 p-6 sm:p-8 shadow-2xl shadow-amber-500/20"
+      @click.outside="statusModalOpen = false">
+      
+      <!-- Close Button -->
+      <button 
+        @click="statusModalOpen = false" 
+        class="absolute right-5 top-5 rounded-full bg-slate-800 p-1.5 text-slate-400 hover:text-white">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="text-left">
+        <div class="text-[11px] font-bold uppercase tracking-widest text-amber-400">PILGRIM VERIFICATION PORTAL</div>
+        <h3 class="mt-1 text-2xl font-black text-white">Check Travel Eligibility Pass</h3>
+        <p class="mt-1 text-xs text-slate-400">Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.</p>
+      </div>
+
+      <!-- HTMX Lookup Form (LAND-04) -->
+      <form 
+        class="mt-6 flex flex-col sm:flex-row gap-3"
+        hx-get="/api/public/booking-status"
+        hx-target="#booking-status-result"
+        hx-indicator="#status-loading">
+        <div class="relative flex-1">
+          <input 
+            type="text" 
+            name="query" 
+            required 
+            placeholder="e.g. 9876543210 or BY-2026-1234"
+            class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-semibold text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
+        </div>
+        <button 
+          type="submit"
+          class="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3 text-xs font-black text-black shadow-md shadow-amber-500/20 hover:brightness-110 active:scale-95">
+          Verify Pass
+        </button>
+      </form>
+
+      <!-- Loading Indicator -->
+      <div id="status-loading" class="htmx-indicator my-4 text-center">
+        <div class="inline-flex items-center gap-2 text-xs text-amber-400">
+          <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+          Searching verified passenger database...
+        </div>
+      </div>
+
+      <!-- Results Container (Golden VIP Pass swapped by HTMX) (LAND-04, LAND-05) -->
+      <div id="booking-status-result" class="mt-6"></div>
+
+    </div>
+  </div>
+
+  <!-- 6. Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-10 text-xs text-slate-500">
+    <div class="mx-auto flex max-w-7xl flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-2">
+        <div class="h-6 w-6 rounded-lg bg-amber-500 font-black text-black text-[10px] flex items-center justify-center">BY</div>
+        <span class="font-bold text-slate-300">BharatYatra PWA</span>
+        <span>• Rural Bus Tourism Micro-Collection Platform</span>
+      </div>
+      <div class="flex items-center gap-4 text-[11px]">
+        <a href="/agent/dashboard" class="text-amber-400 hover:underline font-bold">Agent App</a>
+        <a href="/distributor/dashboard" class="text-amber-400 hover:underline font-bold">Distributor Portal</a>
+        <a href="/_/" class="text-slate-400 hover:underline">Admin UI</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 3D Bus Engine (LAND-01) -->
+  <script src="/js/bus-3d.js"></script>
+
+</body>
+</html>

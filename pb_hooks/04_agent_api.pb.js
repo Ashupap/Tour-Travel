@@ -181,67 +181,72 @@ routerAdd("POST", "/api/agent/batch-sync", (c) => {
   let skippedCount = 0;
   const results = [];
 
-  $app.dao().runInTransaction((txDao) => {
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      const key = item.idempotency_key;
+  try {
+    $app.dao().runInTransaction((txDao) => {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const key = item.idempotency_key;
 
-      // 1. Check idempotency
-      if (key) {
-        try {
-          const existing = txDao.findFirstRecordByData("installments", "idempotency_key", key);
-          if (existing && existing.getString("status") === "paid") {
-            skippedCount++;
-            results.push({
-              installment_id: item.installment_id,
-              status: "skipped_duplicate",
-              idempotency_key: key
-            });
-            continue;
+        // 1. Check idempotency
+        if (key) {
+          try {
+            const existing = txDao.findFirstRecordByData("installments", "idempotency_key", key);
+            if (existing && existing.getString("status") === "paid") {
+              skippedCount++;
+              results.push({
+                installment_id: item.installment_id,
+                status: "skipped_duplicate",
+                idempotency_key: key
+              });
+              continue;
+            }
+          } catch (e) {
+            // Record not found is normal for new syncs
           }
-        } catch (e) {
-          // Record not found is normal for new syncs
         }
+
+        // 2. Find target installment
+        if (!item.installment_id) {
+          throw new BadRequestError(`Missing installment_id at index ${i}`);
+        }
+
+        const installment = txDao.findRecordById("installments", item.installment_id);
+        if (!installment) {
+          throw new NotFoundError(`Installment ${item.installment_id} not found`);
+        }
+
+        // 3. Verify ownership: must belong to a subscription assigned to this agent
+        const sub = txDao.findRecordById("subscriptions", installment.getString("subscription_id"));
+        if (!sub || sub.getString("agent_id") !== agent.id) {
+          throw new ForbiddenError(`Unauthorized: installment ${item.installment_id} belongs to another agent`);
+        }
+
+        // 4. Update installment to paid status in agent custody
+        installment.set("status", "paid");
+        installment.set("payment_mode", item.payment_mode || "cash");
+        installment.set("paid_at", item.paid_at || new Date().toISOString().replace("T", " "));
+        installment.set("receipt_slip_id", item.receipt_slip_id || `OFF-${agent.id}-${Date.now()}`);
+        if (key) {
+          installment.set("idempotency_key", key);
+        }
+        installment.set("collected_by", agent.id);
+        installment.set("handover_status", "agent_custody");
+
+        txDao.saveRecord(installment);
+        processedCount++;
+
+        results.push({
+          installment_id: installment.id,
+          status: "synced",
+          receipt_slip_id: installment.getString("receipt_slip_id"),
+          idempotency_key: key
+        });
       }
-
-      // 2. Find target installment
-      if (!item.installment_id) {
-        throw new BadRequestError(`Missing installment_id at index ${i}`);
-      }
-
-      const installment = txDao.findRecordById("installments", item.installment_id);
-      if (!installment) {
-        throw new NotFoundError(`Installment ${item.installment_id} not found`);
-      }
-
-      // 3. Verify ownership: must belong to a subscription assigned to this agent
-      const sub = txDao.findRecordById("subscriptions", installment.getString("subscription_id"));
-      if (!sub || sub.getString("agent_id") !== agent.id) {
-        throw new ForbiddenError(`Unauthorized: installment ${item.installment_id} belongs to another agent`);
-      }
-
-      // 4. Update installment to paid status in agent custody
-      installment.set("status", "paid");
-      installment.set("payment_mode", item.payment_mode || "cash");
-      installment.set("paid_at", item.paid_at || new Date().toISOString().replace("T", " "));
-      installment.set("receipt_slip_id", item.receipt_slip_id || `OFF-${agent.id}-${Date.now()}`);
-      if (key) {
-        installment.set("idempotency_key", key);
-      }
-      installment.set("collected_by", agent.id);
-      installment.set("handover_status", "agent_custody");
-
-      txDao.saveRecord(installment);
-      processedCount++;
-
-      results.push({
-        installment_id: installment.id,
-        status: "synced",
-        receipt_slip_id: installment.getString("receipt_slip_id"),
-        idempotency_key: key
-      });
-    }
-  });
+    });
+  } catch (err) {
+    console.error("BATCH SYNC ERROR:", err);
+    return c.json(400, { error: err.message || String(err) });
+  }
 
   return c.json(200, {
     success: true,
