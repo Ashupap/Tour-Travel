@@ -17,7 +17,7 @@ migrate((db) => {
   const subscriptions = dao.findCollectionByNameOrId("subscriptions");
   subscriptions.listRule = "@request.auth.role = 'admin' || (@request.auth.role = 'distributor' && distributor_id = @request.auth.id) || (@request.auth.role = 'agent' && agent_id = @request.auth.id)";
   subscriptions.viewRule = "@request.auth.role = 'admin' || (@request.auth.role = 'distributor' && distributor_id = @request.auth.id) || (@request.auth.role = 'agent' && agent_id = @request.auth.id)";
-  subscriptions.createRule = "@request.auth.role = 'admin' || (@request.auth.role = 'agent' && agent_id = @request.auth.id)";
+  subscriptions.createRule = "@request.auth.role = 'admin' || (@request.auth.role = 'agent' && @request.data.agent_id = @request.auth.id)";
   subscriptions.updateRule = "@request.auth.role = 'admin'";
   subscriptions.deleteRule = "@request.auth.role = 'admin'";
   dao.saveCollection(subscriptions);
@@ -35,7 +35,7 @@ migrate((db) => {
   const cashHandovers = dao.findCollectionByNameOrId("cash_handovers");
   cashHandovers.listRule = "@request.auth.role = 'admin' || agent_id = @request.auth.id || distributor_id = @request.auth.id";
   cashHandovers.viewRule = "@request.auth.role = 'admin' || agent_id = @request.auth.id || distributor_id = @request.auth.id";
-  cashHandovers.createRule = "@request.auth.role = 'agent' && agent_id = @request.auth.id";
+  cashHandovers.createRule = "@request.auth.role = 'admin' || (@request.auth.role = 'agent' && @request.data.agent_id = @request.auth.id)";
   cashHandovers.updateRule = "@request.auth.role = 'admin' || (@request.auth.role = 'distributor' && distributor_id = @request.auth.id)";
   cashHandovers.deleteRule = "@request.auth.role = 'admin'";
   dao.saveCollection(cashHandovers);

@@ -90,7 +90,10 @@ migrate((db) => {
       {
         name: "allowed_tenures",
         type: "json",
-        required: true
+        required: true,
+        options: {
+          maxSize: 1048576
+        }
       },
       {
         name: "min_emis_to_travel",
