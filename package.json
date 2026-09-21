@@ -1,0 +1,19 @@
+{
+  "name": "bharatyatra-pwa",
+  "version": "1.0.0",
+  "description": "BharatYatra PWA — Offline-First EMI-Based Bus Tour & Micro-Collection System",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/phase1_verification.js",
+    "pb": "pocketbase.exe serve --http=127.0.0.1:8090"
+  },
+  "keywords": [
+    "pocketbase",
+    "htmx",
+    "pwa",
+    "offline-first",
+    "tour-travel"
+  ],
+  "author": "BharatYatra Team",
+  "license": "ISC"
+}

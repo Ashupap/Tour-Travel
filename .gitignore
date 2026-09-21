@@ -1,0 +1,25 @@
+# PocketBase data & local storage
+pb_data/
+*.db
+*.db-wal
+*.db-shm
+
+# Executables & archives
+*.exe
+*.zip
+*.tar.gz
+
+# Dependencies
+node_modules/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Test output & temp
+scratch/
+test-results/
