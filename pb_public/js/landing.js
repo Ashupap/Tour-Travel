@@ -15,11 +15,11 @@ const I18N = {
     hero: {
       badge: "🙏 ଜୟ ଜଗନ୍ନାଥ • ଆମ ଓଡ଼ିଶାର ନିଜସ୍ୱ ତୀର୍ଥଯାତ୍ରା ସେବା",
       title1: "ଆମ ଓଡ଼ିଶାରୁ ଚାରିଧାମ ଯାତ୍ରା",
-      title2: "ବିଳାସପୂର୍ଣ୍ଣ ସ୍ଲିପର ବସ୍ ରେ ମା' ବାପାଙ୍କୁ ପବିତ୍ର ତୀର୍ଥ କରାନ୍ତୁ",
+      title2: "",
       punchline: "ପୂରା ଟଙ୍କାର ଚିନ୍ତା ନାହିଁ! ମାତ୍ର ଦୁଇଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ, ବାକି ଟଙ୍କା ଧାମ ଦର୍ଶନ ସାରି ଘରକୁ ଫେରିବା ପରେ ସହଜରେ ଶୁଝନ୍ତୁ।",
       point1: "କୌଣସି ବ୍ୟାଙ୍କ ଋଣ ବା CIBIL ଚିନ୍ତା ନାହିଁ",
       point2: "୧୦୦% ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ଆହାର (ବିନା ପିଆଜ-ରସୁଣ)",
-      point3: "ଓଡ଼ିଶାର ସମସ୍ତ ୩୦ଟି ଜିଲ୍ଲାରୁ ସିଧାସଳଖ ବସ୍ ପିକଅପ୍",
+      point3: "ଓଡ଼ିଶାର ସମସ୍ତ ୩୦ଟି ଜିଲ୍ଲାରୁ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍",
       btnExplore: "ତୀର୍ଥ ପ୍ୟାକେଜ୍ ଦେଖନ୍ତୁ",
       btnVerify: "ମୋ ବୁକିଂ ପାସ୍ ଦେଖିବି",
       stat1Val: "୪୮,୦୦୦+",
@@ -34,11 +34,11 @@ const I18N = {
     highway: {
       tag: "ଯାତ୍ରା ରାଜପଥ • BHARATYATRA HIGHWAY",
       title: "ଘରୁ ଧାମ ପର୍ଯ୍ୟନ୍ତ ନିଶ୍ଚିନ୍ତ ଯାତ୍ରା",
-      desc: "କଳା ପିଚୁ ରାସ୍ତାରେ ଆଗେଇ ଚାଲିଛି ଆପଣଙ୍କ ସ୍ଲିପର ବସ୍। ଦେଖନ୍ତୁ କିପରି ସହଜରେ ପୂରଣ ହେବ ତୀର୍ଥ ସ୍ୱପ୍ନ:",
+      desc: "କଳା ପିଚୁ ରାସ୍ତାରେ ଆଗେଇ ଚାଲିଛି ଆପଣଙ୍କ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍। ଦେଖନ୍ତୁ କିପରି ସହଜରେ ପୂରଣ ହେବ ତୀର୍ଥ ସ୍ୱପ୍ନ:",
       m1Title: "୧. ଘରୁ ସଂକଳ୍ପ (ମାସ ୦୧)",
       m1Desc: "ଘରେ ବସି ନିଜ ସହାୟକ ଭାଇଙ୍କ ଠାରୁ ପାସବୁକ୍ ପାଆନ୍ତୁ। ସିଟ୍ ସଂରକ୍ଷିତ ହେଲା।",
       m2Title: "୨. ବସ୍ ଚଢ଼ିବା ଅନୁମତି (ମାସ ୦୨)",
-      m2Desc: "କେବଳ ଦ୍ୱିତୀୟ କିସ୍ତି ପରେ ଟିକେଟ୍ ଅନଲକ୍! ଚଢ଼ନ୍ତୁ ୫-ଷ୍ଟାର ଏସି ସ୍ଲିପର ବସ୍ ରେ।",
+      m2Desc: "କେବଳ ଦ୍ୱିତୀୟ କିସ୍ତି ପରେ ଟିକେଟ୍ ଅନଲକ୍! ଚଢ଼ନ୍ତୁ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍ ରେ।",
       m3Title: "୩. ପବିତ୍ର ଧାମ ଦର୍ଶନ",
       m3Desc: "କେଦାରନାଥ, କାଶୀ ଓ ଅଯୋଧ୍ୟାରେ ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ମହାପ୍ରସାଦ।",
       m4Title: "୪. ସୁରକ୍ଷିତ ଘରକୁ ଫେରିବା",
@@ -75,11 +75,11 @@ const I18N = {
     hero: {
       badge: "🙏 JAI JAGANNATH • Dedicated Pilgrimage Network from Odisha",
       title1: "Sacred Dhams from Odisha",
-      title2: "Travel in Royal 5-Star Sleeper Coaches with Zero Financial Strain",
+      title2: "",
       punchline: "No full upfront payment stress! Board your coach after paying just 2 micro-installments, and comfortably clear the remaining balance after returning home.",
       point1: "Zero Bank CIBIL or Formal Loan Stress",
       point2: "100% Pure Satvik Meals (No Onion, No Garlic)",
-      point3: "Direct Luxury Bus Pickup from All 30 Odisha Districts",
+      point3: "Direct Premium Deluxe Bus Pickup from All 30 Odisha Districts",
       btnExplore: "Explore Tour Circuits",
       btnVerify: "Check Booking Pass",
       stat1Val: "48,000+",
@@ -94,11 +94,11 @@ const I18N = {
     highway: {
       tag: "PILGRIMAGE HIGHWAY • JOURNEY ROADMAP",
       title: "From Your Home to Sacred Dhams & Safe Return",
-      desc: "Our royal sleeper coach navigates the sacred highway. See how your dream pilgrimage unfolds step by step:",
+      desc: "Our premium deluxe bus navigates the sacred highway. See how your dream pilgrimage unfolds step by step:",
       m1Title: "1. Sankalpa at Home (Month 01)",
       m1Desc: "Receive your physical passbook from your village Sahayak. Seat reserved.",
       m2Title: "2. Coach Clearance (Month 02)",
-      m2Desc: "Travel unlocked after just 2 payments! Board the luxury 5-star AC sleeper.",
+      m2Desc: "Travel unlocked after just 2 payments! Board the premium deluxe bus.",
       m3Title: "3. Sacred Dham Darshan",
       m3Desc: "Kedarnath, Kashi & Ayodhya VIP darshan with hot satvik meals prepared onboard.",
       m4Title: "4. Peaceful Home Return",
@@ -138,7 +138,7 @@ const TOUR_PACKAGES = [
     min_emis_to_travel: 2,
     badge: "Most Sacred • ବହୁତ ଲୋକପ୍ରିୟ",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD7tQda4ONtO4XduQSsRgMs_cQJr9gS4okjrDXbJvJ66IU7hUjeuEQ4VgLZdF9SxqQ-6A7oCVps105SdJADiN9a4xItaXOoLybFaSUaA_ekEocjLyvjWjitv82d5_nlbKUzDvjyTHZQt8V6fZartdU0ZzWK8qs5vnFe7L_hJM3oVs1vRGwQTMO5tFMbHgOYDevQfH52Te695mTDEv_yYvuaGJ_kajeKRJw0dJ-zPwPlAi1UuADNj2fIVuI7sCW_bSECIx2fp1PY1wVu",
-    highlights: ["AC Sleeper Coach with Blanket", "VIP Kedarnath Helipad/Pony Support", "Pure Satvik Aahar (No Onion-Garlic)"]
+    highlights: ["Premium Deluxe Bus with Blanket", "VIP Kedarnath Helipad/Pony Support", "Pure Satvik Aahar (No Onion-Garlic)"]
   },
   {
     id: "pkg-ayodhya-kashi",
@@ -168,7 +168,7 @@ const TOUR_PACKAGES = [
     min_emis_to_travel: 2,
     badge: "Shiva Mahayatra • ମହାକାଳ ଦର୍ଶନ",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBy3nNUBbzm-RFmWiKnfDmbG1j7zqaJjvRyWpFcWs25ckUOnfK_mJOKJV7WvfnNTYZXyC4dHdWat-O9qikjJeb2vqpSON1Hrul0Ap3fSr546UEI9JHByaqAIPZP9Hu3J1Tz2xFB2IyRBNW_rexi0qX-6j4f4_BaAQqRwlsbo7mBdWHaALk41-TyN-kJ1Ia6YIimJlnuVgGml6PVyAd2gp_qnWkT7GS-uZ2JzfdGYkiqpfxayIdTyGlGgzBvUmeTbDkQEdW4D3mtqX1y",
-    highlights: ["Bhasma Aarti Access", "Double-Decker Sleeper Comfort", "Purohit Special Puja Service"]
+    highlights: ["Bhasma Aarti Access", "Premium Deluxe Bus Comfort", "Purohit Special Puja Service"]
   },
   {
     id: "pkg-south-circuit",
@@ -276,11 +276,6 @@ function landingApp() {
         const progress = docHeight > 0 ? Math.min(100, Math.max(0, Math.round((scrollTop / docHeight) * 100))) : 0;
         this.scrollProgress = progress;
 
-        // 4 Milestones across page scroll:
-        // 1. Sankalpa (0-25%)
-        // 2. Board Bus (25-50%)
-        // 3. Darshan & Prasad (50-75%)
-        // 4. Safe Return (75-100%)
         if (progress < 25) {
           this.currentMilestone = 1;
         } else if (progress < 50) {

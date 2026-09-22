@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>BharatYatra: Ama Odisha ru Char Dham — Luxury Sleeper Bus &amp; Micro-EMI Tirthayatra</title>
-  <meta name="description" content="Jai Jagannath! Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra 5-star AC sleeper bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
+  <title>BharatYatra: Ama Odisha ru Char Dham — Premium Deluxe Bus &amp; Micro-EMI Tirthayatra</title>
+  <meta name="description" content="Jai Jagannath! Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra Premium Deluxe Bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
 
   <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="/manifest.json"/>
@@ -80,16 +80,6 @@
       background-size: 8px 8px;
     }
 
-    .road-white-stripes {
-      background-image: repeating-linear-gradient(
-        to bottom,
-        #ffffff 0px,
-        #ffffff 16px,
-        transparent 16px,
-        transparent 32px
-      );
-    }
-
     [x-cloak] { display: none !important; }
     html { scroll-behavior: smooth; }
   </style>
@@ -105,7 +95,7 @@
 <body class="bg-[#FFFDF7] text-slate-800 text-[14px] leading-relaxed min-h-screen relative overflow-x-hidden selection:bg-amber-300 selection:text-slate-900 font-odia" x-data="landingApp()">
 
   <!-- ========================================================================= -->
-  <!-- FULL-PAGE BLACK ROAD WITH WHITE MARKINGS & SCROLLING BUS (User Requested)  -->
+  <!-- FULL-PAGE BLACK ROAD WITH WHITE MARKINGS & SCROLLING BUS                   -->
   <!-- ========================================================================= -->
   <aside 
     aria-label="Pilgrimage Highway Scroll Tracker"
@@ -187,7 +177,7 @@
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
           <span class="material-symbols-outlined text-[24px]">temple_hindu</span>
         </div>
-        <div class="flex flex-col">
+        <div class="flex flex-col text-left">
           <div class="flex items-center gap-1.5">
             <span class="font-display-lg text-2xl text-slate-900 font-bold tracking-tight">Bharat<span class="text-amber-600">Yatra</span></span>
             <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold border border-amber-300">
@@ -241,10 +231,10 @@
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 2. HERO SECTION WITH HIGH-RES DESTINATION IMAGE IN BACKGROUND              -->
+  <!-- 2. HERO SECTION WITH IMAGE BACKGROUND & CLEAN LEFT ALIGNMENT               -->
   <!-- ========================================================================= -->
   <main id="hero-section" class="relative overflow-hidden pt-12 pb-20 px-4 sm:px-6 lg:px-8 border-b border-amber-200/60">
-    <!-- Hero Background Image (Lord Jagannath Temple at Night / Grand Tirtha Vista) -->
+    <!-- Hero Background Image (Lord Jagannath Temple at Night) -->
     <div class="absolute inset-0 z-0">
       <img 
         src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Lord_Jagannath_temple_at_night.jpg" 
@@ -255,25 +245,24 @@
       <div class="absolute inset-0 bg-gradient-to-t from-[#FFFDF7] via-transparent to-transparent"></div>
     </div>
 
-    <!-- Hero Content (Punchy, Emotional, NO PRICE/AMOUNT MENTIONED) -->
-    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center sm:items-start text-center sm:text-left mt-2">
+    <!-- Hero Content (Pure Left Alignment, Single Punchy Title, Subtext as is) -->
+    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-start text-left mt-2">
       <!-- Divine Badge -->
       <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold shadow-sm backdrop-blur-md">
         <span class="text-base">🙏</span>
         <span x-text="t('hero', 'badge')"></span>
       </div>
 
-      <!-- Main Headline -->
-      <h1 class="font-display-lg text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.18] mt-4">
-        <span x-text="t('hero', 'title1')"></span> <br/>
-        <span class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 bg-clip-text text-transparent" x-text="t('hero', 'title2')"></span>
+      <!-- Main Headline: ONLY 'ଆମ ଓଡ଼ିଶାରୁ ଚାରିଧାମ ଯାତ୍ରା' as requested -->
+      <h1 class="font-display-lg text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight mt-4 text-left">
+        <span x-text="t('hero', 'title1')"></span>
       </h1>
 
-      <!-- Punchy Connecting Statement (Zero price text) -->
-      <p class="text-base sm:text-lg text-slate-700 max-w-2xl leading-relaxed mt-3" x-text="t('hero', 'punchline')"></p>
+      <!-- Punchy Subtext as it is -->
+      <p class="text-base sm:text-lg text-slate-700 max-w-2xl leading-relaxed mt-3 text-left" x-text="t('hero', 'punchline')"></p>
 
-      <!-- 3 Punchy Pillars -->
-      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-3 text-xs font-bold text-slate-800">
+      <!-- 3 Punchy Pillars (Left Aligned) -->
+      <div class="flex flex-wrap items-center justify-start gap-2 pt-3 text-xs font-bold text-slate-800">
         <span class="bg-white/90 backdrop-blur-md border border-amber-300 rounded-full px-3.5 py-1.5 shadow-sm flex items-center gap-1.5">
           <span class="text-emerald-600 font-bold">✓</span> <span x-text="t('hero', 'point1')"></span>
         </span>
@@ -285,8 +274,8 @@
         </span>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3.5 pt-5">
+      <!-- Action Buttons (Left Aligned) -->
+      <div class="flex flex-wrap items-center justify-start gap-3.5 pt-5">
         <a class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-500/30 hover:brightness-105 active:scale-95 transition" href="#circuits">
           <span class="material-symbols-outlined text-[20px]">explore</span>
           <span x-text="t('hero', 'btnExplore')"></span>
@@ -299,21 +288,21 @@
         </button>
       </div>
 
-      <!-- Rural Devotee Statistics Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mt-8 p-4 rounded-2xl bg-white/95 border border-amber-200 shadow-md backdrop-blur-md">
-        <div class="flex flex-col items-center sm:items-start border-r border-amber-100 last:border-0 px-2">
+      <!-- Rural Devotee Statistics Bar (Left Aligned) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mt-8 p-4 rounded-2xl bg-white/95 border border-amber-200 shadow-md backdrop-blur-md text-left">
+        <div class="flex flex-col items-start border-r border-amber-100 last:border-0 px-2">
           <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold" x-text="t('hero', 'stat1Val')"></span>
           <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat1Lbl')"></span>
         </div>
-        <div class="flex flex-col items-center sm:items-start border-r border-amber-100 last:border-0 px-2">
+        <div class="flex flex-col items-start border-r border-amber-100 last:border-0 px-2">
           <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold" x-text="t('hero', 'stat2Val')"></span>
           <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat2Lbl')"></span>
         </div>
-        <div class="flex flex-col items-center sm:items-start border-r border-amber-100 last:border-0 px-2">
+        <div class="flex flex-col items-start border-r border-amber-100 last:border-0 px-2">
           <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold" x-text="t('hero', 'stat3Val')"></span>
           <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat3Lbl')"></span>
         </div>
-        <div class="flex flex-col items-center sm:items-start px-2">
+        <div class="flex flex-col items-start px-2">
           <span class="font-finance-display text-2xl sm:text-3xl text-emerald-600 font-bold" x-text="t('hero', 'stat4Val')"></span>
           <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat4Lbl')"></span>
         </div>
@@ -328,22 +317,21 @@
   <!-- 3. THE BHARATYATRA HIGHWAY & MILESTONES (BLACK ROAD WITH WHITE MARKINGS)   -->
   <!-- ========================================================================= -->
   <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="journey-highway">
-    <div class="text-center max-w-3xl mx-auto mb-8">
+    <div class="text-left max-w-3xl mb-8">
       <span class="text-xs font-bold text-amber-700 uppercase tracking-widest" x-text="t('highway', 'tag')"></span>
       <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1" x-text="t('highway', 'title')"></h2>
       <p class="text-sm sm:text-base text-slate-600 mt-1" x-text="t('highway', 'desc')"></p>
     </div>
 
     <!-- The Authentic Black Highway with White Lane Stripes -->
-    <div class="rounded-3xl road-asphalt border-4 border-slate-800 shadow-2xl p-6 sm:p-10 relative overflow-hidden text-white">
+    <div class="rounded-3xl road-asphalt border-4 border-slate-800 shadow-2xl p-6 sm:p-10 relative overflow-hidden text-white text-left">
       <!-- White Dashed Center Line across the horizontal road -->
       <div class="hidden md:block absolute left-8 right-8 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-white/80 pointer-events-none z-0"></div>
 
       <!-- 4 NH Milestone Pillars along the Black Road -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10 text-left">
         <!-- Milestone 1 -->
-        <div class="flex flex-col items-center text-center group cursor-pointer" @click="scrollToSection('advantage')">
-          <!-- Traditional Indian Highway Milestone Marker -->
+        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('advantage')">
           <div class="w-24 h-32 rounded-t-full bg-white border-2 border-slate-300 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform">
             <div class="w-full h-10 rounded-t-full bg-amber-400 flex items-center justify-center font-bold text-slate-950 text-xs border-b border-slate-300">
               🚩 NH-01
@@ -356,14 +344,14 @@
               ମାସ ୦୧
             </div>
           </div>
-          <div class="mt-3">
+          <div class="mt-3 text-left">
             <h4 class="font-bold text-sm text-amber-300" x-text="t('highway', 'm1Title')"></h4>
             <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm1Desc')"></p>
           </div>
         </div>
 
         <!-- Milestone 2 (Golden Coach Clearance) -->
-        <div class="flex flex-col items-center text-center group cursor-pointer" @click="scrollToSection('advantage')">
+        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('advantage')">
           <div class="w-24 h-32 rounded-t-full bg-white border-2 border-emerald-400 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform ring-4 ring-emerald-400/30">
             <div class="w-full h-10 rounded-t-full bg-emerald-500 flex items-center justify-center font-bold text-white text-xs border-b border-slate-300">
               🚌 UNLOCKED
@@ -376,14 +364,14 @@
               ମାସ ୦୨
             </div>
           </div>
-          <div class="mt-3">
+          <div class="mt-3 text-left">
             <h4 class="font-bold text-sm text-emerald-400" x-text="t('highway', 'm2Title')"></h4>
             <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm2Desc')"></p>
           </div>
         </div>
 
         <!-- Milestone 3 (Dham Darshan) -->
-        <div class="flex flex-col items-center text-center group cursor-pointer" @click="scrollToSection('circuits')">
+        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('circuits')">
           <div class="w-24 h-32 rounded-t-full bg-white border-2 border-slate-300 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform">
             <div class="w-full h-10 rounded-t-full bg-amber-400 flex items-center justify-center font-bold text-slate-950 text-xs border-b border-slate-300">
               🛕 DARSHAN
@@ -396,14 +384,14 @@
               ଚାରିଧାମ
             </div>
           </div>
-          <div class="mt-3">
+          <div class="mt-3 text-left">
             <h4 class="font-bold text-sm text-amber-300" x-text="t('highway', 'm3Title')"></h4>
             <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm3Desc')"></p>
           </div>
         </div>
 
         <!-- Milestone 4 (Safe Return) -->
-        <div class="flex flex-col items-center text-center group cursor-pointer" @click="scrollToSection('emi-calculator-section')">
+        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('emi-calculator-section')">
           <div class="w-24 h-32 rounded-t-full bg-white border-2 border-slate-300 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform">
             <div class="w-full h-10 rounded-t-full bg-amber-400 flex items-center justify-center font-bold text-slate-950 text-xs border-b border-slate-300">
               🏠 PHERIBA
@@ -416,7 +404,7 @@
               ମାସ ୦୩-୧୦
             </div>
           </div>
-          <div class="mt-3">
+          <div class="mt-3 text-left">
             <h4 class="font-bold text-sm text-amber-300" x-text="t('highway', 'm4Title')"></h4>
             <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm4Desc')"></p>
           </div>
@@ -427,7 +415,7 @@
       <div class="mt-8 pt-4 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
         <div class="flex items-center gap-2">
           <span class="text-xl">🚌</span>
-          <span>5-Star AC Sleeper Coach with Emergency Paramedic &amp; Satvik Kitchen</span>
+          <span>Premium Deluxe Bus with Emergency Paramedic &amp; Satvik Kitchen</span>
         </div>
         <div class="flex items-center gap-2 font-mono text-amber-400 font-bold">
           <span>● GPS SATELLITE TRACKED HIGHWAY</span>
@@ -440,7 +428,7 @@
   <!-- 4. THE MICRO-EMI ADVANTAGE: BENTO GRID                                    -->
   <!-- ========================================================================= -->
   <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="advantage">
-    <div class="text-center max-w-3xl mx-auto mb-10">
+    <div class="text-left max-w-3xl mb-10">
       <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">
         <span x-text="lang === 'odia' ? 'ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ' : 'TRAVEL FIRST, SETTLE LATER'"></span>
       </span>
@@ -448,14 +436,14 @@
         <span x-text="lang === 'odia' ? 'ବିନା ଆର୍ଥିକ ଚିନ୍ତାରେ ବାପା-ମା’ଙ୍କୁ ତୀର୍ଥ କରାନ୍ତୁ' : 'Fulfill Your Parents Sacred Pilgrimage Dream with Ease'"></span>
       </h2>
       <p class="text-sm sm:text-base text-slate-600 mt-2">
-        <span x-text="lang === 'odia' ? 'କୌଣସି ବ୍ୟାଙ୍କ ଋଣ ନାହିଁ, କୌଣସି କାଗଜପତ୍ର ଝମେଲା ନାହିଁ। କେବଳ ୨ଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ!' : 'No bank loans, zero paperwork hassle. Board your luxury sleeper coach after paying just 2 installments!'"></span>
+        <span x-text="lang === 'odia' ? 'କୌଣସି ବ୍ୟାଙ୍କ ଋଣ ନାହିଁ, କୌଣସି କାଗଜପତ୍ର ଝମେଲା ନାହିଁ। କେବଳ ୨ଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ!' : 'No bank loans, zero paperwork hassle. Board your premium deluxe bus after paying just 2 installments!'"></span>
       </p>
     </div>
 
     <!-- Bento Grid Container -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
       <!-- Bento 1: Travel First (Spans 2 cols) -->
-      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden">
+      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden text-left">
         <div>
           <div class="flex items-center justify-between mb-3">
             <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold">
@@ -490,7 +478,7 @@
                 <span x-text="lang === 'odia' ? 'ବସ୍ ଚଢ଼ିବା ଅନୁମତି!' : 'Coach Boarding Active!'"></span>
               </div>
               <p class="text-[11px] text-slate-700 mt-1">
-                <span x-text="lang === 'odia' ? 'ଟିକେଟ୍ ଅନଲକ୍। ସପରିବାର ଯାତ୍ରା କରନ୍ତୁ।' : 'Board the AC sleeper coach with family.'"></span>
+                <span x-text="lang === 'odia' ? 'ଟିକେଟ୍ ଅନଲକ୍। ସପରିବାର ଯାତ୍ରା କରନ୍ତୁ।' : 'Board the premium deluxe bus with family.'"></span>
               </p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
@@ -507,7 +495,7 @@
       </div>
 
       <!-- Bento 2: Zero Banking Friction -->
-      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg">
+      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg text-left">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 mb-4 shadow-sm">
             <span class="material-symbols-outlined text-[26px]">fingerprint</span>
@@ -540,7 +528,7 @@
       </div>
 
       <!-- Bento 3: Doorstep Sahayak -->
-      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg">
+      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg text-left">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 mb-4 shadow-sm">
             <span class="material-symbols-outlined text-[26px]">home_pin</span>
@@ -574,7 +562,7 @@
       </div>
 
       <!-- Bento 4: 100% Satvik Food -->
-      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden">
+      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden text-left">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
           <div>
             <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
@@ -602,7 +590,7 @@
             </div>
           </div>
 
-          <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-300 text-center flex flex-col items-center">
+          <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-300 text-left flex flex-col items-start">
             <div class="w-12 h-12 rounded-full bg-amber-200 flex items-center justify-center text-amber-800 mb-2 font-bold text-xl">
               🙏
             </div>
@@ -619,8 +607,8 @@
   <!-- ========================================================================= -->
   <!-- 5. CURATED SACRED TOUR CIRCUITS (LAND-03 3D TILT CARDS)                   -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="circuits">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left" id="circuits">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 text-left">
       <div>
         <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">
           <span x-text="lang === 'odia' ? 'ତୀର୍ଥ ପ୍ୟାକେଜ୍ ସମୂହ' : 'CURATED PILGRIMAGE CIRCUITS'"></span>
@@ -629,16 +617,16 @@
           <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରୁ ଆରମ୍ଭ ହେଉଥିବା ପବିତ୍ର ଯାତ୍ରା' : 'Sacred Tirtha Packages from Odisha'"></span>
         </h2>
         <p class="text-sm text-slate-600 mt-1">
-          <span x-text="lang === 'odia' ? 'ଏସି ସ୍ଲିପର ବସ୍, ଆଶ୍ରମ ରହଣି, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'All packages include AC sleeper berths, hotel stays, VIP darshan protocol, and 3 satvik meals daily.'"></span>
+          <span x-text="lang === 'odia' ? 'ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍, ଆଶ୍ରମ ରହଣି, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'All packages include premium deluxe bus berths, hotel stays, VIP darshan protocol, and 3 satvik meals daily.'"></span>
         </p>
       </div>
     </div>
 
     <!-- Tour Cards Grid with Vanilla-Tilt (LAND-03) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
       <template x-for="pkg in packages" :key="pkg.id">
         <div 
-          class="package-tilt-card rounded-3xl bg-white temple-gold-border overflow-hidden flex flex-col justify-between group transition-all duration-300 shadow-md hover:shadow-xl cursor-pointer"
+          class="package-tilt-card rounded-3xl bg-white temple-gold-border overflow-hidden flex flex-col justify-between group transition-all duration-300 shadow-md hover:shadow-xl cursor-pointer text-left"
           @click="selectPackage(pkg)">
           <div>
             <!-- High-Res Visual Photo Container -->
@@ -658,7 +646,7 @@
             </div>
 
             <!-- Card Content -->
-            <div class="p-4">
+            <div class="p-4 text-left">
               <div class="text-[12px] font-bold text-amber-700" x-text="pkg.odia_title"></div>
               <h3 class="font-headline-md text-lg text-slate-900 font-bold mt-0.5 leading-snug" x-text="pkg.title"></h3>
               <p class="text-xs text-slate-500 mt-1 line-clamp-2" x-text="lang === 'odia' ? pkg.odia_destination : pkg.destination"></p>
@@ -708,20 +696,20 @@
   <!-- ========================================================================= -->
   <!-- 6. DYNAMIC MICRO-SAVINGS TRAVEL SIMULATOR (LAND-02 CALCULATOR)            -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="emi-calculator-section">
-    <div class="rounded-3xl bg-white p-6 sm:p-10 temple-gold-border shadow-xl relative overflow-hidden">
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left" id="emi-calculator-section">
+    <div class="rounded-3xl bg-white p-6 sm:p-10 temple-gold-border shadow-xl relative overflow-hidden text-left">
       <!-- Background Ambient Amber Glow -->
       <div class="absolute right-0 bottom-0 w-80 h-80 bg-amber-100/70 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="max-w-3xl mb-8">
+      <div class="max-w-3xl mb-8 text-left">
         <span class="text-xs font-bold text-amber-700 uppercase tracking-wider" x-text="t('calculator', 'tag')"></span>
         <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1" x-text="t('calculator', 'title')"></h2>
         <p class="text-sm text-slate-600 mt-1" x-text="t('calculator', 'desc')"></p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center text-left">
         <!-- Controls Side (7 cols) -->
-        <div class="lg:col-span-7 space-y-5">
+        <div class="lg:col-span-7 space-y-5 text-left">
           <!-- Select Circuit -->
           <div>
             <label class="block text-xs font-bold text-slate-700 uppercase mb-2" x-text="t('calculator', 'choosePkg')"></label>
@@ -759,7 +747,7 @@
           </div>
 
           <!-- Boarding Progress Visual Explanation -->
-          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
+          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-left">
             <div class="flex items-center justify-between text-xs sm:text-sm mb-1.5">
               <span class="text-slate-700 font-medium" x-text="t('calculator', 'statusLbl')"></span>
               <span class="text-emerald-700 font-finance-body font-bold">
@@ -781,8 +769,8 @@
         </div>
 
         <!-- Calculated Live Result Box (5 cols) -->
-        <div class="lg:col-span-5">
-          <div class="p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-amber-50 to-amber-100/60 border-2 border-amber-400 shadow-lg relative">
+        <div class="lg:col-span-5 text-left">
+          <div class="p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-amber-50 to-amber-100/60 border-2 border-amber-400 shadow-lg relative text-left">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-amber-900 uppercase tracking-wide" x-text="t('calculator', 'estEmiLbl')"></span>
               <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-300">Auto Approved</span>
@@ -803,7 +791,7 @@
 
             <div class="my-5 border-t border-amber-200"></div>
 
-            <div class="space-y-2 text-xs sm:text-sm text-slate-700">
+            <div class="space-y-2 text-xs sm:text-sm text-slate-700 text-left">
               <div class="flex justify-between">
                 <span class="text-slate-600" x-text="t('calculator', 'toBoardLbl')"></span>
                 <span class="font-finance-body text-amber-800 font-bold">
@@ -839,8 +827,8 @@
   <!-- ========================================================================= -->
   <!-- 7. GOLDEN VIP TRAVEL PASS PREVIEW (OFFLINE TRAVEL TICKET)                 -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="verification-pass">
-    <div class="text-center max-w-3xl mx-auto mb-10">
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left" id="verification-pass">
+    <div class="text-left max-w-3xl mb-10">
       <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">
         <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ପ୍ରମାଣପତ୍ର' : 'OFFLINE TRAVEL CERTIFICATE'"></span>
       </span>
@@ -853,18 +841,18 @@
     </div>
 
     <!-- The Embossed Boarding Pass Stub Card (Light Mode Ivory) -->
-    <div class="max-w-4xl mx-auto rounded-3xl bg-white border-2 border-amber-300 shadow-xl relative overflow-hidden">
+    <div class="max-w-4xl mx-auto rounded-3xl bg-white border-2 border-amber-300 shadow-xl relative overflow-hidden text-left">
       <div class="h-2.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600"></div>
 
-      <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+      <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-left">
         <!-- Left Pass Body (8 cols) -->
-        <div class="md:col-span-8 space-y-4">
+        <div class="md:col-span-8 space-y-4 text-left">
           <div class="flex flex-wrap items-center justify-between border-b border-amber-100 pb-3 gap-2">
             <div class="flex items-center gap-2.5">
               <div class="w-10 h-10 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 text-lg">
                 🚩
               </div>
-              <div>
+              <div class="text-left">
                 <span class="font-display-lg text-xl text-slate-900 font-bold">BharatYatra Royal Pass</span>
                 <div class="text-[10px] text-amber-800 font-bold uppercase tracking-wider">National Pilgrimage Micro-Credit Board • Odisha Division</div>
               </div>
@@ -877,7 +865,7 @@
           </div>
 
           <!-- Devotee Details Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-left">
             <div>
               <span class="text-[10px] text-slate-500 uppercase font-bold">Devotee Head of Family</span>
               <div class="text-sm text-slate-900 font-bold mt-0.5">Pandit Rameshwar Mohapatra &amp; Parivar</div>
@@ -886,11 +874,11 @@
             <div>
               <span class="text-[10px] text-slate-500 uppercase font-bold">Sacred Circuit</span>
               <div class="text-sm text-amber-800 font-bold mt-0.5">Char Dham Himalayan Yatra</div>
-              <div class="text-[11px] text-slate-600">Coach #OD-02-BY-108 (AC Sleeper)</div>
+              <div class="text-[11px] text-slate-600">Coach #OD-02-BY-108 (Premium Deluxe Bus)</div>
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-2 pt-1 text-xs">
+          <div class="grid grid-cols-3 gap-2 pt-1 text-xs text-left">
             <div>
               <span class="text-[10px] text-slate-500 uppercase font-bold">Pass Reference</span>
               <div class="font-mono text-xs text-slate-900 font-bold mt-0.5">BY-OD-884920</div>
@@ -941,13 +929,13 @@
   <!-- ========================================================================= -->
   <!-- 8. FOOTER                                                                 -->
   <!-- ========================================================================= -->
-  <footer class="w-full px-4 sm:px-6 lg:px-8 py-10 max-w-7xl mx-auto border-t border-amber-200 bg-white/80">
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+  <footer class="w-full px-4 sm:px-6 lg:px-8 py-10 max-w-7xl mx-auto border-t border-amber-200 bg-white/80 text-left">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-left">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white text-sm font-bold">
           BY
         </div>
-        <div>
+        <div class="text-left">
           <span class="font-display-lg text-lg text-slate-900 font-bold">BharatYatra — Odisha</span>
           <span class="block text-[11px] text-slate-500">Pious Micro-EMI Bus Tourism &amp; Pilgrimage Platform</span>
         </div>
@@ -962,7 +950,7 @@
       </div>
     </div>
 
-    <div class="border-t border-amber-100 pt-5 mt-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+    <div class="border-t border-amber-100 pt-5 mt-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-left">
       <p>© 2026 BharatYatra Technologies Ltd. Regulated under Rural Pilgrimage Micro-Credit Guidelines. Jai Jagannath!</p>
       <div class="flex items-center gap-2 text-emerald-700 font-bold">
         <span>✓ 100% Satvik Certified</span>
@@ -982,7 +970,7 @@
     @keydown.escape.window="statusModalOpen = false">
     
     <div 
-      class="relative w-full max-w-xl rounded-3xl border-2 border-amber-400 bg-white p-6 sm:p-8 shadow-2xl"
+      class="relative w-full max-w-xl rounded-3xl border-2 border-amber-400 bg-white p-6 sm:p-8 shadow-2xl text-left"
       @click.outside="statusModalOpen = false">
       
       <!-- Close Button -->
