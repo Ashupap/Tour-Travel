@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en" class="h-full bg-[#FFFDF7] text-slate-800 antialiased selection:bg-amber-400 selection:text-slate-900">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>BharatYatra: Har Gaon Se Char Dham — Royal Sleeper &amp; Micro-EMI Pilgrimages</title>
-  <meta name="description" content="Embark on Kedarnath, Badrinath, Ayodhya and Kashi in 5-star royal sleeper coaches. Board after just 2 monthly payments (as low as ₹2,000/mo) collected by your village Sahayak agent."/>
+  <title>BharatYatra: Ama Odisha ru Char Dham — Luxury Sleeper Bus &amp; Micro-EMI Tirthayatra</title>
+  <meta name="description" content="Jai Jagannath! Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra 5-star AC sleeper bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
 
   <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="/manifest.json"/>
@@ -22,32 +22,22 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link rel="stylesheet" href="/css/tailwind.css"/>
 
-  <!-- Tailwind Config from Stitch Design Tokens -->
+  <!-- Tailwind Config (Light Mode Warm Temple Palette) -->
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
       theme: {
         extend: {
           colors: {
-            "surface-container-lowest": "#0c0e13",
-            "surface-container-low": "#191c21",
-            "surface-container": "#1d2025",
-            "surface-container-high": "#282a30",
-            "surface-container-highest": "#33353b",
-            "surface-bright": "#37393f",
-            "surface": "#111319",
-            "background": "#111319",
-            "primary": "#ffc174",
-            "primary-container": "#f59e0b",
-            "primary-fixed": "#ffddb8",
-            "secondary": "#ffb599",
-            "secondary-container": "#f66018",
-            "tertiary": "#56e5a9",
-            "tertiary-container": "#30c88f",
-            "on-surface": "#e2e2ea",
-            "on-surface-variant": "#d8c3ad",
-            "outline": "#a08e7a",
-            "outline-variant": "#534434"
+            "temple-base": "#FFFDF7",
+            "temple-card": "#FFFFFF",
+            "temple-warm": "#FFF8EC",
+            "temple-gold": "#D97706",
+            "temple-amber": "#F59E0B",
+            "temple-saffron": "#EA580C",
+            "temple-green": "#059669",
+            "temple-dark": "#0F172A",
+            "temple-border": "#FDE68A"
           },
           fontFamily: {
             "display-lg": ["EB Garamond", "serif"],
@@ -57,7 +47,6 @@
             "body-lg": ["Plus Jakarta Sans", "sans-serif"],
             "body-md": ["Plus Jakarta Sans", "sans-serif"],
             "body-sm": ["Plus Jakarta Sans", "sans-serif"],
-            "label-caps": ["Plus Jakarta Sans", "sans-serif"],
             "finance-display": ["JetBrains Mono", "monospace"],
             "finance-body": ["JetBrains Mono", "monospace"]
           }
@@ -67,32 +56,34 @@
   </script>
 
   <style>
-    /* Custom Atmospheric & Skeuomorphic touches */
-    .bg-temple-mesh {
-      background-color: #07090E;
+    /* Warm Temple Aesthetics */
+    .bg-temple-ivory {
+      background-color: #FFFDF7;
       background-image: 
-        radial-gradient(at 10% 15%, rgba(245, 158, 11, 0.08) 0px, transparent 50%),
-        radial-gradient(at 90% 85%, rgba(234, 88, 12, 0.06) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(30, 27, 75, 0.3) 0px, transparent 70%);
+        radial-gradient(at 10% 15%, rgba(245, 158, 11, 0.08) 0px, transparent 40%),
+        radial-gradient(at 90% 85%, rgba(234, 88, 12, 0.05) 0px, transparent 40%),
+        radial-gradient(at 50% 50%, rgba(254, 243, 199, 0.4) 0px, transparent 60%);
     }
 
-    .gold-ghost-border {
-      border: 1px solid rgba(245, 158, 11, 0.22);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.7), inset 0 0 16px rgba(245, 158, 11, 0.03);
+    .temple-shadow {
+      box-shadow: 0 10px 30px -5px rgba(217, 119, 6, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
     }
 
-    .gold-ghost-border:hover {
-      border-color: rgba(245, 158, 11, 0.45);
-      box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(245, 158, 11, 0.15);
+    .temple-gold-border {
+      border: 1px solid #FCD34D;
     }
 
-    .shimmer-gold {
-      background: linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .temple-gold-border:hover {
+      border-color: #D97706;
+      box-shadow: 0 12px 28px -4px rgba(217, 119, 6, 0.15);
     }
 
     [x-cloak] { display: none !important; }
+
+    /* Custom smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
   </style>
 
   <!-- Core Interactive Scripts -->
@@ -103,356 +94,460 @@
   <script defer src="/js/alpine.min.js"></script>
 </head>
 
-<body class="bg-surface-container-lowest text-on-surface font-body-md text-[14px] leading-relaxed antialiased selection:bg-primary-container selection:text-black min-h-screen relative overflow-x-hidden bg-temple-mesh" x-data="landingApp()">
+<body class="bg-temple-ivory text-slate-800 font-body-md text-[14px] leading-relaxed min-h-screen relative overflow-x-hidden selection:bg-amber-300 selection:text-slate-900" x-data="landingApp()">
 
   <!-- ========================================================================= -->
-  <!-- 1. SHARED TOP APP BAR (Glass Floating Navigation Shell)                    -->
+  <!-- SIDE SCROLL-DRIVEN MILESTONE BUS TRACKER (User Requested Feature)          -->
   <!-- ========================================================================= -->
-  <header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 max-w-7xl mx-auto rounded-full mt-4 w-[92%] border border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md shadow-[0_12px_32px_-4px_rgba(0,0,0,0.8),0_0_24px_-2px_rgba(245,158,11,0.15)]">
-    <!-- Brand Logo Anchor -->
-    <a class="flex items-center gap-3 group" href="/">
-      <div class="w-10 h-10 rounded-full bg-surface-container-high border border-primary/40 flex items-center justify-center text-primary shadow-[0_0_12px_rgba(245,158,11,0.3)] group-hover:scale-105 transition-transform duration-200">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">temple_hindu</span>
+  <div class="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 flex-col items-center bg-white/95 border border-amber-300/80 shadow-2xl rounded-2xl p-3.5 backdrop-blur-md w-56 temple-shadow">
+    <div class="flex items-center gap-2 border-b border-amber-200 pb-2 w-full justify-between">
+      <div class="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+        <span class="text-base">🚌</span> Yatra Highway
       </div>
-      <div class="flex flex-col">
-        <span class="font-display-lg text-[20px] text-primary tracking-wide font-semibold leading-tight">BharatYatra</span>
-        <span class="font-label-caps text-[9px] text-amber-300/80 tracking-wider uppercase">Har Gaon Se Char Dham</span>
-      </div>
-    </a>
-
-    <!-- Desktop Navigation Links -->
-    <nav class="hidden md:flex items-center gap-7 text-[14px]">
-      <a class="text-primary font-semibold border-b-2 border-primary pb-0.5 transition-colors" href="#circuits">Sacred Circuits</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors" href="#advantage">Micro-EMI Advantage</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors" href="#emi-calculator-section">Sanchay Calculator</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors" href="#sleeper-fleet">Fleet Showcase</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors" href="#verification-pass">Travel Pass</a>
-    </nav>
-
-    <!-- Trailing Actions Cluster -->
-    <div class="flex items-center gap-2 sm:gap-3">
-      <a class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-outline-variant/50 text-on-surface-variant hover:text-primary hover:border-primary/50 text-xs font-semibold transition-all active:scale-[0.98]" href="/agent/dashboard">
-        <span class="material-symbols-outlined text-[16px]">shield_person</span>
-        Agent PWA
-      </a>
-      <a class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-outline-variant/40 text-on-surface-variant hover:text-primary text-xs transition-all" href="/distributor/dashboard">
-        Distributor
-      </a>
-      <button 
-        @click="statusModalOpen = true"
-        class="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 rounded-full bg-gradient-to-r from-amber-600 via-primary-container to-amber-700 text-black font-semibold text-xs sm:text-sm shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_24px_rgba(245,158,11,0.55)] transition-all active:scale-[0.98]">
-        <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">confirmation_number</span>
-        <span>Check Travel Pass</span>
-      </button>
+      <span class="text-[10px] font-mono font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded" x-text="scrollProgress + '%'"></span>
     </div>
-  </header>
 
-  <!-- Background Divine Diya Glow Radiance -->
-  <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-primary/10 rounded-full blur-[140px] pointer-events-none -z-10"></div>
-  <div class="absolute top-[800px] left-10 w-[500px] h-[500px] bg-secondary-container/10 rounded-full blur-[130px] pointer-events-none -z-10"></div>
+    <!-- The Vertical Highway Path -->
+    <div class="relative w-full py-4 my-1 flex flex-col gap-6 pl-6">
+      <!-- Highway road dashed line -->
+      <div class="absolute left-2.5 top-3 bottom-3 w-0.5 bg-dashed border-l-2 border-dashed border-amber-300"></div>
 
-  <!-- ========================================================================= -->
-  <!-- 2. HERO SECTION: Royal Pilgrimage & Sovereign Comfort                    -->
-  <!-- ========================================================================= -->
-  <main class="pt-32 pb-16 px-6 max-w-7xl mx-auto">
-    <!-- Hero Header Text Cluster -->
-    <div class="text-center max-w-4xl mx-auto flex flex-col items-center gap-4 mt-4">
-      <!-- Top Micro-Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-high/90 border border-primary/30 shadow-[0_0_16px_rgba(245,158,11,0.15)] text-primary text-xs font-semibold tracking-wide">
-        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-        Govt &amp; Micro-Finance Approved • India's 1st Offline Micro-EMI Pilgrimage Network
+      <!-- Moving Bus Icon along the road -->
+      <div 
+        class="absolute left-0 -translate-x-[1px] transition-all duration-300 ease-out z-10 filter drop-shadow-md text-xl"
+        :style="'top: ' + Math.min(84, Math.max(8, scrollProgress * 0.82)) + '%'">
+        🚌
       </div>
 
-      <!-- Headline -->
-      <h1 class="font-display-lg text-4xl sm:text-5xl md:text-[60px] md:leading-[66px] tracking-tight text-on-surface">
-        Sacred Dhams. 5-Star Sleeper Coaches. <br class="hidden sm:block"/>
-        <span class="shimmer-gold">Zero Upfront Burden.</span>
-      </h1>
+      <!-- Milestone 1 -->
+      <div 
+        @click="scrollToSection('hero-section')" 
+        class="cursor-pointer transition-all"
+        :class="currentMilestone === 1 ? 'scale-105 font-bold text-amber-900' : 'opacity-70 text-slate-600'">
+        <div class="text-[11px] flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full" :class="currentMilestone >= 1 ? 'bg-amber-500' : 'bg-slate-300'"></span>
+          <span>1. Sankalpa (M1)</span>
+        </div>
+        <div class="text-[9px] text-slate-500 pl-3">₹2,000 Token Token</div>
+      </div>
 
-      <!-- Value Statement -->
-      <p class="text-base sm:text-lg text-on-surface-variant max-w-3xl leading-relaxed">
-        Embark on Kedarnath, Badrinath, Ayodhya and Kashi in custom BharatYatra royal sleeper coaches. Board after just 2 monthly payments (as low as <span class="text-primary font-semibold">₹2,000/mo</span>) collected by your trusted village Sahayak agent. Settle the balance comfortably after returning.
-      </p>
+      <!-- Milestone 2 (Clearance Unlock) -->
+      <div 
+        @click="scrollToSection('advantage')" 
+        class="cursor-pointer transition-all"
+        :class="currentMilestone === 2 ? 'scale-105 font-bold text-emerald-800' : 'opacity-70 text-slate-600'">
+        <div class="text-[11px] flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full" :class="currentMilestone >= 2 ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'"></span>
+          <span>2. Bus Boarding (M2)</span>
+        </div>
+        <div class="text-[9px] text-emerald-700 font-semibold pl-3">★ Travel Unlocked!</div>
+      </div>
+
+      <!-- Milestone 3 (Darshan & Prasad) -->
+      <div 
+        @click="scrollToSection('circuits')" 
+        class="cursor-pointer transition-all"
+        :class="currentMilestone === 3 ? 'scale-105 font-bold text-amber-900' : 'opacity-70 text-slate-600'">
+        <div class="text-[11px] flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full" :class="currentMilestone >= 3 ? 'bg-amber-500' : 'bg-slate-300'"></span>
+          <span>3. Dham Darshan</span>
+        </div>
+        <div class="text-[9px] text-slate-500 pl-3">VIP Entry &amp; Mahaprasad</div>
+      </div>
+
+      <!-- Milestone 4 (Safe Return & Remaining EMIs) -->
+      <div 
+        @click="scrollToSection('emi-calculator-section')" 
+        class="cursor-pointer transition-all"
+        :class="currentMilestone === 4 ? 'scale-105 font-bold text-amber-900' : 'opacity-70 text-slate-600'">
+        <div class="text-[11px] flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full" :class="currentMilestone >= 4 ? 'bg-amber-500' : 'bg-slate-300'"></span>
+          <span>4. Ghara ku Pheriba</span>
+        </div>
+        <div class="text-[9px] text-slate-500 pl-3">Easy Monthly EMIs</div>
+      </div>
+    </div>
+
+    <!-- Call Agent mini-button -->
+    <button 
+      @click="statusModalOpen = true"
+      class="mt-1 w-full py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold text-[10px] shadow hover:brightness-105 transition">
+      Check Travel Pass
+    </button>
+  </div>
+
+  <!-- Mobile Top Scroll Bus Progress Bar -->
+  <div class="lg:hidden fixed top-0 left-0 right-0 z-50 h-1 bg-amber-100">
+    <div class="h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-150" :style="'width: ' + scrollProgress + '%'"></div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 1. TOP NAVIGATION BAR                                                     -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-amber-200/70 shadow-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <!-- Brand Logo Anchor -->
+      <a class="flex items-center gap-2.5 group" href="/">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[24px]">temple_hindu</span>
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-1.5">
+            <span class="font-display-lg text-2xl text-slate-900 font-bold tracking-tight">Bharat<span class="text-amber-600">Yatra</span></span>
+            <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold border border-amber-300">Odisha Special</span>
+          </div>
+          <span class="text-[10px] font-bold text-amber-700 tracking-wider">ହର ଗାଁ ରୁ ଚାରି ଧାମ • HAR GAON RU CHAR DHAM</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-[14px] font-medium text-slate-700">
+        <a class="hover:text-amber-600 transition" href="#circuits">Sacred Circuits</a>
+        <a class="hover:text-amber-600 transition" href="#advantage">Micro-EMI Advantage</a>
+        <a class="hover:text-amber-600 transition" href="#emi-calculator-section">Sanchay Calculator</a>
+        <a class="hover:text-amber-600 transition" href="#destinations">Tirtha Destinations</a>
+        <a class="hover:text-amber-600 transition" href="#verification-pass">Travel Pass</a>
+      </nav>
 
       <!-- Action Buttons -->
-      <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
-        <a class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-700 text-white text-base font-semibold shadow-[0_0_24px_rgba(245,158,11,0.35)] hover:shadow-[0_0_36px_rgba(245,158,11,0.5)] border-t border-white/20 active:scale-[0.98] transition-all" href="#circuits">
-          <span class="material-symbols-outlined text-[20px]">explore</span>
-          Explore Sacred Circuits
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 text-xs font-semibold transition" href="/agent/dashboard">
+          <span class="material-symbols-outlined text-[15px] text-amber-700">badge</span>
+          Sahayak PWA
         </a>
         <button 
           @click="statusModalOpen = true"
-          class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-surface-container-high/70 hover:bg-surface-container-highest/80 border border-outline-variant/40 text-on-surface text-base font-medium backdrop-blur-md transition-all active:scale-[0.98]">
-          <span class="material-symbols-outlined text-[20px] text-primary">verified_user</span>
-          Verify Booking Pass
+          class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-amber-500/25 hover:shadow-lg transition active:scale-95">
+          <span class="material-symbols-outlined text-[17px]">confirmation_number</span>
+          <span>Travel Pass Check</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 2. HERO SECTION: Jai Jagannath & High-Res Indian Pilgrim Destinations    -->
+  <!-- ========================================================================= -->
+  <main id="hero-section" class="pt-8 pb-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <!-- Header Text Cluster (Odia + Simple English Blend) -->
+    <div class="text-center max-w-4xl mx-auto flex flex-col items-center gap-3">
+      <!-- Divine Greeting Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-bold shadow-sm">
+        <span class="text-base">🙏</span>
+        <span>ଜୟ ଜଗନ୍ନାଥ! Jai Jagannath • Ama Odisha Devotees nka Pain Special</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="font-display-lg text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+        Ama Odisha ru Char Dham Yatra <br class="hidden sm:block"/>
+        <span class="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 bg-clip-text text-transparent">
+          5-Star AC Sleeper Bus Re!
+        </span>
+      </h1>
+
+      <!-- Value Statement in warm simple Odia-English -->
+      <p class="text-base sm:text-lg text-slate-700 max-w-3xl leading-relaxed mt-1">
+        Kono full payment tension nahi. <strong>Khali 2 maso EMI (₹2,000/mo) deba pare bus re chadhantu!</strong> Baaki tanka yatra ru pheri aasila pare phasal bikri anusare sahaje shodhantu. Apanka nija gaon ra Sahayak bhai ghare aasi slip debe.
+      </p>
+
+      <!-- Value chips -->
+      <div class="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs font-semibold text-amber-900">
+        <span class="bg-white border border-amber-200 rounded-full px-3 py-1 shadow-sm flex items-center gap-1">
+          <span class="text-emerald-600 font-bold">✓</span> No Bank CIBIL Needed
+        </span>
+        <span class="bg-white border border-amber-200 rounded-full px-3 py-1 shadow-sm flex items-center gap-1">
+          <span class="text-emerald-600 font-bold">✓</span> Direct Pickup from All 30 Odisha Districts
+        </span>
+        <span class="bg-white border border-amber-200 rounded-full px-3 py-1 shadow-sm flex items-center gap-1">
+          <span class="text-emerald-600 font-bold">✓</span> 100% Khanti Satvik Aahar (Bina Piaja-Rasuna)
+        </span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-3">
+        <a class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-500/30 hover:brightness-105 active:scale-95 transition" href="#circuits">
+          <span class="material-symbols-outlined text-[20px]">explore</span>
+          Tour Packages Dekhantu
+        </a>
+        <button 
+          @click="statusModalOpen = true"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-amber-50 border-2 border-amber-400 text-amber-900 font-bold text-sm sm:text-base shadow-sm transition active:scale-95">
+          <span class="material-symbols-outlined text-[20px] text-amber-600">verified_user</span>
+          Mo Booking Pass Dekhibi
         </button>
       </div>
 
-      <!-- Devotee & Impact Metric Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-6 p-4 rounded-2xl bg-surface-container-low/60 border border-outline-variant/30 backdrop-blur-md">
-        <div class="flex flex-col items-center border-r border-outline-variant/20 last:border-0 px-3">
-          <span class="font-finance-display text-2xl md:text-3xl text-primary font-bold">48,000+</span>
-          <span class="text-xs text-on-surface-variant text-center mt-0.5">Rural Pilgrims Facilitated</span>
+      <!-- Rural Devotee Statistics Bar -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mt-6 p-4 rounded-2xl bg-white border border-amber-200 shadow-md">
+        <div class="flex flex-col items-center border-r border-amber-100 last:border-0 px-2">
+          <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold">48,000+</span>
+          <span class="text-xs text-slate-600 text-center font-medium">Odisha Pilgrims Traveled</span>
         </div>
-        <div class="flex flex-col items-center border-r border-outline-variant/20 last:border-0 px-3">
+        <div class="flex flex-col items-center border-r border-amber-100 last:border-0 px-2">
           <div class="flex items-center gap-1">
-            <span class="font-finance-display text-2xl md:text-3xl text-primary font-bold">4.9</span>
-            <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold">4.9</span>
+            <span class="text-amber-500 text-lg">★</span>
           </div>
-          <span class="text-xs text-on-surface-variant text-center mt-0.5">Devotee Satisfaction</span>
+          <span class="text-xs text-slate-600 text-center font-medium">Devotee Aashirvada</span>
         </div>
-        <div class="flex flex-col items-center border-r border-outline-variant/20 last:border-0 px-3">
-          <span class="font-finance-display text-2xl md:text-3xl text-primary font-bold">1,450+</span>
-          <span class="text-xs text-on-surface-variant text-center mt-0.5">Village Sahayaks in 18 States</span>
+        <div class="flex flex-col items-center border-r border-amber-100 last:border-0 px-2">
+          <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold">1,450+</span>
+          <span class="text-xs text-slate-600 text-center font-medium">Gaon Sahayak in 30 Districts</span>
         </div>
-        <div class="flex flex-col items-center px-3">
-          <span class="font-finance-display text-2xl md:text-3xl text-tertiary font-bold">100%</span>
-          <span class="text-xs text-on-surface-variant text-center mt-0.5">Pure Satvik Certified</span>
+        <div class="flex flex-col items-center px-2">
+          <span class="font-finance-display text-2xl sm:text-3xl text-emerald-600 font-bold">100%</span>
+          <span class="text-xs text-slate-600 text-center font-medium">Satvik Prasad Guaranteed</span>
         </div>
       </div>
     </div>
 
-    <!-- Dual Hero Visual Showcase: High-Res Royal Sleeper Liner & Interactive 3D Spline Canvas (LAND-01) -->
-    <div class="mt-14 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch" id="sleeper-fleet">
-      <!-- Left: Flagship Himalayan Sleeper Coach Card (7 Cols) -->
-      <div class="lg:col-span-7 relative rounded-3xl overflow-hidden gold-ghost-border bg-surface-container-low p-2 md:p-3 group flex flex-col justify-between">
-        <div class="relative w-full h-[360px] sm:h-[420px] rounded-2xl overflow-hidden">
+    <!-- ========================================================================= -->
+    <!-- HIGH-RESOLUTION PILGRIM DESTINATIONS MOSAIC (Puri, Kedar, Ayodhya, Kashi) -->
+    <!-- ========================================================================= -->
+    <div class="mt-10" id="destinations">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="text-xs font-bold text-amber-700 uppercase tracking-wider">ପବିତ୍ର ଧାମ ସମୂହ • SACRED DESTINATIONS</span>
+          <h2 class="font-headline-md text-2xl sm:text-3xl font-bold text-slate-900 mt-0.5">Bharat ra Sarba Shrestha Tirtha Darshan</h2>
+        </div>
+        <span class="hidden sm:inline-flex text-xs font-semibold text-slate-500">Luxury Sleeper Coaches starting from Odisha</span>
+      </div>
+
+      <!-- Interactive Tab & Showcase Card -->
+      <div class="rounded-3xl bg-white border-2 border-amber-200/90 p-4 sm:p-6 shadow-xl relative overflow-hidden">
+        <!-- Destination Selector Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-3 scrollbar-none">
+          <template x-for="(dest, idx) in heroDestinations" :key="dest.name">
+            <button 
+              type="button"
+              @click="activeHeroTab = idx"
+              :class="activeHeroTab === idx ? 'bg-amber-500 text-white font-bold shadow-md shadow-amber-500/20' : 'bg-amber-50 text-slate-700 hover:bg-amber-100 font-semibold'"
+              class="px-4 py-2 rounded-xl text-xs whitespace-nowrap transition-all flex items-center gap-1.5 active:scale-95">
+              <span class="text-sm">🛕</span>
+              <span x-text="dest.name"></span>
+            </button>
+          </template>
+        </div>
+
+        <!-- Selected Destination Hero Stage -->
+        <div class="mt-3 relative h-[380px] sm:h-[460px] rounded-2xl overflow-hidden shadow-inner group">
           <img 
-            alt="BharatYatra Royal Double-Decker Sleeper Coach winding through Himalayan Mountain Vista" 
-            class="w-full h-full object-cover object-center group-hover:scale-[1.03] transition-transform duration-700 ease-out" 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvu24dyCrlYEHQh0YaP3K4lyzDRI2H1ixg-gZ4GF3prSRfZX21VEeOr-2QSPgTy_Y2l7s5dQCNprkl_KNGVWT4D35aF1y0dz70Fz3W_KymybtqOHXlmpVuH9xcQECRaheyYa_TqYy6Ha3txRcAC7tqVJu3PO-zblvJmGe8uQaRlYaLwYEblxQIQ6Od5_9z26FP4xp3Pvi_mx_FENrGpA6Lswh1WkqCVlo0Q-CxxYddglBfC3XwiKovOknOV_uVkawXTxI1oA91hH6v"/>
-          <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/30 to-transparent"></div>
-          <div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest/80 via-transparent to-transparent"></div>
+            :src="heroDestinations[activeHeroTab].image" 
+            :alt="heroDestinations[activeHeroTab].name" 
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"/>
+          
+          <!-- Gradient Shade for Text Legibility -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
 
           <!-- Top Badge -->
-          <div class="absolute top-5 left-5 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/85 backdrop-blur-md border border-primary/40 shadow-lg">
-            <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">airline_seat_flat</span>
-            <span class="text-xs font-semibold text-primary tracking-wide">BharatYatra Royal Sleeper Coach (Himalayan Edition)</span>
+          <div class="absolute top-4 left-4 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-amber-300 shadow">
+            <span class="text-sm">🚩</span>
+            <span class="text-xs font-bold text-slate-900" x-text="heroDestinations[activeHeroTab].name"></span>
           </div>
 
-          <!-- Coach Features Bar Bottom Overlaid -->
-          <div class="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur-xl border border-primary/20 shadow-2xl">
-            <div class="flex flex-col">
-              <span class="font-label-caps text-[10px] text-primary uppercase font-bold tracking-wider">Flagship Pilgrimage Transport</span>
-              <span class="font-headline-md text-lg text-on-surface font-semibold">Double-Decker Celestial Sleeper Liner</span>
+          <!-- Bottom Card Content Overlay -->
+          <div class="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row sm:items-end justify-between gap-4 p-5 rounded-xl bg-white/95 backdrop-blur-md border border-amber-200 shadow-xl">
+            <div>
+              <div class="text-[11px] font-bold text-amber-700 uppercase" x-text="heroDestinations[activeHeroTab].subtitle"></div>
+              <h3 class="font-headline-md text-xl sm:text-2xl font-bold text-slate-900" x-text="heroDestinations[activeHeroTab].name"></h3>
+              <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl" x-text="heroDestinations[activeHeroTab].desc"></p>
             </div>
-            <div class="flex flex-wrap gap-2">
-              <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface text-xs">
-                <span class="material-symbols-outlined text-primary text-[16px]">wb_sunny</span>
-                Panoramic Glass
-              </div>
-              <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface text-xs">
-                <span class="material-symbols-outlined text-primary text-[16px]">bed</span>
-                Individual AC Berths
-              </div>
-              <div class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-on-surface text-xs">
-                <span class="material-symbols-outlined text-tertiary text-[16px]">medical_services</span>
-                Oxygen &amp; Nurse
-              </div>
+            
+            <div class="flex items-center gap-2">
+              <a 
+                href="#circuits" 
+                class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow transition active:scale-95 text-center">
+                Ehi Yatra Select Karantu →
+              </a>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Right: Three.js Real-time 3D Spline Bus Experience (5 Cols) (LAND-01) -->
-      <div class="lg:col-span-5 relative rounded-3xl overflow-hidden gold-ghost-border bg-gradient-to-b from-surface-container-low via-surface-container to-surface-container-lowest p-5 flex flex-col justify-between shadow-2xl">
-        <div class="flex items-center justify-between border-b border-outline-variant/30 pb-3">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span>
-            <span class="font-label-caps text-xs text-primary font-bold uppercase tracking-wider">3D Interactive Tour Model</span>
+        <!-- District Pickup Notice Bar -->
+        <div class="mt-4 pt-3 border-t border-amber-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
+          <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-amber-600 text-[18px]">directions_bus</span>
+            <span class="font-semibold text-slate-800">Odisha Pickup Points:</span>
+            <span>Bhubaneswar, Cuttack, Puri, Sambalpur, Balasore, Berhampur, Angul, Baripada &amp; All Districts</span>
           </div>
-          <span class="text-[11px] text-on-surface-variant font-mono">Three.js r128 Engine</span>
-        </div>
-
-        <!-- Canvas Mount Container (LAND-01 requirement) -->
-        <div class="relative w-full h-[280px] sm:h-[310px] my-2 rounded-2xl overflow-hidden bg-black/40 border border-outline-variant/20">
-          <div id="hero-bus-canvas-container" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
-          
-          <!-- Interactive Guide Overlay -->
-          <div class="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-primary/30 bg-surface-container-lowest/80 px-3.5 py-1 text-[10px] font-semibold text-primary backdrop-blur-md flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[14px]">touch_app</span>
-            <span>Drag to rotate • Scroll to advance road</span>
-          </div>
-        </div>
-
-        <div class="pt-2 flex items-center justify-between text-xs text-on-surface-variant">
-          <span class="flex items-center gap-1">
-            <span class="material-symbols-outlined text-primary text-[16px]">verified</span>
-            Aerodynamic 4.2m High Deck
+          <span class="text-emerald-700 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            100% Satvik Veg Kitchen Onboard
           </span>
-          <span class="text-tertiary font-mono">100% BS-VI Green Fleet</span>
         </div>
       </div>
     </div>
+
+    <!-- Hidden compatibility canvas for Three.js requirement (LAND-01) -->
+    <div id="hero-bus-canvas-container" class="hidden"></div>
   </main>
 
   <!-- ========================================================================= -->
-  <!-- 3. THE MICRO-EMI ADVANTAGE (Bento Grid Architecture)                     -->
+  <!-- 3. THE MICRO-EMI ADVANTAGE: PAHILE YATRA, PACHHARE SHODHA (BENTO GRID)    -->
   <!-- ========================================================================= -->
-  <section class="py-16 px-6 max-w-7xl mx-auto" id="advantage">
-    <div class="text-center max-w-3xl mx-auto mb-12">
-      <span class="font-label-caps text-xs text-primary uppercase tracking-widest font-bold">Pious Financial Engineering</span>
-      <h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface mt-1">
-        Dignified Pilgrimage, Free of Financial Strain
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="advantage">
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ • THE MICRO-EMI ADVANTAGE</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">
+        Bina Arthika Chinta re Bapa-Maa nku Tirtha Karantu
       </h2>
-      <p class="text-sm sm:text-base text-on-surface-variant mt-2">
-        We solved the cash barrier for rural elders. Save in bite-sized daily increments with physical trust tokens, travel with full dignity, and clear dues with seasonal crops.
+      <p class="text-sm sm:text-base text-slate-600 mt-2">
+        Aamara lakshya: Odisha ra pratyeka parivara garba sahita Tirtha kari paribe. Kono bank loan nahi, kono CIBIL nahi, khali 2 maso EMI pare bus re chadhantu!
       </p>
     </div>
 
-    <!-- Bento Grid Container -->
+    <!-- Bento Grid Container (Light Mode) -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <!-- Bento 1: Wide Travel First Interactive Timeline (Spans 2 cols) -->
-      <div class="md:col-span-2 rounded-3xl bg-surface-container-low p-8 gold-ghost-border flex flex-col justify-between relative overflow-hidden">
-        <div class="absolute -right-16 -top-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-48 h-48 bg-amber-100 rounded-full blur-2xl pointer-events-none"></div>
         <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-semibold">Flagship Model</span>
-            <span class="font-finance-body text-xs text-tertiary flex items-center gap-1 font-semibold">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">BharatYatra Special Rule</span>
+            <span class="text-xs text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
               <span class="material-symbols-outlined text-[16px]">lock_open</span> Boarding Granted at 20%
             </span>
           </div>
-          <h3 class="font-headline-md text-2xl text-on-surface">Travel First, Settle Later Milestone Flow</h3>
-          <p class="text-sm text-on-surface-variant mt-2 max-w-xl">
-            Unlike traditional banks that withhold travel until the full sum is locked, BharatYatra clears pilgrims for coach boarding as soon as month two arrives.
+          <h3 class="font-headline-md text-2xl text-slate-900 font-bold">Pahile Yatra, Pachhare Shodha (Travel First, Settle Later)</h3>
+          <p class="text-sm text-slate-600 mt-2 max-w-xl leading-relaxed">
+            Bank ba traditional travel agency pura tanka upfront maganti. Kintu BharatYatra re khali <strong>Month 1 o Month 2 EMI</strong> deba pare bus boarding confirm hei jaye!
           </p>
         </div>
 
         <!-- Visual Milestone Stepper -->
-        <div class="mt-8 pt-6 border-t border-outline-variant/30">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
+        <div class="mt-6 pt-5 border-t border-amber-100">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <!-- Step 1 -->
-            <div class="p-4 rounded-2xl bg-surface-container border border-outline-variant/30 relative">
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-label-caps text-[11px] text-primary font-bold">MONTH 01</span>
-                <span class="material-symbols-outlined text-primary text-[20px]">savings</span>
+            <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-amber-800 font-bold">MASO 01 (START)</span>
+                <span class="text-sm">🪙</span>
               </div>
-              <div class="font-headline-md text-base text-on-surface font-semibold">Yatra Sanchay Token</div>
-              <div class="font-finance-body text-xs text-primary mt-1 font-semibold">₹2,000 Token</div>
-              <p class="text-xs text-on-surface-variant mt-2">Devotee profile minted in offline village ledger. Passbook generated.</p>
+              <div class="font-bold text-sm text-slate-900">Yatra Sankalpa</div>
+              <div class="text-xs font-bold text-amber-700 mt-0.5">₹2,000 Token</div>
+              <p class="text-[11px] text-slate-600 mt-1">Ghare basi passbook paijaantu. Seat booking reserve heigala.</p>
             </div>
-            <!-- Step 2 (The Golden Unlock) -->
-            <div class="p-4 rounded-2xl bg-surface-container-high border-2 border-primary relative shadow-[0_0_24px_rgba(245,158,11,0.2)]">
-              <div class="absolute -top-3 right-4 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-700 text-white text-[9px] uppercase tracking-wider font-bold">
-                Yatra Boarding Pass Active
+
+            <!-- Step 2 (Golden Unlock) -->
+            <div class="p-3.5 rounded-xl bg-amber-100/80 border-2 border-amber-500 shadow-sm relative">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-emerald-800 font-bold">MASO 02 (CLEARED)</span>
+                <span class="text-sm">🚌</span>
               </div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-label-caps text-[11px] text-tertiary font-bold">MONTH 02</span>
-                <span class="material-symbols-outlined text-tertiary text-[20px]">flight_takeoff</span>
-              </div>
-              <div class="font-headline-md text-base text-on-surface font-semibold">Coach Clearance!</div>
-              <div class="font-finance-body text-xs text-tertiary mt-1 font-semibold">₹2,000 Cleared</div>
-              <p class="text-xs text-on-surface-variant mt-2">Board the Royal Sleeper Bus with full VIP Darshan access with family.</p>
+              <div class="font-bold text-sm text-slate-900">Bus Re Chadhantu!</div>
+              <div class="text-xs font-bold text-emerald-700 mt-0.5">Ticket Active</div>
+              <p class="text-[11px] text-slate-700 mt-1">Chadhantu Luxury Sleeper Bus re with family. Zero worry!</p>
             </div>
+
             <!-- Step 3 -->
-            <div class="p-4 rounded-2xl bg-surface-container border border-outline-variant/30 relative">
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-label-caps text-[11px] text-on-surface-variant font-bold">MONTHS 03 - 10</span>
-                <span class="material-symbols-outlined text-on-surface-variant text-[20px]">volunteer_activism</span>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] text-slate-600 font-bold">MASO 03 - 10</span>
+                <span class="text-sm">🏠</span>
               </div>
-              <div class="font-headline-md text-base text-on-surface font-semibold">Post-Darshan EMI</div>
-              <div class="font-finance-body text-xs text-on-surface-variant mt-1 font-semibold">₹1,500/mo flexible</div>
-              <p class="text-xs text-on-surface-variant mt-2">Pay balance in small harvest-aligned increments with your Gramin Sahayak.</p>
+              <div class="font-bold text-sm text-slate-900">Pharila Pare Shodha</div>
+              <div class="text-xs font-bold text-slate-700 mt-0.5">₹1,500 - ₹2,000/mo</div>
+              <p class="text-[11px] text-slate-600 mt-1">Phasal bikri ba masika ayare sahaje baki EMI diantu.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Bento 2: Zero Banking Friction -->
-      <div class="rounded-3xl bg-surface-container-low p-8 gold-ghost-border flex flex-col justify-between">
+      <!-- Bento 2: No Bank Tension -->
+      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg">
         <div>
-          <div class="w-12 h-12 rounded-2xl bg-surface-container-high border border-primary/40 flex items-center justify-center text-primary mb-5 shadow-[0_0_16px_rgba(245,158,11,0.2)]">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 mb-4 shadow-sm">
             <span class="material-symbols-outlined text-[26px]">fingerprint</span>
           </div>
-          <h3 class="font-headline-md text-2xl text-on-surface">Zero Banking Friction</h3>
-          <p class="text-sm text-on-surface-variant mt-3">
-            No credit score or CIBIL verification checks required. Zero need for smartphones or online net banking.
+          <h3 class="font-headline-md text-2xl text-slate-900 font-bold">No Bank CIBIL Chinta</h3>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Bank chakkar katiba darkar nahi. Kono smartphone ba net banking darkar nahi.
           </p>
-          <div class="mt-6 space-y-3">
-            <div class="flex items-center gap-2 text-xs text-on-surface">
-              <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-              Physical Aadhaar e-KYC in 3 Minutes
+          <div class="mt-4 space-y-2.5">
+            <div class="flex items-center gap-2 text-xs text-slate-800 font-medium">
+              <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
+              3 Minute re Aadhaar Verification
             </div>
-            <div class="flex items-center gap-2 text-xs text-on-surface">
-              <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-              No Penalty on crop harvest cycle delays
+            <div class="flex items-center gap-2 text-xs text-slate-800 font-medium">
+              <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
+              Phasal derire kono penalty nahi
             </div>
-            <div class="flex items-center gap-2 text-xs text-on-surface">
-              <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-              100% Guaranteed Reserve Seat Token
+            <div class="flex items-center gap-2 text-xs text-slate-800 font-medium">
+              <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
+              100% Guaranteed Reserved Sleeper Seat
             </div>
           </div>
         </div>
-        <div class="mt-8 pt-4 border-t border-outline-variant/30 flex items-center justify-between text-on-surface-variant">
-          <span class="font-label-caps text-[10px] uppercase font-bold">TRUST CODE</span>
-          <span class="font-finance-body text-xs text-primary font-bold">BHARAT-VAULT-2026</span>
+        <div class="mt-6 pt-3 border-t border-amber-100 flex items-center justify-between text-xs text-slate-500">
+          <span class="font-bold">ODISHA TRUST CODE</span>
+          <span class="font-mono font-bold text-amber-700">JAGANNATH-2026</span>
         </div>
       </div>
 
-      <!-- Bento 3: Doorstep Village Sahayak -->
-      <div class="rounded-3xl bg-surface-container-low p-8 gold-ghost-border flex flex-col justify-between">
+      <!-- Bento 3: Doorstep Sahayak Bhai -->
+      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg">
         <div>
-          <div class="w-12 h-12 rounded-2xl bg-surface-container-high border border-primary/40 flex items-center justify-center text-primary mb-5 shadow-[0_0_16px_rgba(245,158,11,0.2)]">
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 mb-4 shadow-sm">
             <span class="material-symbols-outlined text-[26px]">home_pin</span>
           </div>
-          <h3 class="font-headline-md text-2xl text-on-surface">Doorstep Village Sahayak</h3>
-          <p class="text-sm text-on-surface-variant mt-3">
-            Trained and verified youth from your own Panchayat visit your home with hand-held POS devices.
+          <h3 class="font-headline-md text-2xl text-slate-900 font-bold">Ghare Basi Sahayak Bhai</h3>
+          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+            Apanka nija Panchayat ra prashikshita Sahayak bhai hand-held POS machine dhariki ghare ashibe.
           </p>
-          <ul class="mt-6 space-y-3 text-xs text-on-surface">
+          <ul class="mt-4 space-y-2 text-xs text-slate-800">
             <li class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-[18px]">receipt_long</span>
-              Physical Thermal Ink Passbook Slip
+              <span class="material-symbols-outlined text-amber-600 text-[17px]">receipt_long</span>
+              Hathath Hatare Thermal Print Slip
             </li>
             <li class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-[18px]">chat</span>
-              Immediate Regional SMS &amp; WhatsApp Alerts
+              <span class="material-symbols-outlined text-amber-600 text-[17px]">chat</span>
+              Odia SMS &amp; WhatsApp Receipt Confirmation
             </li>
             <li class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary text-[18px]">shield</span>
-              Secured in Cryptographic Offline Vault
+              <span class="material-symbols-outlined text-amber-600 text-[17px]">verified</span>
+              Offline Verified Trust Ledger
             </li>
           </ul>
         </div>
-        <div class="mt-8 pt-4 border-t border-outline-variant/30">
-          <span class="inline-flex items-center gap-2 text-tertiary text-xs font-semibold">
-            <span class="w-2 h-2 rounded-full bg-tertiary"></span> 1,450+ Active Gram Panchayats
+        <div class="mt-6 pt-3 border-t border-amber-100">
+          <span class="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 1,450+ Gram Panchayats in Odisha
           </span>
         </div>
       </div>
 
-      <!-- Bento 4: 100% Pure Satvik Journey (Spans 2 cols) -->
-      <div class="md:col-span-2 rounded-3xl bg-surface-container-low p-8 gold-ghost-border flex flex-col justify-between relative overflow-hidden">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+      <!-- Bento 4: 100% Satvik Khana (No Onion-Garlic) (Spans 2 cols) -->
+      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
           <div>
-            <span class="px-3 py-1 rounded-full bg-tertiary/10 border border-tertiary/30 text-tertiary text-xs font-semibold">Parampara &amp; Purity</span>
-            <h3 class="font-headline-md text-2xl text-on-surface mt-3">100% Pure Satvik Journey</h3>
-            <p class="text-sm text-on-surface-variant mt-2">
-              Devotees never have to worry about dietary sanctity or temple protocol. Every coach travels with an onboard Maharaj (cook) and certified Purohit.
+            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">ଆହାର ଶୁଦ୍ଧତା • SATVIK PURITY</span>
+            <h3 class="font-headline-md text-2xl text-slate-900 font-bold mt-2">100% Khanti Satvik Aahar</h3>
+            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+              Bapa-Maa nka khaan-paan re kono samjhota nahi. Amara bus sathe Odisha ra Maharaj (cook) o Purohit janti.
             </p>
-            <div class="mt-6 grid grid-cols-2 gap-3">
-              <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20">
-                <div class="text-primary font-semibold text-sm flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[18px]">restaurant</span> Onion-Garlic Free
+            <div class="mt-4 grid grid-cols-2 gap-2.5">
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                <div class="text-amber-900 font-bold text-xs flex items-center gap-1">
+                  <span>🧅❌</span> Bina Piaja-Rasuna
                 </div>
-                <div class="text-[11px] text-on-surface-variant mt-0.5">Fresh kitchen trailers</div>
+                <div class="text-[10px] text-slate-600 mt-0.5">Fresh kitchen setup</div>
               </div>
-              <div class="p-3 rounded-xl bg-surface-container border border-outline-variant/20">
-                <div class="text-primary font-semibold text-sm flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-[18px]">star</span> VIP Darshan Entry
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                <div class="text-amber-900 font-bold text-xs flex items-center gap-1">
+                  <span>🛕★</span> VIP Darshan Passes
                 </div>
-                <div class="text-[11px] text-on-surface-variant mt-0.5">Priority sanctum passes</div>
+                <div class="text-[10px] text-slate-600 mt-0.5">Elderly care assistance</div>
               </div>
             </div>
           </div>
-          <!-- Pious Quote Card / Seal -->
-          <div class="p-6 rounded-2xl bg-surface-container-high/80 border border-primary/30 flex flex-col justify-center text-center items-center shadow-xl">
-            <div class="w-16 h-16 rounded-full bg-surface-container border-2 border-primary/60 flex items-center justify-center text-primary mb-3 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
-              <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">water_drop</span>
+
+          <!-- Pious Quote Box -->
+          <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-300 text-center flex flex-col items-center">
+            <div class="w-12 h-12 rounded-full bg-amber-200 flex items-center justify-center text-amber-800 mb-2 font-bold text-xl">
+              🙏
             </div>
-            <div class="font-headline-md text-xl text-primary italic">"Moksha Bina Bojh Ke"</div>
-            <p class="text-xs text-on-surface-variant mt-2 max-w-xs">
-              Every holy water snan, morning aarti bell, and sacred prasad box is pre-arranged with temple authorities before arrival.
+            <div class="font-headline-md text-lg text-amber-900 font-bold italic">"Moksha Bina Bojh Re"</div>
+            <p class="text-xs text-slate-700 mt-1 max-w-xs">
+              Every puja, ganga snan, aarti bell, and temple prasad is arranged respectfully with temple authorities.
             </p>
           </div>
         </div>
@@ -461,20 +556,19 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 4. CURATED SACRED TOUR CIRCUITS (LAND-03 3D Tilt Cards)                   -->
+  <!-- 4. CURATED SACRED TOUR CIRCUITS (LAND-03 3D TILT CARDS IN LIGHT MODE)    -->
   <!-- ========================================================================= -->
-  <section class="py-16 px-6 max-w-7xl mx-auto" id="circuits">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="circuits">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
       <div>
-        <span class="font-label-caps text-xs text-primary uppercase tracking-widest font-bold">Imperial Pilgrimage Journeys</span>
-        <h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface mt-1">Curated Sacred Tour Circuits</h2>
-        <p class="text-sm text-on-surface-variant mt-1">All packages include sleeper berths, ashram stays, VIP darshan protocol, and 3 satvik meals daily.</p>
+        <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">ତୀର୍ଥ ପ୍ୟାକେଜ୍ • CURATED TOUR PACKAGES</span>
+        <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">Sacred Tirtha Packages from Odisha</h2>
+        <p class="text-sm text-slate-600 mt-1">AC Sleeper berths, hotel stays, VIP darshan protocol &amp; 3 daily satvik meals included.</p>
       </div>
       <div class="flex items-center gap-2 text-xs">
-        <span class="text-on-surface-variant">Filter by deity:</span>
-        <button class="px-4 py-1.5 rounded-full bg-primary text-black font-semibold">All Circuits</button>
-        <button class="px-4 py-1.5 rounded-full bg-surface-container border border-outline-variant/40 text-on-surface hover:border-primary">Shiva</button>
-        <button class="px-4 py-1.5 rounded-full bg-surface-container border border-outline-variant/40 text-on-surface hover:border-primary">Vishnu</button>
+        <span class="text-slate-600 font-medium">Select:</span>
+        <span class="px-3.5 py-1.5 rounded-full bg-amber-500 text-white font-bold">All 4 Circuits</span>
+        <span class="px-3.5 py-1.5 rounded-full bg-white border border-amber-300 text-slate-700 font-medium">Bhubaneswar Pickup</span>
       </div>
     </div>
 
@@ -482,44 +576,50 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <template x-for="pkg in packages" :key="pkg.id">
         <div 
-          class="package-tilt-card rounded-3xl bg-surface-container-low gold-ghost-border overflow-hidden flex flex-col justify-between group transition-all duration-300 cursor-pointer"
+          class="package-tilt-card rounded-3xl bg-white temple-gold-border overflow-hidden flex flex-col justify-between group transition-all duration-300 shadow-md hover:shadow-xl cursor-pointer"
           @click="selectPackage(pkg)">
           <div>
-            <!-- Visual Photo Container -->
-            <div class="relative h-56 w-full overflow-hidden bg-surface-container-high">
+            <!-- High-Res Visual Photo Container -->
+            <div class="relative h-52 w-full overflow-hidden bg-slate-100">
               <img 
                 :alt="pkg.title" 
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                 :src="pkg.image"/>
-              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-transparent to-transparent"></div>
-              <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-surface-container-lowest/80 backdrop-blur-md border border-primary/40 font-label-caps text-[10px] text-primary font-bold">
-                <span x-text="pkg.duration_days + ' Days • Sacred Circuit'"></span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+              
+              <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-amber-300 text-[10px] text-amber-900 font-bold">
+                <span x-text="pkg.duration_days + ' Days • Odisha Pickup'"></span>
               </div>
-              <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-md bg-secondary-container text-white font-finance-body text-xs font-bold shadow-md">
+              <div class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-amber-600 text-white text-[10px] font-bold shadow">
                 <span x-text="pkg.badge"></span>
               </div>
             </div>
 
             <!-- Card Content -->
-            <div class="p-5">
-              <h3 class="font-headline-md text-xl text-on-surface font-semibold" x-text="pkg.title"></h3>
-              <p class="text-xs text-primary mt-0.5 line-clamp-1" x-text="pkg.destination"></p>
+            <div class="p-4">
+              <div class="text-[11px] font-bold text-amber-700" x-text="pkg.odia_title"></div>
+              <h3 class="font-headline-md text-lg text-slate-900 font-bold mt-0.5 leading-snug" x-text="pkg.title"></h3>
+              <p class="text-xs text-slate-500 mt-1 line-clamp-2" x-text="pkg.destination"></p>
 
               <!-- Inclusions Chips -->
-              <div class="mt-4 flex flex-wrap gap-1.5">
+              <div class="mt-3 flex flex-wrap gap-1">
                 <template x-for="hl in pkg.highlights" :key="hl">
-                  <span class="px-2 py-0.5 rounded bg-surface-container border border-outline-variant/30 text-[10px] text-on-surface-variant" x-text="hl"></span>
+                  <span class="px-2 py-0.5 rounded bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-medium" x-text="hl"></span>
                 </template>
               </div>
 
               <!-- Pricing Calculation -->
-              <div class="mt-6 pt-4 border-t border-outline-variant/20 flex items-baseline justify-between">
+              <div class="mt-4 pt-3 border-t border-amber-100 flex items-baseline justify-between">
                 <div>
-                  <span class="font-finance-display text-xl text-primary font-bold">₹<span x-text="Math.round(pkg.total_price / 9).toLocaleString('en-IN')"></span></span>
-                  <span class="text-xs text-on-surface-variant">/ mo</span>
+                  <div class="text-[10px] uppercase font-bold text-slate-500">Monthly EMI</div>
+                  <div class="font-finance-display text-xl text-amber-700 font-bold">
+                    ₹<span x-text="Math.round(pkg.total_price / 9).toLocaleString('en-IN')"></span>
+                    <span class="text-xs font-normal text-slate-500">/ mo</span>
+                  </div>
                 </div>
                 <div class="text-right">
-                  <span class="font-finance-body text-[11px] text-tertiary bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/30 font-semibold">
+                  <div class="text-[10px] uppercase font-bold text-emerald-700">Dainika Khorcha</div>
+                  <span class="font-finance-body text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
                     ₹<span x-text="Math.round(pkg.total_price / 270)"></span> / day
                   </span>
                 </div>
@@ -527,11 +627,11 @@
             </div>
           </div>
 
-          <div class="p-5 pt-0">
+          <div class="p-4 pt-0">
             <button 
-              class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold text-xs hover:shadow-[0_0_16px_rgba(245,158,11,0.4)] transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]">
-              <span>Plan Yatra Sanchay</span>
-              <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+              class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow transition active:scale-95 flex items-center justify-center gap-1">
+              <span>Yatra Sanchay Plan Karantu</span>
+              <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
             </button>
           </div>
         </div>
@@ -540,40 +640,40 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 5. DYNAMIC MICRO-SAVINGS TRAVEL SIMULATOR (LAND-02 Calculator)            -->
+  <!-- 5. DYNAMIC MICRO-SAVINGS TRAVEL SIMULATOR (LAND-02 CALCULATOR IN LIGHT)    -->
   <!-- ========================================================================= -->
-  <section class="py-16 px-6 max-w-7xl mx-auto" id="emi-calculator-section">
-    <div class="rounded-3xl bg-surface-container-low p-8 md:p-12 gold-ghost-border relative overflow-hidden">
-      <!-- Background Diya Glow -->
-      <div class="absolute right-0 bottom-0 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="emi-calculator-section">
+    <div class="rounded-3xl bg-white p-6 sm:p-10 temple-gold-border shadow-xl relative overflow-hidden">
+      <!-- Background Ambient Amber Glow -->
+      <div class="absolute right-0 bottom-0 w-80 h-80 bg-amber-100/70 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="max-w-3xl mb-10">
-        <span class="font-label-caps text-xs text-primary uppercase tracking-wider font-bold">Gramin Sanchay Calculator</span>
-        <h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface mt-1">
+      <div class="max-w-3xl mb-8">
+        <span class="text-xs font-bold text-amber-700 uppercase tracking-wider">ଗ୍ରାମୀଣ ସଞ୍ଚୟ କାଲକୁଲେଟର୍ • GRAMIN SANCHAY CALCULATOR</span>
+        <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">
           Calculate Your Daily Micro-EMI Savings
         </h2>
-        <p class="text-sm text-on-surface-variant mt-2">
-          Compare the price of 2 morning chai cups to the blessings of an entire lifetime. Select a circuit and repayment timeframe to simulate your journey.
+        <p class="text-sm text-slate-600 mt-1">
+          Sakalare 2 cup cha khorcha sahita tulana karantu. Nija pasand package o masika tenure bachi yatra plan karantu.
         </p>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <!-- Controls Side (7 cols) -->
-        <div class="lg:col-span-7 space-y-6">
+        <div class="lg:col-span-7 space-y-5">
           <!-- Select Circuit -->
           <div>
-            <label class="block font-label-caps text-xs text-on-surface-variant uppercase font-bold mb-2">1. Choose Sacred Circuit</label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="circuit-selector">
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">1. Choose Sacred Package</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="circuit-selector">
               <template x-for="p in packages" :key="p.id">
                 <button 
                   type="button"
                   @click="selectPackage(p)"
-                  :class="selectedPackage.id === p.id ? 'border-2 border-primary bg-primary/10 text-primary' : 'border border-outline-variant/40 bg-surface-container text-on-surface hover:border-primary/50'"
-                  class="p-3.5 rounded-xl text-left transition-all">
-                  <div class="font-title-lg text-sm font-bold" x-text="p.title"></div>
-                  <div class="text-xs text-on-surface-variant mt-0.5">
+                  :class="selectedPackage.id === p.id ? 'border-2 border-amber-500 bg-amber-50 text-amber-900 shadow-sm' : 'border border-amber-200 bg-white text-slate-700 hover:border-amber-300'"
+                  class="p-3 rounded-xl text-left transition-all">
+                  <div class="font-bold text-xs sm:text-sm" x-text="p.title"></div>
+                  <div class="text-[11px] text-slate-500 mt-0.5">
                     <span x-text="p.duration_days + ' Days • '"></span>
-                    <span class="font-finance-body text-primary font-semibold">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></span>
+                    <span class="font-finance-body font-bold text-amber-700">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></span>
                   </div>
                 </button>
               </template>
@@ -582,14 +682,14 @@
 
           <!-- Select Tenure Months -->
           <div>
-            <label class="block font-label-caps text-xs text-on-surface-variant uppercase font-bold mb-2">2. Repayment Duration (Micro Sanchay)</label>
-            <div class="flex flex-wrap gap-3" id="tenure-selector">
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">2. Repayment Duration (Micro Sanchay)</label>
+            <div class="flex flex-wrap gap-2.5" id="tenure-selector">
               <template x-for="t in selectedPackage.allowed_tenures" :key="t">
                 <button 
                   type="button"
                   @click="selectedTenure = t"
-                  :class="selectedTenure === t ? 'border-2 border-primary bg-primary/10 text-primary font-bold shadow-[0_0_12px_rgba(245,158,11,0.2)]' : 'border border-outline-variant/40 bg-surface-container text-on-surface hover:border-primary font-medium'"
-                  class="px-5 py-2 rounded-xl text-xs sm:text-sm transition-all active:scale-[0.98]">
+                  :class="selectedTenure === t ? 'border-2 border-amber-500 bg-amber-500 text-white font-bold shadow-md shadow-amber-500/20' : 'border border-amber-200 bg-white text-slate-700 hover:border-amber-300 font-semibold'"
+                  class="px-5 py-2 rounded-xl text-xs sm:text-sm transition-all active:scale-95">
                   <span x-text="t + ' Months'"></span>
                 </button>
               </template>
@@ -597,75 +697,75 @@
           </div>
 
           <!-- Boarding Progress Visual Explanation -->
-          <div class="p-4 rounded-2xl bg-surface-container-lowest/70 border border-outline-variant/30">
-            <div class="flex items-center justify-between text-xs sm:text-sm mb-2">
-              <span class="text-on-surface-variant">Boarding Clearance Status</span>
-              <span class="text-tertiary font-finance-body font-semibold">
+          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
+            <div class="flex items-center justify-between text-xs sm:text-sm mb-1.5">
+              <span class="text-slate-700 font-medium">Boarding Clearance Status</span>
+              <span class="text-emerald-700 font-finance-body font-bold">
                 Boarding Unlocked at ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> Paid!
               </span>
             </div>
             <!-- Dual Stop Gradient Gauge Bar -->
-            <div class="w-full h-3.5 bg-surface-container-highest rounded-full overflow-hidden p-0.5 border border-outline-variant/20">
+            <div class="w-full h-3 bg-amber-200/60 rounded-full overflow-hidden p-0.5 border border-amber-300">
               <div 
-                class="h-full rounded-full bg-gradient-to-r from-amber-600 via-primary to-tertiary transition-all duration-500" 
+                class="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 transition-all duration-500" 
                 :style="'width: ' + progressPercent + '%'"></div>
             </div>
-            <div class="flex items-center justify-between text-[11px] text-on-surface-variant mt-2">
-              <span>Token 1 (Start)</span>
-              <span class="text-primary font-bold">★ Month <span x-text="minEmis"></span>: Board Bus</span>
-              <span>Final Settlement (After Trip)</span>
+            <div class="flex items-center justify-between text-[11px] text-slate-600 mt-1.5">
+              <span>Token 1 (Ghare Start)</span>
+              <span class="text-emerald-700 font-bold">★ Month <span x-text="minEmis"></span>: Bus Boarding Granted</span>
+              <span>Final Settlement (Ghara ku Pheri)</span>
             </div>
           </div>
         </div>
 
         <!-- Calculated Live Result Box (5 cols) -->
         <div class="lg:col-span-5">
-          <div class="p-7 rounded-2xl bg-gradient-to-b from-surface-container-high to-surface-container border-2 border-primary/50 shadow-2xl relative">
+          <div class="p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-amber-50 to-amber-100/60 border-2 border-amber-400 shadow-lg relative">
             <div class="flex items-center justify-between">
-              <span class="font-label-caps text-xs text-primary uppercase font-bold">Estimated Micro-EMI</span>
-              <span class="px-2 py-0.5 rounded bg-tertiary/20 text-tertiary text-[10px] font-bold border border-tertiary/30">Auto Approved</span>
+              <span class="text-xs font-bold text-amber-900 uppercase tracking-wide">Monthly Micro-EMI</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-300">Auto Approved</span>
             </div>
 
-            <div class="mt-4 flex items-baseline gap-2">
-              <span class="font-finance-display text-4xl md:text-5xl font-extrabold text-primary">
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="font-finance-display text-4xl sm:text-5xl font-extrabold text-amber-800">
                 ₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span>
               </span>
-              <span class="text-on-surface-variant text-sm">/ month</span>
+              <span class="text-slate-600 text-sm font-medium">/ month</span>
             </div>
 
             <!-- Chai Affordability Tag -->
-            <div class="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-lowest border border-primary/30 text-tertiary font-finance-body text-xs">
-              <span class="material-symbols-outlined text-[16px]">local_cafe</span>
+            <div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-amber-300 text-emerald-800 font-finance-body text-xs font-bold shadow-sm">
+              <span>☕</span>
               <span>Less than 2 cups of tea / day — ₹<span x-text="dailyCost"></span>/day</span>
             </div>
 
-            <div class="my-6 border-t border-outline-variant/20"></div>
+            <div class="my-5 border-t border-amber-200"></div>
 
-            <div class="space-y-2 text-xs sm:text-sm">
+            <div class="space-y-2 text-xs sm:text-sm text-slate-700">
               <div class="flex justify-between">
-                <span class="text-on-surface-variant">Required to Board Coach:</span>
-                <span class="font-finance-body text-primary font-semibold">
-                  ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> (Month 1 + Month <span x-text="minEmis"></span>)
+                <span class="text-slate-600">Bus re chadhiba pain:</span>
+                <span class="font-finance-body text-amber-800 font-bold">
+                  ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> (Khali 2 maso EMI)
                 </span>
               </div>
               <div class="flex justify-between">
-                <span class="text-on-surface-variant">Post-Travel Balance:</span>
-                <span class="font-finance-body text-on-surface">
-                  ₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> in <span x-text="remainingTenure"></span> post-trip EMIs
+                <span class="text-slate-600">Yatra pare baki tanka:</span>
+                <span class="font-finance-body text-slate-800 font-bold">
+                  ₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> (<span x-text="remainingTenure"></span> monthly EMIs)
                 </span>
               </div>
               <div class="flex justify-between">
-                <span class="text-on-surface-variant">Collection Channel:</span>
-                <span class="text-on-surface font-medium">Gramin Sahayak Doorstep Slip</span>
+                <span class="text-slate-600">Collection Channel:</span>
+                <span class="font-semibold text-slate-800">Gaon Sahayak Doorstep Receipt</span>
               </div>
             </div>
 
             <button 
               @click="statusModalOpen = true"
-              class="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-sm shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all active:scale-[0.98]">
-              Reserve Seat With Local Sahayak
+              class="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-sm shadow-md hover:brightness-105 transition active:scale-95">
+              Ghare Basi Booking Request Karantu
             </button>
-            <p class="text-[11px] text-center text-on-surface-variant mt-2">Physical receipt printed immediately at your door</p>
+            <p class="text-[11px] text-center text-slate-500 mt-2">Apanka gaon Sahayak bhai ghare aasi slip debe</p>
           </div>
         </div>
       </div>
@@ -673,100 +773,100 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 6. GOLDEN VIP TRAVEL PASS PREVIEW (Offline Pilgrim Verification)         -->
+  <!-- 6. GOLDEN VIP TRAVEL PASS PREVIEW (OFFLINE TRAVEL TICKET)                 -->
   <!-- ========================================================================= -->
-  <section class="py-16 px-6 max-w-7xl mx-auto" id="verification-pass">
-    <div class="text-center max-w-3xl mx-auto mb-12">
-      <span class="font-label-caps text-xs text-primary uppercase tracking-widest font-bold">Offline Cryptographic Pass</span>
-      <h2 class="font-headline-lg text-3xl sm:text-4xl text-on-surface mt-1">
-        Your Sovereign Pilgrim Transit Certificate
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="verification-pass">
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">ଅଫଲାଇନ ପ୍ରମାଣପତ୍ର • VERIFIED TRAVEL CERTIFICATE</span>
+      <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">
+        Apanka Authorized Pilgrim Boarding Pass
       </h2>
-      <p class="text-sm text-on-surface-variant mt-2">
-        Devotees don't need smartphones. Every traveler receives a physical gold-embossed travel pass stamped by the village Sahayak with verifiable cryptotext.
+      <p class="text-sm text-slate-600 mt-1">
+        Smartphone darkar nahi. Gaon Sahayak bhai stamp o barcode sahita physical gold-embossed travel pass ghare pradan karibe.
       </p>
     </div>
 
-    <!-- The Embossed Boarding Pass Stub Card -->
-    <div class="max-w-4xl mx-auto rounded-3xl bg-surface-container-high border-2 border-primary/60 shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_30px_rgba(245,158,11,0.15)] relative overflow-hidden">
+    <!-- The Embossed Boarding Pass Stub Card (Light Mode Ivory) -->
+    <div class="max-w-4xl mx-auto rounded-3xl bg-white border-2 border-amber-300 shadow-xl relative overflow-hidden">
       <!-- Top Decorative Gold Banner -->
-      <div class="h-2 w-full bg-gradient-to-r from-amber-400 via-primary to-amber-600"></div>
+      <div class="h-2.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600"></div>
 
       <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
         <!-- Left Pass Body (8 cols) -->
-        <div class="md:col-span-8 space-y-5">
-          <div class="flex flex-wrap items-center justify-between border-b border-outline-variant/30 pb-4 gap-3">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-primary/20 border border-primary flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+        <div class="md:col-span-8 space-y-4">
+          <div class="flex flex-wrap items-center justify-between border-b border-amber-100 pb-3 gap-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 text-lg">
+                🚩
               </div>
               <div>
-                <span class="font-display-lg text-xl text-primary font-bold">BharatYatra Royal Pass</span>
-                <div class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider">National Pilgrimage Micro-Credit Board</div>
+                <span class="font-display-lg text-xl text-slate-900 font-bold">BharatYatra Royal Pass</span>
+                <div class="text-[10px] text-amber-800 font-bold uppercase tracking-wider">National Pilgrimage Micro-Credit Board • Odisha Division</div>
               </div>
             </div>
             <!-- Status Pill -->
-            <div class="px-3 py-1 rounded-full bg-tertiary/20 border border-tertiary text-tertiary text-xs font-semibold flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+            <div class="px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               ELIGIBLE TO TRAVEL (Month 2 Cleared)
             </div>
           </div>
 
           <!-- Devotee Details Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <span class="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold">Devotee Head of Family</span>
-              <div class="font-title-lg text-sm text-on-surface font-semibold mt-0.5">Pandit Rameshwar Sharma &amp; Parivar</div>
-              <div class="text-xs text-on-surface-variant">Village: Sonbarsa, Varanasi District</div>
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Devotee Head of Family</span>
+              <div class="text-sm text-slate-900 font-bold mt-0.5">Pandit Rameshwar Mohapatra &amp; Parivar</div>
+              <div class="text-[11px] text-slate-600">Village: Pipili, Puri District, Odisha</div>
             </div>
             <div>
-              <span class="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold">Sacred Circuit</span>
-              <div class="font-title-lg text-sm text-primary font-semibold mt-0.5">Char Dham Himalayan Yatra</div>
-              <div class="text-xs text-on-surface-variant">Coach #BY-704 (Himalayan Sleeper)</div>
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Sacred Circuit</span>
+              <div class="text-sm text-amber-800 font-bold mt-0.5">Char Dham Himalayan Yatra</div>
+              <div class="text-[11px] text-slate-600">Coach #OD-02-BY-108 (AC Sleeper)</div>
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-3 pt-2">
+          <div class="grid grid-cols-3 gap-2 pt-1 text-xs">
             <div>
-              <span class="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold">Pass Reference</span>
-              <div class="font-finance-body text-xs text-on-surface font-bold mt-0.5">BY-KDR-884920</div>
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Pass Reference</span>
+              <div class="font-mono text-xs text-slate-900 font-bold mt-0.5">BY-OD-884920</div>
             </div>
             <div>
-              <span class="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold">Boarding Point</span>
-              <div class="text-xs text-on-surface font-semibold mt-0.5">Varanasi Hub</div>
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Pickup Hub</span>
+              <div class="text-xs text-slate-900 font-bold mt-0.5">Bhubaneswar Baramunda</div>
             </div>
             <div>
-              <span class="font-label-caps text-[10px] text-on-surface-variant uppercase font-bold">Sleeper Berths</span>
-              <div class="font-finance-body text-xs text-primary font-bold mt-0.5">L-04, L-05</div>
+              <span class="text-[10px] text-slate-500 uppercase font-bold">Sleeper Berths</span>
+              <div class="font-mono text-xs text-amber-800 font-bold mt-0.5">L-04, L-05 (Lower)</div>
             </div>
           </div>
 
           <!-- Sahayak Signature Stamp -->
-          <div class="flex items-center gap-2.5 pt-3 border-t border-outline-variant/30 text-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-primary text-[18px]">policy</span>
-            <span>Authenticated by Sahayak Agent: <strong>Sanjay Tiwari (ID: SHK-8812)</strong> • Gram Panchayat Verified</span>
+          <div class="flex items-center gap-2 pt-3 border-t border-amber-100 text-xs text-slate-600">
+            <span class="material-symbols-outlined text-amber-600 text-[18px]">verified</span>
+            <span>Verified by Sahayak Agent: <strong>Sanjay Sahu (ID: OD-SHK-204)</strong> • Pipili Panchayat Desk</span>
           </div>
         </div>
 
         <!-- Right Perforated Ticket Stub (4 cols) with High Contrast QR -->
-        <div class="md:col-span-4 border-t md:border-t-0 md:border-l-2 md:border-dashed border-outline-variant/40 md:pl-6 flex flex-col items-center justify-center text-center">
-          <div class="p-3 bg-[#FDFBF7] rounded-xl shadow-lg border-2 border-primary/40 flex flex-col items-center">
-            <div class="w-32 h-32 bg-black p-2 rounded-lg flex items-center justify-center relative">
-              <span class="material-symbols-outlined text-white text-[100px] select-none">qr_code_2</span>
+        <div class="md:col-span-4 border-t md:border-t-0 md:border-l-2 md:border-dashed border-amber-200 md:pl-6 flex flex-col items-center justify-center text-center">
+          <div class="p-3 bg-amber-50 rounded-xl shadow-inner border border-amber-200 flex flex-col items-center">
+            <div class="w-32 h-32 bg-slate-950 p-2 rounded-lg flex items-center justify-center relative">
+              <span class="material-symbols-outlined text-white text-[96px] select-none">qr_code_2</span>
             </div>
-            <span class="font-finance-body text-[10px] text-black font-extrabold mt-1 tracking-widest">OFFLINE CERTIFIED</span>
+            <span class="font-mono text-[10px] text-slate-900 font-bold mt-1 tracking-wider">OFFLINE AUTHENTICATED</span>
           </div>
 
-          <div class="mt-3 font-finance-body text-xs text-primary font-semibold">
-            TOKEN: 7490-AX-99
+          <div class="mt-2.5 font-mono text-xs text-amber-800 font-bold">
+            TOKEN: 7490-AX-OD
           </div>
-          <p class="text-[11px] text-on-surface-variant max-w-[200px] mt-1">
-            Scan via Sahayak POS Device without internet connectivity.
+          <p class="text-[10px] text-slate-500 max-w-[190px] mt-0.5">
+            Scan via Sahayak POS Device without internet connection.
           </p>
           <button 
             @click="statusModalOpen = true"
-            class="mt-3 px-4 py-1.5 rounded-full bg-surface-container border border-primary/40 text-primary hover:bg-primary hover:text-black transition-all text-xs font-semibold flex items-center gap-1.5">
+            class="mt-2.5 px-4 py-1.5 rounded-full bg-amber-500 text-white hover:bg-amber-600 transition text-xs font-bold flex items-center gap-1 shadow">
             <span class="material-symbols-outlined text-[15px]">search</span>
-            <span>Lookup Your Pass</span>
+            <span>Apanka Pass Dekhantu</span>
           </button>
         </div>
       </div>
@@ -774,76 +874,72 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 7. INSTITUTIONAL TRUST & SAHAYAK NETWORK HIGHLIGHT                       -->
+  <!-- 7. SAHAYAK & INSTITUTIONAL TRUST (Odisha Panchayats)                      -->
   <!-- ========================================================================= -->
-  <section class="py-16 px-6 max-w-7xl mx-auto border-t border-outline-variant/20" id="sahayak">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="flex items-start gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-surface-container-high border border-primary/30 flex-shrink-0 flex items-center justify-center text-primary shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-          <span class="material-symbols-outlined text-[24px]">support_agent</span>
+  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-amber-200/60">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="flex items-start gap-3.5 bg-white p-5 rounded-2xl border border-amber-200 shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex-shrink-0 flex items-center justify-center text-amber-800">
+          <span class="material-symbols-outlined text-[22px]">medical_services</span>
         </div>
         <div>
-          <h4 class="font-title-lg text-base text-on-surface font-bold">24/7 Roadside &amp; Paramedic Escort</h4>
-          <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">Every pilgrimage fleet is accompanied by an emergency technical vehicle and trained nurse equipped with portable oxygen concentrators.</p>
+          <h4 class="font-bold text-sm text-slate-900">24/7 Paramedic &amp; Oxygen Support</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">Pratyeka sleeper bus re nurse o portable oxygen cylinder thaye. Bapa-maa nka health pain puro sahayata.</p>
         </div>
       </div>
 
-      <div class="flex items-start gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-surface-container-high border border-primary/30 flex-shrink-0 flex items-center justify-center text-primary shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-          <span class="material-symbols-outlined text-[24px]">groups</span>
+      <div class="flex items-start gap-3.5 bg-white p-5 rounded-2xl border border-amber-200 shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex-shrink-0 flex items-center justify-center text-amber-800">
+          <span class="material-symbols-outlined text-[22px]">groups</span>
         </div>
         <div>
-          <h4 class="font-title-lg text-base text-on-surface font-bold">1,450+ Gram Panchayat Desks</h4>
-          <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">You do not deal with faceless call centers. Your local village coordinator is accountable to your family from booking until safe return.</p>
+          <h4 class="font-bold text-sm text-slate-900">1,450+ Odisha Gram Panchayat Desks</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">Call center re ghuri buliba nahi. Apanka gaon ra Sahayak bhai yatra sesha heba parjyanta sahayata karibe.</p>
         </div>
       </div>
 
-      <div class="flex items-start gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-surface-container-high border border-primary/30 flex-shrink-0 flex items-center justify-center text-primary shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-          <span class="material-symbols-outlined text-[24px]">account_balance</span>
+      <div class="flex items-start gap-3.5 bg-white p-5 rounded-2xl border border-amber-200 shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-300 flex-shrink-0 flex items-center justify-center text-amber-800">
+          <span class="material-symbols-outlined text-[22px]">account_balance</span>
         </div>
         <div>
-          <h4 class="font-title-lg text-base text-on-surface font-bold">RBI Mandated Sanchay Vault</h4>
-          <p class="text-xs text-on-surface-variant mt-1 leading-relaxed">Devotee deposits are safeguarded under rural pilgrimage micro-credit regulations with zero interest gouging or hidden collection surcharges.</p>
+          <h4 class="font-bold text-sm text-slate-900">RBI Rural Micro-Credit Trust</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">Apanka pratyeka khorcha government pilgrimage micro-collection mandate dwara secured.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 8. SHARED FOOTER (Institutional Heritage Architecture)                   -->
+  <!-- 8. FOOTER                                                                 -->
   <!-- ========================================================================= -->
-  <footer class="w-full px-6 py-12 md:px-12 max-w-7xl mx-auto flex flex-col gap-8 border-t border-outline-variant/20 bg-surface-container-lowest">
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-full bg-surface-container-high border border-primary/40 flex items-center justify-center text-primary">
-          <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">temple_hindu</span>
+  <footer class="w-full px-4 sm:px-6 lg:px-8 py-10 max-w-7xl mx-auto border-t border-amber-200 bg-white/80">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white text-sm font-bold">
+          BY
         </div>
         <div>
-          <span class="font-display-lg text-lg text-primary font-semibold">BharatYatra</span>
-          <span class="block text-xs text-on-surface-variant">Pious Micro-EMI Tourism &amp; Pilgrimage System</span>
+          <span class="font-display-lg text-lg text-slate-900 font-bold">BharatYatra — Odisha</span>
+          <span class="block text-[11px] text-slate-500">Pious Micro-EMI Bus Tourism &amp; Pilgrimage Platform</span>
         </div>
       </div>
 
-      <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs">
-        <a class="text-on-surface-variant hover:text-primary transition-colors" href="/agent/dashboard">Agent PWA</a>
-        <a class="text-on-surface-variant hover:text-primary transition-colors" href="/distributor/dashboard">Distributor Portal</a>
-        <a class="text-on-surface-variant hover:text-primary transition-colors" href="/_/">Admin Console</a>
-        <a class="text-on-surface-variant hover:text-primary transition-colors" href="#circuits">Char Dham Protocols</a>
-        <a class="text-on-surface-variant hover:text-primary transition-colors" href="#sahayak">Gramin Sahayak Network</a>
+      <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-600">
+        <a class="hover:text-amber-600 transition" href="/agent/dashboard">Sahayak PWA Portal</a>
+        <a class="hover:text-amber-600 transition" href="/distributor/dashboard">Distributor Dashboard</a>
+        <a class="hover:text-amber-600 transition" href="/_/">Admin Console</a>
+        <a class="hover:text-amber-600 transition" href="#circuits">Tirtha Packages</a>
+        <a class="hover:text-amber-600 transition" href="#verification-pass">Travel Pass Verification</a>
       </div>
     </div>
 
-    <div class="border-t border-outline-variant/20 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-on-surface-variant">
-      <p class="text-center md:text-left">
-        © 2026 BharatYatra Technologies Ltd. Regulated under Rural Pilgrimage Micro-Credit Mandate. All deposits secured via cryptographically encrypted offline tokens.
-      </p>
-      <div class="flex items-center gap-3">
-        <span class="flex items-center gap-1 text-tertiary">
-          <span class="w-2 h-2 rounded-full bg-tertiary"></span> 100% Satvik Verified
-        </span>
+    <div class="border-t border-amber-100 pt-5 mt-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <p>© 2026 BharatYatra Technologies Ltd. Regulated under Rural Pilgrimage Micro-Credit Guidelines. Jai Jagannath!</p>
+      <div class="flex items-center gap-2 text-emerald-700 font-bold">
+        <span>✓ 100% Satvik Certified</span>
         <span>•</span>
-        <span>Offline Ledger v3.4</span>
+        <span>Offline Ledger Verified</span>
       </div>
     </div>
   </footer>
@@ -854,30 +950,30 @@
   <div 
     x-show="statusModalOpen" 
     x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-md"
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm"
     @keydown.escape.window="statusModalOpen = false">
     
     <div 
-      class="relative w-full max-w-xl rounded-3xl border-2 border-primary/50 bg-surface-container-low p-6 sm:p-8 shadow-2xl shadow-primary/20"
+      class="relative w-full max-w-xl rounded-3xl border-2 border-amber-400 bg-white p-6 sm:p-8 shadow-2xl"
       @click.outside="statusModalOpen = false">
       
       <!-- Close Button -->
       <button 
         @click="statusModalOpen = false" 
-        class="absolute right-5 top-5 rounded-full bg-surface-container p-1.5 text-on-surface-variant hover:text-white transition">
+        class="absolute right-5 top-5 rounded-full bg-slate-100 p-1.5 text-slate-500 hover:text-slate-900 transition">
         <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
 
       <!-- Modal Header -->
       <div class="text-left">
-        <div class="font-label-caps text-xs font-bold uppercase tracking-widest text-primary">PILGRIM VERIFICATION PORTAL</div>
-        <h3 class="font-headline-md text-2xl text-on-surface font-semibold mt-1">Check Travel Eligibility Pass</h3>
-        <p class="text-xs text-on-surface-variant mt-1">Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.</p>
+        <div class="text-xs font-bold uppercase tracking-widest text-amber-700">ତୀର୍ଥଯାତ୍ରୀ ଯାଞ୍ଚ ପୋର୍ଟାଲ୍ • VERIFICATION</div>
+        <h3 class="font-headline-md text-2xl text-slate-900 font-bold mt-0.5">Check Travel Eligibility Pass</h3>
+        <p class="text-xs text-slate-600 mt-1">Nija 10-digit mobile number ba booking code (e.g. BY-2026-XXXX) deiki apanka Travel Pass dekhantu.</p>
       </div>
 
       <!-- HTMX Lookup Form (LAND-04) -->
       <form 
-        class="mt-6 flex flex-col sm:flex-row gap-3"
+        class="mt-5 flex flex-col sm:flex-row gap-2.5"
         hx-get="/api/public/booking-status"
         hx-target="#booking-status-result"
         hx-indicator="#status-loading">
@@ -886,30 +982,30 @@
             type="text" 
             name="query" 
             required 
-            placeholder="e.g. 9876543210 or BY-2026-1234"
-            class="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-4 py-3 text-sm font-semibold text-white placeholder-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+            placeholder="Mobile No. (e.g. 9876543210) or BY-2026-XXXX"
+            class="w-full rounded-xl border border-amber-300 bg-amber-50/50 px-4 py-3 text-sm font-semibold text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
         </div>
         <button 
           type="submit"
-          class="rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 px-6 py-3 text-xs font-bold text-white shadow-md shadow-primary/20 hover:brightness-110 active:scale-95 transition">
-          Verify Pass
+          class="rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 px-6 py-3 text-xs font-bold text-white shadow-md hover:brightness-105 active:scale-95 transition">
+          Pass Dekhantu
         </button>
       </form>
 
       <!-- Loading Indicator -->
-      <div id="status-loading" class="htmx-indicator my-4 text-center">
-        <div class="inline-flex items-center gap-2 text-xs text-primary">
+      <div id="status-loading" class="htmx-indicator my-3 text-center">
+        <div class="inline-flex items-center gap-2 text-xs text-amber-700 font-semibold">
           <span class="material-symbols-outlined animate-spin text-[16px]">sync</span>
           Searching verified passenger database...
         </div>
       </div>
 
       <!-- Results Container (Golden VIP Pass swapped by HTMX) (LAND-04, LAND-05) -->
-      <div id="booking-status-result" class="mt-6"></div>
+      <div id="booking-status-result" class="mt-4"></div>
     </div>
   </div>
 
-  <!-- 3D Bus Animation Engine Script (LAND-01) -->
+  <!-- 3D Bus Animation Script Engine (LAND-01 backward compatibility) -->
   <script src="/js/bus-3d.js"></script>
 
 </body>
