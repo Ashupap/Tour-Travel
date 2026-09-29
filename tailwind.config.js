@@ -8,6 +8,8 @@ export default {
     "./pb_public/agent/receipt.js",
     "./pb_public/distributor/index.html",
     "./pb_public/distributor/distributor.js",
+    "./pb_public/admin/index.html",
+    "./pb_public/admin/admin.js",
     "./pb_public/js/landing.js",
     "./pb_public/js/reveal.js"
   ],

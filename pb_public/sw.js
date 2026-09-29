@@ -1,7 +1,7 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "bharatyatra-cache-v2";
+const CACHE_NAME = "bharatyatra-cache-v3";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -15,6 +15,8 @@ const STATIC_ASSETS = [
   "/js/reveal.js",
   "/offline-store.js",
   "/agent/receipt.js",
+  "/admin/index.html",
+  "/admin/admin.js",
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",
   "/images/hero-1.jpg",

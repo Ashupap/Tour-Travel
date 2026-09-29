@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Control Center — BharatYatra</title>
+  <meta name="description" content="BharatYatra master administration portal: portfolio health, post-travel default risk, package management and bus manifest exports.">
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#D97706">
+  <script defer src="/js/alpine.min.js"></script>
+  <script src="/admin/admin.js"></script>
+</head>
+<body class="flex min-h-full flex-col font-sans" x-data="adminApp()">
+
+  <!-- Toast -->
+  <div
+    x-show="toastMessage"
+    x-cloak
+    x-transition:enter="transition ease-out duration-300 transform"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200 transform"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-4"
+    class="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-xl text-xs font-bold"
+    :class="{
+      'border-emerald-500/50 bg-emerald-950/90 text-emerald-200 shadow-emerald-500/20': toastType === 'success',
+      'border-red-500/50 bg-red-950/90 text-red-200 shadow-red-500/20': toastType === 'error',
+      'border-amber-500/50 bg-amber-950/90 text-amber-200 shadow-amber-500/20': toastType === 'info'
+    }">
+    <span x-text="toastMessage"></span>
+  </div>
+
+  <!-- LOGIN VIEW -->
+  <div x-show="!token" x-cloak class="flex min-h-full flex-1 items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-3xl border border-amber-500/30 bg-slate-900/90 p-8 shadow-2xl shadow-amber-500/10 backdrop-blur-xl">
+      <div class="text-center">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-600 to-yellow-400 font-black text-black shadow-lg shadow-amber-500/20 text-lg">
+          BY
+        </div>
+        <h2 class="mt-4 text-2xl font-black text-white">Admin Control Center</h2>
+        <p class="mt-1 text-xs text-slate-400">Master portal for portfolio health, default risk, package management and bus manifest exports. Administrator credentials only.</p>
+      </div>
+
+      <div x-show="loginError" x-cloak class="mt-4 rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-300 font-medium text-center" x-text="loginError"></div>
+
+      <form class="mt-6 space-y-4" @submit.prevent="login()">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Email Address</label>
+          <input
+            type="email"
+            x-model="loginEmail"
+            required
+            placeholder="admin@bharatyatra.local"
+            class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Password</label>
+          <input
+            type="password"
+            x-model="loginPassword"
+            required
+            placeholder="••••••••••••"
+            class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
+        </div>
+
+        <button
+          type="submit"
+          :disabled="loading"
+          class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 py-3 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 disabled:opacity-50">
+          <span x-show="!loading">Enter Admin Portal →</span>
+          <span x-show="loading">Authenticating...</span>
+        </button>
+      </form>
+
+      <div class="mt-6 text-center text-[11px] text-slate-500">
+        <a href="/" class="text-amber-400 hover:underline">← Back to Public Landing Page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATED ADMIN PORTAL -->
+  <div x-show="token" x-cloak class="flex min-h-full flex-1 flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl">
+      <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3">
+          <a href="/" class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 font-black text-black text-sm">BY</a>
+          <div>
+            <div class="text-sm font-black text-white flex items-center gap-2">
+              <span>Admin Control Center</span>
+              <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30 uppercase">Admin</span>
+            </div>
+            <div class="text-[10px] text-slate-400" x-text="admin ? admin.name + ' • ' + admin.email : 'Loading...'"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            @click="refresh()"
+            :disabled="loading"
+            class="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-slate-800 transition active:scale-95">
+            <svg class="h-3.5 w-3.5 text-amber-400" :class="{ 'animate-spin': loading }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Refresh</span>
+          </button>
+          <button
+            @click="logout()"
+            class="rounded-lg border border-red-500/30 bg-red-950/30 px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-900/40 transition active:scale-95">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 w-full space-y-6">
+
+      <!-- Portfolio KPI Grid (ADMN-01) -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg">
+          <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Booked Value</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <div class="text-3xl font-black text-white">₹<span x-text="metrics.total_booked_value.toLocaleString('en-IN')">0</span></div>
+            <span class="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300">Gross Portfolio</span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 to-slate-900/60 p-5 shadow-lg">
+          <div class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Total Realized Cash</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <div class="text-3xl font-black text-emerald-300">₹<span x-text="metrics.total_realized_cash.toLocaleString('en-IN')">0</span></div>
+            <span class="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300 border border-emerald-500/30">Collected</span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-rose-500/30 bg-gradient-to-br from-rose-950/20 to-slate-900/60 p-5 shadow-lg">
+          <div class="text-[10px] uppercase font-bold tracking-wider text-rose-400">Total Defaults</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <div class="text-3xl font-black text-rose-300">₹<span x-text="metrics.total_defaults.toLocaleString('en-IN')">0</span></div>
+            <span class="rounded bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-rose-300 border border-rose-500/30">
+              <span x-text="metrics.post_travel_default_count">0</span> accounts
+            </span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/30 to-slate-900/60 p-5 shadow-lg">
+          <div class="text-[10px] uppercase font-bold tracking-wider text-amber-400">Cash in Transit</div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <div class="text-3xl font-black text-amber-200">₹<span x-text="metrics.cash_in_transit.toLocaleString('en-IN')">0</span></div>
+            <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30">Field Float</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
+        <button
+          @click="activeTab = 'overview'"
+          :class="activeTab === 'overview' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
+          Risk Watchlist (<span x-text="watchlist.length">0</span>)
+        </button>
+        <button
+          @click="activeTab = 'packages'"
+          :class="activeTab === 'packages' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
+          Package Manager
+        </button>
+        <button
+          @click="activeTab = 'manifest'"
+          :class="activeTab === 'manifest' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
+          Bus Manifest
+        </button>
+      </div>
+
+      <!-- RISK WATCHLIST (ADMN-02) -->
+      <section x-show="activeTab === 'overview'" x-cloak class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 px-5 py-4">
+          <div>
+            <h2 class="text-sm font-black text-white">Post-Travel Default Risk Watchlist</h2>
+            <p class="text-[11px] text-slate-400">Customers with travel status <span class="font-bold text-amber-300">scheduled/completed</span> carrying at least one overdue installment.</p>
+          </div>
+          <div class="flex items-center gap-2 text-[11px]">
+            <span class="text-slate-500">Sort by</span>
+            <template x-for="opt in [['days','Days Overdue'],['amount','Amount'],['name','Name']]" :key="opt[0]">
+              <button
+                @click="setSort(opt[0])"
+                :class="sortBy === opt[0] ? 'border-amber-500 bg-amber-500/10 text-amber-300' : 'border-slate-700 text-slate-400 hover:text-slate-200'"
+                class="rounded-lg border px-3 py-1.5 font-bold transition"
+                x-text="opt[1]"></button>
+            </template>
+          </div>
+        </div>
+
+        <div x-show="loading && !watchlist.length" class="p-8 text-center text-xs text-slate-500">Loading watchlist…</div>
+
+        <div x-show="!loading && !watchlist.length" class="p-10 text-center">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-400 text-xl">✓</div>
+          <p class="mt-3 text-sm font-bold text-slate-200">No post-travel defaults detected</p>
+          <p class="text-[11px] text-slate-500">Every scheduled/completed passenger is current on EMIs.</p>
+        </div>
+
+        <div x-show="watchlist.length" class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950/60 text-[10px] uppercase tracking-wider text-slate-400">
+              <tr>
+                <th class="px-5 py-3 font-bold">Booking</th>
+                <th class="px-5 py-3 font-bold">Customer</th>
+                <th class="px-5 py-3 font-bold">Package</th>
+                <th class="px-5 py-3 font-bold">Status</th>
+                <th class="px-5 py-3 font-bold text-right">Overdue</th>
+                <th class="px-5 py-3 font-bold text-right">Days</th>
+                <th class="px-5 py-3 font-bold">Agent / Distributor</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <template x-for="row in watchlist" :key="row.subscription_id">
+                <tr class="hover:bg-slate-800/40">
+                  <td class="px-5 py-3 font-mono font-bold text-amber-300" x-text="row.booking_code"></td>
+                  <td class="px-5 py-3">
+                    <div class="font-bold text-white" x-text="row.customer_name"></div>
+                    <div class="text-[10px] text-slate-500 font-mono" x-text="row.customer_phone"></div>
+                  </td>
+                  <td class="px-5 py-3 text-slate-300" x-text="row.package_title || '—'"></td>
+                  <td class="px-5 py-3">
+                    <span class="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-300" x-text="row.travel_status"></span>
+                  </td>
+                  <td class="px-5 py-3 text-right font-black text-rose-300">₹<span x-text="row.overdue_amount.toLocaleString('en-IN')"></span></td>
+                  <td class="px-5 py-3 text-right font-bold" :class="row.max_days_overdue > 30 ? 'text-rose-400' : 'text-slate-300'" x-text="row.max_days_overdue"></td>
+                  <td class="px-5 py-3 text-[11px] text-slate-400">
+                    <div x-text="row.agent_name || '—'"></div>
+                    <div class="text-slate-600" x-text="row.distributor_name || ''"></div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PACKAGE MANAGER (ADMN-03) -->
+      <section x-show="activeTab === 'packages'" x-cloak id="admin-packages-section" class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 px-5 py-4">
+          <div>
+            <h2 class="text-sm font-black text-white">Package Manager</h2>
+            <p class="text-[11px] text-slate-400">Create, edit and deactivate tour packages — changes appear on the public landing page immediately.</p>
+          </div>
+          <button
+            @click="openCreatePackage()"
+            class="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition">
+            + New Package
+          </button>
+        </div>
+
+        <div x-show="packagesLoading" class="p-8 text-center text-xs text-slate-500">Loading packages…</div>
+
+        <div x-show="!packagesLoading && !packages.length" class="p-10 text-center">
+          <p class="text-sm font-bold text-slate-200">No packages yet</p>
+          <p class="text-[11px] text-slate-500">Create your first tour package to publish it on the landing page.</p>
+        </div>
+
+        <div x-show="packages.length" class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950/60 text-[10px] uppercase tracking-wider text-slate-400">
+              <tr>
+                <th class="px-5 py-3 font-bold">Package</th>
+                <th class="px-5 py-3 font-bold text-right">Price</th>
+                <th class="px-5 py-3 font-bold">Tenures</th>
+                <th class="px-5 py-3 font-bold text-right">Bookings</th>
+                <th class="px-5 py-3 font-bold">Status</th>
+                <th class="px-5 py-3 font-bold text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <template x-for="p in packages" :key="p.id">
+                <tr class="hover:bg-slate-800/40">
+                  <td class="px-5 py-3">
+                    <div class="flex items-center gap-3">
+                      <div class="h-10 w-14 shrink-0 overflow-hidden rounded-lg border border-slate-700 bg-slate-800">
+                        <img :src="p.cover_image_url || '/images/pkg-kashi.jpg'" alt="" class="h-full w-full object-cover" onerror="this.style.display='none'">
+                      </div>
+                      <div>
+                        <div class="font-bold text-white" x-text="p.title"></div>
+                        <div class="text-[10px] text-slate-500" x-text="p.destination + ' • ' + p.duration_days + ' days'"></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-5 py-3 text-right font-black text-amber-200">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></td>
+                  <td class="px-5 py-3">
+                    <div class="flex flex-wrap gap-1">
+                      <template x-for="t in p.allowed_tenures" :key="t">
+                        <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-bold text-slate-300 border border-slate-700" x-text="t + 'M'"></span>
+                      </template>
+                    </div>
+                  </td>
+                  <td class="px-5 py-3 text-right font-bold text-slate-300" x-text="p.subscriptions_count"></td>
+                  <td class="px-5 py-3">
+                    <button
+                      @click="togglePackageActive(p)"
+                      :class="p.is_active ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-slate-600 bg-slate-800 text-slate-400'"
+                      class="rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase transition"
+                      x-text="p.is_active ? 'Active' : 'Inactive'"></button>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <div class="inline-flex gap-2">
+                      <button @click="openEditPackage(p)" class="rounded-lg border border-slate-700 px-2.5 py-1 text-[10px] font-bold text-slate-300 hover:bg-slate-800 transition">Edit</button>
+                      <button @click="deletePackage(p)" class="rounded-lg border border-red-500/30 bg-red-950/30 px-2.5 py-1 text-[10px] font-bold text-red-300 hover:bg-red-900/40 transition">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Package Modal -->
+        <div x-show="showPackageModal" x-cloak class="fixed inset-0 z-40 flex items-center justify-center p-4">
+          <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="showPackageModal = false"></div>
+          <div x-transition class="relative z-50 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-amber-500/30 bg-slate-900 p-6 shadow-2xl shadow-amber-500/10">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-base font-black text-white" x-text="packageForm.id ? 'Edit Package' : 'New Package'"></h3>
+                <p class="text-[11px] text-slate-400">Fields marked * are required.</p>
+              </div>
+              <button @click="showPackageModal = false" class="text-slate-500 hover:text-white text-lg leading-none">×</button>
+            </div>
+
+            <form class="mt-5 space-y-4" @submit.prevent="savePackage()">
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                  <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Title *</label>
+                  <input type="text" x-model="packageForm.title" required minlength="3" maxlength="200"
+                    placeholder="Char Dham Yatra"
+                    class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Destination *</label>
+                  <input type="text" x-model="packageForm.destination" required minlength="2" maxlength="100"
+                    placeholder="Uttarakhand"
+                    class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Duration (days) *</label>
+                  <input type="number" x-model.number="packageForm.duration_days" required min="1" max="60"
+                    class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white focus:border-amber-400 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Total Price (₹) *</label>
+                  <input type="number" x-model.number="packageForm.total_price" required min="1"
+                    class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white focus:border-amber-400 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Min EMIs to Travel *</label>
+                  <input type="number" x-model.number="packageForm.min_emis_to_travel" required min="1" max="12"
+                    class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white focus:border-amber-400 focus:outline-none">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Allowed Tenures (months) *</label>
+                <div class="mt-1.5 flex flex-wrap gap-2">
+                  <template x-for="t in [3, 6, 9, 12]" :key="t">
+                    <button type="button"
+                      @click="toggleTenure(t)"
+                      :class="packageForm.allowed_tenures.includes(t) ? 'border-amber-500 bg-amber-500/15 text-amber-300' : 'border-slate-700 text-slate-400 hover:text-slate-200'"
+                      class="rounded-lg border px-3.5 py-2 text-xs font-black transition"
+                      x-text="t + ' months'"></button>
+                  </template>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Itinerary (HTML allowed)</label>
+                <textarea x-model="packageForm.itinerary" rows="3"
+                  placeholder="Day 1: Arrival in Haridwar…"
+                  class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white placeholder-slate-600 focus:border-amber-400 focus:outline-none"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-300 uppercase tracking-wider">Cover Image (jpeg/png/webp ≤ 5MB)</label>
+                <input type="file" accept="image/jpeg,image/png,image/webp"
+                  @change="packageForm.coverFile = $event.target.files[0] || null"
+                  class="mt-1.5 w-full text-[11px] text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-amber-500/15 file:px-3 file:py-1.5 file:text-[11px] file:font-bold file:text-amber-300">
+                <div x-show="packageForm.coverFile" class="mt-1 text-[10px] text-emerald-400" x-text="'Selected: ' + (packageForm.coverFile ? packageForm.coverFile.name : '')"></div>
+              </div>
+
+              <label class="flex items-center gap-2 text-xs text-slate-300">
+                <input type="checkbox" x-model="packageForm.is_active" class="rounded border-slate-600 bg-slate-950 text-amber-500 focus:ring-amber-400">
+                Active (visible on public landing page)
+              </label>
+
+              <div x-show="packageFormError" class="rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-[11px] font-medium text-red-300" x-text="packageFormError"></div>
+
+              <div class="flex gap-3 pt-1">
+                <button type="submit" :disabled="savingPackage"
+                  class="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 py-3 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 disabled:opacity-50 transition">
+                  <span x-show="!savingPackage" x-text="packageForm.id ? 'Save Changes' : 'Create Package'"></span>
+                  <span x-show="savingPackage">Saving…</span>
+                </button>
+                <button type="button" @click="showPackageModal = false"
+                  class="rounded-xl border border-slate-700 px-5 py-3 text-xs font-bold text-slate-300 hover:bg-slate-800 transition">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUS MANIFEST (ADMN-04) — populated by plan 04-03 -->
+      <section x-show="activeTab === 'manifest'" x-cloak id="admin-manifest-section" class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg p-5">
+        <h2 class="text-sm font-black text-white">Bus Manifest Export</h2>
+        <p class="text-[11px] text-slate-400">Export all passengers scheduled for a tour with their payment status as CSV or a printable sheet.</p>
+      </section>
+
+    </main>
+
+    <footer class="border-t border-slate-800 py-4 text-center text-[10px] text-slate-600">
+      BharatYatra Micro-Collection Network • Admin Control Center • v1.0
+    </footer>
+  </div>
+
+</body>
+</html>

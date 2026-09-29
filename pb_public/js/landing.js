@@ -365,6 +365,52 @@ function landingApp() {
         this.initScrollMilestoneTracker();
         if (window.initReveals) window.initReveals();
       });
+
+      // Admin-managed catalog: refresh from server, silently fall back to static defaults offline
+      this.loadServerPackages();
+    },
+
+    async loadServerPackages() {
+      try {
+        const res = await fetch("/api/public/packages", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const serverPkgs = Array.isArray(data.packages) ? data.packages : [];
+        if (!serverPkgs.length) return;
+
+        const staticPkgs = Array.isArray(TOUR_PACKAGES) ? TOUR_PACKAGES : [];
+        const merged = serverPkgs.map((sp, i) => {
+          const base = staticPkgs.find((p) => p.id === sp.id) || staticPkgs[i] || {};
+          const tenures = Array.isArray(sp.allowed_tenures) && sp.allowed_tenures.length
+            ? sp.allowed_tenures.map((x) => Number(x))
+            : (base.allowed_tenures || [6, 9, 12]);
+          return {
+            ...base,
+            id: sp.id,
+            title: sp.title || base.title,
+            destination: sp.destination || base.destination,
+            duration_days: Number(sp.duration_days) || base.duration_days,
+            total_price: Number(sp.total_price) || base.total_price,
+            allowed_tenures: tenures,
+            min_emis_to_travel: Number(sp.min_emis_to_travel) || base.min_emis_to_travel || 2,
+            image: sp.cover_image_url || base.image || "/images/pkg-kashi.jpg",
+            badge: base.badge || "",
+            highlights: Array.isArray(base.highlights) ? base.highlights : [],
+            odia_title: base.odia_title || "",
+            odia_destination: base.odia_destination || ""
+          };
+        });
+
+        this.packages = merged;
+        const stillSelected = merged.find((p) => this.selectedPackage && p.id === this.selectedPackage.id);
+        this.selectedPackage = stillSelected || merged[0];
+        if (!this.selectedPackage.allowed_tenures.includes(this.selectedTenure)) {
+          this.selectedTenure = this.selectedPackage.allowed_tenures[0];
+        }
+        this.$nextTick(() => this.initTilt());
+      } catch (err) {
+        // Offline or server unavailable: keep the static catalog
+      }
     },
 
     get monthlyEmi() {
