@@ -381,6 +381,13 @@ function landingApp() {
         });
       });
 
+      this.$watch("filteredPackages", () => {
+        this.$nextTick(() => {
+          this.initTilt();
+          if (window.initReveals) window.initReveals();
+        });
+      });
+
       this.$nextTick(() => {
         this.animateStats();
         this.initTilt();
@@ -400,8 +407,17 @@ function landingApp() {
         const serverPkgs = Array.isArray(data.packages) ? data.packages : [];
         if (!serverPkgs.length) return;
 
+        const seenTitles = new Set();
+        const uniquePkgs = [];
+        for (const sp of serverPkgs) {
+          const key = encodeURIComponent((sp.title || sp.id || "").toLowerCase());
+          if (seenTitles.has(key)) continue;
+          seenTitles.add(key);
+          uniquePkgs.push(sp);
+        }
+
         const staticPkgs = Array.isArray(TOUR_PACKAGES) ? TOUR_PACKAGES : [];
-        const merged = serverPkgs.map((sp, i) => {
+        const merged = uniquePkgs.map((sp, i) => {
           const base = staticPkgs.find((p) => p.id === sp.id) || staticPkgs[i] || {};
           const tenures = Array.isArray(sp.allowed_tenures) && sp.allowed_tenures.length
             ? sp.allowed_tenures.map((x) => Number(x))
