@@ -9,10 +9,10 @@ See: `.planning/PROJECT.md` (updated 2026-09-21)
 
 ## Current Status
 
-**Phase:** 3 of 4
-**Phase name:** Public Landing & Distributor
-**Status:** Complete
-**Last action:** Executed Phase 3 (5 plans, 45/45 verification tests passed)
+**Phase:** 4 of 4
+**Phase name:** Admin Dashboard & Production Polish
+**Status:** Planning complete — ready to execute
+**Last action:** Generated Phase 4 context, research, and 4 execution plans (`.planning/phases/04-admin-dashboard-polish/`)
 
 ## Roadmap Progress
 
@@ -21,7 +21,16 @@ See: `.planning/PROJECT.md` (updated 2026-09-21)
 | 1 | Foundation & Data | Complete |
 | 2 | Agent PWA Core | Complete |
 | 3 | Public Landing & Distributor | Complete |
-| 4 | Admin Dashboard & Production Polish | Not started |
+| 4 | Admin Dashboard & Production Polish | Planning complete |
+
+## Phase 4 Plans
+
+| Plan | Wave | Description | Requirements | Status |
+|------|------|-------------|--------------|--------|
+| 04-01 | 1 | Admin portal shell, portfolio metrics & sortable risk watchlist | ADMN-01, ADMN-02 | Planned |
+| 04-02 | 2 | Package manager CRUD & live landing catalog reflection | ADMN-03 | Planned |
+| 04-03 | 2 | Bus manifest export (CSV + printable) | ADMN-04 | Planned |
+| 04-04 | 3 | Production hardening, deployment guide & Phase 4 verification suite | ADMN-01..04 | Planned |
 
 ## Phase 3 Plans
 
