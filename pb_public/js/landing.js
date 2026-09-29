@@ -87,6 +87,14 @@ const I18N = {
       desc: "ନିଜ ଗାଁ ସହାୟକଙ୍କୁ ଭେଟନ୍ତୁ, ପବିତ୍ର ତୀର୍ଥ ବାଛନ୍ତୁ, ପହିଲେ ଯାତ୍ରା କରନ୍ତୁ — ପଛରେ ଶୋଧ।",
       btn: "ମୋ ଯାତ୍ରା ପ୍ଲାନ୍ କରନ୍ତୁ",
       btnAlt: "ପୁରୁଣା ପାସ୍ ଦେଖନ୍ତୁ"
+    },
+    finder: {
+      destLbl: "ଗନ୍ତବ୍ୟ ସ୍ଥାନ",
+      styleLbl: "ଯାତ୍ରା ଶୈଳୀ",
+      allDest: "ଭାରତର ଯେ କୌଣସି ସ୍ଥାନ",
+      allStyle: "ଯେ କୌଣସି ଶୈଳୀ",
+      btn: "ମୋ ଯାତ୍ରା ଖୋଜ",
+      styleNames: { devotion: "ଆଧ୍ୟାତ୍ମିକ", adventure: "ସାହସିକ", culture: "ସଂସ୍କୃତି", coastal: "ସମୁଦ୍ରତୀର" }
     }
   },
   en: {
@@ -174,6 +182,14 @@ const I18N = {
       desc: "Meet your village Sahayak, choose a sacred circuit, and travel first — settle later.",
       btn: "Plan My Yatra",
       btnAlt: "Check Existing Pass"
+    },
+    finder: {
+      destLbl: "Destination",
+      styleLbl: "Travel style",
+      allDest: "Anywhere in India",
+      allStyle: "Any adventure",
+      btn: "Find my escape",
+      styleNames: { devotion: "Devotion", adventure: "Adventure", culture: "Culture", coastal: "Beach" }
     }
   }
 };
@@ -199,6 +215,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [6, 9, 12],
     min_emis_to_travel: 2,
     badge: "Most Sacred • ବହୁତ ଲୋକପ୍ରିୟ",
+    style: "devotion",
     image: "/images/pkg-chardham.jpg",
     highlights: ["Premium Deluxe Bus with Blanket", "VIP Kedarnath Helipad/Pony Support", "Pure Satvik Aahar (No Onion-Garlic)"]
   },
@@ -214,6 +231,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [3, 6, 9],
     min_emis_to_travel: 2,
     badge: "Ram Lalla Special • ରାମ ଦର୍ଶନ",
+    style: "devotion",
     image: "/images/pkg-kashi.jpg",
     highlights: ["Ram Lalla VIP Darshan", "Ganga Maha Aarti Boat Ride", "Elderly Special Care (Zero Walk)"]
   },
@@ -229,6 +247,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [6, 9, 12],
     min_emis_to_travel: 2,
     badge: "Shiva Mahayatra • ମହାକାଳ ଦର୍ଶନ",
+    style: "devotion",
     image: "/images/pkg-jyotirlinga.jpg",
     highlights: ["Bhasma Aarti Access", "Premium Deluxe Bus Comfort", "Purohit Special Puja Service"]
   },
@@ -244,6 +263,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [6, 9, 12],
     min_emis_to_travel: 2,
     badge: "Coastal Dham • ପବିତ୍ର ତୀର୍ଥ",
+    style: "coastal",
     image: "/images/pkg-south.jpg",
     highlights: ["22 Holy Theertham Snan", "Odisha Special Satvik Cooks", "Pamban Sea Bridge View"]
   }
@@ -263,6 +283,8 @@ function landingApp() {
     packages: TOUR_PACKAGES,
     selectedPackage: TOUR_PACKAGES[0],
     selectedTenure: 9,
+    finderDest: "all",
+    finderStyle: "all",
     statusModalOpen: false,
     mobileMenuOpen: false,
     scrolled: false,
@@ -395,6 +417,7 @@ function landingApp() {
             min_emis_to_travel: Number(sp.min_emis_to_travel) || base.min_emis_to_travel || 2,
             image: sp.cover_image_url || base.image || "/images/pkg-kashi.jpg",
             badge: base.badge || "",
+            style: base.style || "devotion",
             highlights: Array.isArray(base.highlights) ? base.highlights : [],
             odia_title: base.odia_title || "",
             odia_destination: base.odia_destination || ""
@@ -413,8 +436,17 @@ function landingApp() {
       }
     },
 
+    get filteredPackages() {
+      const dest = this.finderDest;
+      const style = this.finderStyle;
+      return (this.packages || []).filter((p) => {
+        const destOk = dest === "all" || (p.destination || "").toLowerCase().includes(dest.toLowerCase()) || (p.title || "").toLowerCase().includes(dest.toLowerCase());
+        const styleOk = style === "all" || (p.style || "") === style;
+        return destOk && styleOk;
+      });
+    },
+
     get monthlyEmi() {
-      if (!this.selectedPackage || !this.selectedTenure) return 0;
       return Math.round(this.selectedPackage.total_price / this.selectedTenure);
     },
 

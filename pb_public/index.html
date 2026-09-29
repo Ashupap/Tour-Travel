@@ -1,1061 +1,1393 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-temple-base text-slate-800 antialiased">
+<html lang="en" class="h-full js-reveal">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>BharatYatra: Ama Odisha ru Char Dham — Premium Deluxe Bus &amp; Micro-EMI Tirthayatra</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <meta name="theme-color" content="#102328"/>
   <meta name="description" content="Jai Jagannath! Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra Premium Deluxe Bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
-  <meta name="theme-color" content="#D97706"/>
+  <title>BharatYatra — Har Gaon Ru Char Dham • Premium Deluxe Bus &amp; Micro-EMI Tirthayatra</title>
 
-  <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="/manifest.json"/>
   <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml"/>
 
-  <!-- Google Fonts: Plus Jakarta Sans (body), Anek Odia (Odia script), EB Garamond (display), JetBrains Mono (figures) -->
+  <!-- Fonts: Playfair Display (editorial serif) + DM Sans (body) + Anek Odia (Odia script) -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
-  <link href="https://fonts.googleapis.com/css2?family=Anek+Odia:wght@300;400;500;600;700;800&family=EB+Garamond:ital,wght@0,500..800;1,500..800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Odia:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet"/>
 
-  <!-- Local compiled Tailwind build (single source of truth, works offline) -->
-  <link rel="stylesheet" href="/css/tailwind.css"/>
+  <style>
+    :root {
+      --ink: #102328;
+      --cream: #f7f4ed;
+      --paper: #fffdf9;
+      --accent: #eeb37e;
+      --accent-deep: #a87855;
+      --muted: #687570;
+      --charcoal: #143033;
+      --serif: "Playfair Display", Georgia, serif;
+      --sans: "DM Sans", Anek Odia, Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
+    img { display: block; width: 100%; }
+    h1, h2, h3, p { margin-top: 0; }
+    [x-cloak] { display: none !important; }
+
+    .container {
+      width: min(1320px, calc(100% - 64px));
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .23em;
+      text-transform: uppercase;
+      font-family: var(--sans);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 30px;
+      height: 1px;
+      background: currentColor;
+    }
+    .eyebrow--dark { color: var(--accent-deep); }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      min-height: 53px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 2px;
+      background: var(--accent);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: background .25s, transform .25s;
+    }
+    .button:hover { background: #ffd0a4; transform: translateY(-2px); }
+    .button--ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.65);
+      color: white;
+    }
+    .button--ghost:hover { background: white; color: var(--ink); }
+
+    .skip-link {
+      position: absolute;
+      z-index: 100;
+      top: 12px;
+      left: 12px;
+      padding: 10px 14px;
+      background: var(--ink);
+      color: white;
+      font: 700 12px var(--sans);
+      border-radius: 2px;
+      text-decoration: none;
+      transform: translateY(-240%);
+      transition: transform .2s;
+    }
+    .skip-link:focus { transform: none; }
+
+    /* HERO */
+    .hero {
+      --bg-y: 0px;
+      --scene-x: 0px;
+      --scene-y: 0px;
+      --copy-y: 0px;
+      position: relative;
+      min-height: 800px;
+      min-height: max(800px, 100svh);
+      overflow: hidden;
+      isolation: isolate;
+      background: #1c3234;
+      color: white;
+    }
+
+    .hero__slides {
+      position: absolute;
+      z-index: -4;
+      inset: -9% 0;
+      transform: translate3d(0, var(--bg-y), 0) scale(1.06);
+      will-change: transform;
+    }
+
+    .hero__slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: scale(1);
+      transition: opacity 1500ms ease-in-out, transform 8000ms linear;
+      pointer-events: none;
+    }
+    .hero__slide.is-active { opacity: 1; transform: scale(1.075); }
+    .hero__slide img { height: 100%; object-fit: cover; }
+
+    .hero__shade {
+      position: absolute;
+      z-index: -3;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 78% 35%, rgba(255, 196, 126, .14), transparent 38%),
+        linear-gradient(90deg, rgba(8,25,29,.91), rgba(8,25,29,.67) 48%, rgba(8,25,29,.24)),
+        linear-gradient(0deg, rgba(8,25,29,.91), transparent 46%, rgba(8,25,29,.25));
+    }
+
+    .hero__grain {
+      position: absolute;
+      z-index: -2;
+      inset: 0;
+      pointer-events: none;
+      opacity: .13;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+    }
+
+    .nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      height: 92px;
+      border-bottom: 1px solid rgba(255,255,255,.2);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      flex-shrink: 0;
+      font-family: var(--serif);
+      font-size: 26px;
+      letter-spacing: -.06em;
+    }
+    .logo__mark { color: var(--accent); font-size: 33px; line-height: 1; }
+    .logo small {
+      display: block;
+      margin-top: -3px;
+      font: 700 8px var(--sans);
+      letter-spacing: .32em;
+      text-transform: uppercase;
+    }
+
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: clamp(18px, 3vw, 40px);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .nav__links a { transition: color .2s; }
+    .nav__links a:hover { color: var(--accent); }
+
+    .nav__lang {
+      display: inline-flex;
+      gap: 2px;
+      margin-left: 4px;
+    }
+    .nav__lang button {
+      padding: 7px 10px;
+      border: 1px solid rgba(255,255,255,.45);
+      background: transparent;
+      color: rgba(255,255,255,.85);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      transition: background .2s, color .2s;
+    }
+    .nav__lang button:hover:not([aria-current="true"]) { color: white; border-color: white; }
+    .nav__lang button[aria-current="true"] { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+
+    .nav__cta {
+      flex-shrink: 0;
+      padding: 12px 17px;
+      border: 1px solid rgba(255,255,255,.65);
+      font-size: 11px;
+      font-weight: 700;
+      transition: background .2s, color .2s;
+      background: none;
+      color: white;
+    }
+    .nav__cta:hover { background: white; color: var(--ink); }
+
+    .hero__main {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 645px;
+      padding-top: 45px;
+      padding-bottom: 145px;
+    }
+
+    .hero__copy {
+      position: relative;
+      z-index: 3;
+      width: min(820px, 72%);
+      transform: translate3d(0, var(--copy-y), 0);
+      will-change: transform;
+    }
+
+    .hero h1 {
+      margin: 23px 0 23px;
+      font-size: clamp(60px, 8vw, 112px);
+      line-height: 1.05;
+      letter-spacing: -.075em;
+    }
+    .hero h1 span { display: block; }
+    .hero h1 em { color: var(--accent); font-weight: 400; font-style: italic; }
+
+    .hero__description {
+      max-width: 470px;
+      color: rgba(255,255,255,.85);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    .hero__points {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 24px;
+      margin-top: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,.9);
+    }
+    .hero__points span { display: inline-flex; align-items: center; gap: 7px; }
+    .hero__points i { font-style: normal; color: var(--accent); font-size: 13px; line-height: 1; }
+
+    .hero__actions {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      margin-top: 30px;
+    }
+
+    .text-link {
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(255,255,255,.65);
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      background: none;
+    }
+    .text-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    .hero__scene {
+      position: absolute;
+      top: 14%;
+      right: 3%;
+      width: 390px;
+      height: 460px;
+      perspective: 1000px;
+      transform: translate3d(var(--scene-x), var(--scene-y), 0);
+      will-change: transform;
+      pointer-events: none;
+    }
+    .scene__ring {
+      position: absolute;
+      inset: 5px 0 0;
+      width: 390px;
+      height: 390px;
+      border: 1px solid rgba(255,255,255,.23);
+      border-radius: 50%;
+      transform: rotateX(67deg) rotate(-20deg);
+    }
+    .scene__photo { position: absolute; overflow: hidden; padding: 7px; background: #f7f1e7; box-shadow: 20px 30px 55px rgba(0,0,0,.36); }
+    .scene__photo img { height: 100%; object-fit: cover; }
+    .scene__photo--back { top: 45px; right: 5px; width: 175px; height: 220px; transform: rotate(-12deg) rotateY(-12deg); }
+    .scene__photo--front { top: 125px; left: 20px; width: 235px; height: 310px; transform: rotate(8deg) rotateY(-12deg); }
+    .scene__seal {
+      position: absolute;
+      top: 13px;
+      left: 7px;
+      display: grid;
+      place-items: center;
+      width: 91px;
+      height: 91px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--ink);
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.45;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      transform: rotate(-13deg);
+      box-shadow: 0 12px 28px rgba(0,0,0,.25);
+    }
+
+    .hero__bottom { position: absolute; z-index: 5; right: 0; bottom: 0; left: 0; }
+    .hero__bottom-inner { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+
+    .trip-finder {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      width: min(760px, 82%);
+      min-height: 99px;
+      padding: 12px;
+      background: var(--cream);
+      color: var(--ink);
+      box-shadow: 0 20px 55px rgba(0,0,0,.24);
+    }
+    .trip-finder__field { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 7px 19px; }
+    .trip-finder__field + .trip-finder__field { border-left: 1px solid #dbd8d0; }
+    .trip-finder label { margin-bottom: 7px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    .trip-finder select { width: 100%; border: 0; background: transparent; color: var(--ink); font-size: 13px; font-weight: 700; cursor: pointer; }
+    .trip-finder .button { min-height: auto; }
+
+    .hero__controls { display: flex; align-items: center; gap: 12px; padding-bottom: 32px; white-space: nowrap; }
+    .hero__location { min-width: 86px; font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .hero__dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,.45);
+      transition: width .3s, background .3s, border-radius .3s;
+    }
+    .hero__dot[aria-current="true"] { width: 25px; border-radius: 8px; background: var(--accent); }
+    .hero__pause {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      margin-left: 4px;
+      border: 1px solid rgba(255,255,255,.6);
+      border-radius: 50%;
+      background: transparent;
+      color: white;
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      right: 34px;
+      bottom: 163px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+    }
+
+    /* MARQUEE */
+    .marquee { overflow: hidden; border-bottom: 1px solid #e7e2d6; background: var(--paper); }
+    .marquee__track { display: flex; width: max-content; animation: marquee 40s linear infinite; padding-block: 13px; }
+    .marquee__track span { display: inline-flex; align-items: center; gap: 22px; padding-right: 44px; font-size: 11px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .marquee__track i { font-style: normal; color: var(--accent-deep); }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    /* CONTENT */
+    .intro { padding: 112px 0 93px; }
+    .intro__grid { display: grid; grid-template-columns: 1.3fr .7fr; align-items: end; gap: 50px; }
+
+    .section-title {
+      margin: 17px 0 0;
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(47px, 6vw, 78px);
+      line-height: 1.12;
+      letter-spacing: -.06em;
+      color: var(--ink);
+    }
+    .intro .section-title { font-size: clamp(44px, 5.4vw, 72px); }
+    .section-title em { color: var(--accent-deep); font-weight: 400; font-style: italic; }
+    .intro__text { max-width: 350px; margin-bottom: 8px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+
+    .steps { margin-top: 60px; }
+    .steps ol { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; list-style: none; padding: 0; margin: 0; }
+    .steps li { border-top: 1px solid #dbd8d0; padding-top: 16px; }
+    .steps .step__num { font: 400 54px var(--serif); color: var(--accent-deep); opacity: .45; display: block; }
+    .steps h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin: 10px 0 6px; }
+    .steps p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+    .interlude {
+      --image-y: 0px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 520px;
+      overflow: hidden;
+      isolation: isolate;
+      background: #203b3d;
+      color: white;
+    }
+    .interlude__image {
+      position: absolute;
+      z-index: -2;
+      inset: -18% 0;
+      background: url("/images/hero-2.jpg") center / cover no-repeat;
+      transform: translate3d(0, var(--image-y), 0);
+      will-change: transform;
+    }
+    .interlude::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(5,24,27,.85), rgba(5,24,27,.47) 60%, rgba(5,24,27,.17));
+    }
+    .interlude__content { padding-block: 85px; }
+    .interlude h2 { max-width: 800px; margin: 20px 0; font-size: clamp(48px, 6.2vw, 82px); line-height: 1.1; letter-spacing: -.065em; font-family: var(--serif); font-weight: 400; }
+    .interlude h2 em { color: var(--accent); font-weight: 400; font-style: italic; }
+    .interlude p { max-width: 440px; color: rgba(255,255,255,.82); font-size: 14px; line-height: 1.8; }
+
+    /* PACKAGES */
+    .packages { padding: 105px 0 125px; }
+    .packages__heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 39px; }
+    .packages__heading .section-title { font-size: clamp(45px, 5vw, 68px); }
+    .packages__heading > p { max-width: 295px; margin-bottom: 5px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+
+    .package-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+    .package-card {
+      min-width: 0;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 8px 28px rgba(16,35,40,.05);
+      transition: transform .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+    .package-card:hover { transform: translateY(-5px); box-shadow: 0 20px 42px rgba(16,35,40,.13); }
+    .package-card[hidden] { display: none; }
+    .package-card__image { position: relative; height: 255px; overflow: hidden; background: #d7d9d2; }
+    .package-card__image img { height: 100%; object-fit: cover; transition: transform .7s ease; }
+    .package-card:hover .package-card__image img { transform: scale(1.09); }
+    .package-card__tag { position: absolute; top: 13px; left: 13px; padding: 8px 9px; background: rgba(255,253,249,.95); font-size: 9px; font-weight: 700; }
+    .package-card__body { padding: 21px 17px 18px; }
+    .package-card__meta { margin-bottom: 9px; color: #a37353; font-size: 9px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+    .package-card h3 { margin-bottom: 10px; font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.15; letter-spacing: -.045em; }
+    .package-card__description { min-height: 57px; margin-bottom: 16px; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .package-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 15px; border-top: 1px solid #e9e7df; }
+    .package-card__price { font-size: 18px; font-weight: 700; }
+    .package-card__price small { display: block; margin-bottom: 3px; color: var(--muted); font-size: 9px; font-weight: 400; }
+    .package-card__button {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 35px;
+      height: 35px;
+      border: 1px solid #cbd1cb;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--ink);
+      font-size: 17px;
+    }
+    .package-card__button:hover { background: var(--accent); border-color: var(--accent); }
+
+    .empty-state { display: none; padding: 50px 0; text-align: center; color: var(--muted); }
+    .empty-state.is-visible { display: block; }
+
+    /* EMI CALCULATOR */
+    .calculator { padding: 100px 0 110px; background: var(--paper); border-block: 1px solid #e9e7df; }
+    .calc-head { max-width: 760px; margin: 0 auto 46px; text-align: center; }
+    .calc-head .section-title { font-size: clamp(42px, 5vw, 64px); }
+    .calc-head > p { color: var(--muted); font-size: 14px; line-height: 1.8; }
+
+    .calculator__card { background: #fff; border: 1px solid #e9e7df; box-shadow: 0 18px 45px rgba(16,35,40,.07); padding: 46px; }
+    .calc-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 44px; }
+
+    .calc-label { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+    .circuit-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .calc-option {
+      padding: 16px 17px;
+      border: 1px solid #dbd8d0;
+      background: white;
+      text-align: left;
+      transition: border-color .2s, background .2s;
+    }
+    .calc-option:hover { border-color: var(--accent); }
+    .calc-option[aria-pressed="true"] { border-color: var(--accent-deep); background: #faf4e9; }
+    .calc-option b { font-size: 14px; font-weight: 700; display: block; margin-top: 4px; font-family: var(--serif); font-weight: 500; }
+    .calc-option .calc-option__days { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .calc-option small { color: var(--muted); font-size: 11px; display: block; margin-top: 5px; }
+    .calc-option small b { display: inline; font-family: var(--sans); font-weight: 700; color: var(--accent-deep); }
+
+    .tenure-choice { margin-top: 28px; }
+    .choice-pills { display: flex; flex-wrap: wrap; gap: 9px; }
+    .choice-pill {
+      padding: 11px 18px;
+      border: 1px solid #cbd1cb;
+      background: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all .2s;
+    }
+    .choice-pill:hover { border-color: var(--accent); }
+    .choice-pill[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: white; }
+
+    .progress-box { margin-top: 24px; padding: 18px 20px; background: #faf4e9; border: 1px solid #e9e7df; }
+    .progress-box__head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+    .progress-track { height: 8px; background: #e7ddc9; border-radius: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); border-radius: 6px; transition: width .4s ease; }
+    .progress-box__foot { display: flex; justify-content: space-between; margin-top: 9px; font-size: 11px; color: var(--muted); }
+
+    .calc-result { background: var(--ink); color: white; padding: 34px; position: relative; overflow: hidden; }
+    .calc-result::after { content: ""; position: absolute; right: -70px; top: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(238,179,126,.28), transparent 70%); pointer-events: none; }
+    .calc-result__head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-family: var(--sans); }
+    .calc-result__badge { padding: 5px 9px; border: 1px solid rgba(238,179,126,.5); color: var(--accent); font-size: 10px; }
+    .calc-result__emi { margin-top: 18px; font: 500 52px var(--serif); color: var(--accent); letter-spacing: -.03em; }
+    .calc-result__emi small { font: 400 15px var(--sans); color: rgba(255,255,255,.7); }
+    .calc-result__rows { margin-top: 22px; border-top: 1px solid rgba(255,255,255,.14); padding-top: 18px; }
+    .calc-result__row { display: flex; justify-content: space-between; gap: 14px; padding: 7px 0; font-size: 13px; }
+    .calc-result__row span { color: rgba(255,255,255,.68); }
+    .calc-result__row b { text-align: right; font-weight: 700; color: white; }
+    .calc-result__row .gold { color: var(--accent); }
+    .calc-result__footnote { position: relative; z-index: 1; margin-top: 20px; font-size: 12px; color: rgba(255,255,255,.65); }
+    .calc-result .button { margin-top: 20px; width: 100%; }
+
+    /* PASS */
+    .pass { padding: 100px 0 110px; }
+    .pass-head { max-width: 760px; margin: 0 auto 10px; text-align: center; }
+    .pass-head .section-title { font-size: clamp(42px, 5vw, 64px); }
+    .pass-head > p { color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .pass__card { max-width: 1060px; margin: 0 auto; background: var(--paper); border: 1px solid #e9e7df; box-shadow: 0 18px 45px rgba(16,35,40,.07); overflow: hidden; }
+    .pass__goldline { height: 5px; background: linear-gradient(90deg, var(--accent), var(--accent-deep), var(--accent)); }
+    .pass__body { display: grid; grid-template-columns: 1fr 320px; }
+    .pass__left { padding: 38px 40px; }
+    .pass__head { display: flex; align-items: center; gap: 14px; padding-bottom: 22px; border-bottom: 1px solid #e9e7df; }
+    .pass__medal { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: white; font-size: 22px; }
+    .pass__head b { display: block; font-size: 22px; letter-spacing: -.02em; font-family: var(--serif); font-weight: 500; }
+    .pass__head small { display: block; color: var(--accent-deep); font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; margin-top: 2px; }
+    .pass__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 28px; padding-top: 26px; }
+    .pass__grid label { display: block; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; margin-bottom: 5px; }
+    .pass__grid b { font-size: 14px; font-weight: 700; }
+    .pass__grid b.gold { color: var(--accent-deep); }
+    .pass__grid small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .pass__stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 30px 28px; border-left: 2px dashed #d8d5cc; text-align: center; }
+    .pass__qr { display: grid; place-items: center; width: 132px; height: 132px; background: var(--ink); color: white; font-size: 60px; font-family: var(--serif); }
+    .pass__stub .caption { font-size: 10px; font-weight: 700; letter-spacing: .18em; color: var(--muted); }
+    .pass__stub .token { font-weight: 700; letter-spacing: .06em; color: var(--accent-deep); }
+    .pass__stub p { margin: 0; color: var(--muted); font-size: 11px; max-width: 200px; line-height: 1.7; }
+    .pass__stub .button { min-height: 44px; padding: 0 16px; font-size: 11px; }
+
+    /* TESTIMONIALS */
+    .voices { padding: 100px 0 110px; }
+    .voices-head { max-width: 760px; margin: 0 auto; text-align: center; }
+    .voices-head .section-title { font-size: clamp(42px, 5vw, 64px); }
+    .voices-head > p { color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .voices__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 46px; }
+    .voice { background: var(--paper); border: 1px solid #e9e7df; padding: 32px 30px; display: flex; flex-direction: column; }
+    .voice__stars { color: var(--accent); letter-spacing: .25em; font-size: 13px; }
+    .voice blockquote { margin: 18px 0 0; font: italic 400 17px/1.7 var(--serif); color: var(--ink); }
+    .voice figcaption { margin-top: auto; padding-top: 22px; border-top: 1px solid #e9e7df; display: flex; align-items: center; gap: 12px; }
+    .voice__avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-deep)); color: white; font-weight: 700; flex-shrink: 0; }
+    .voice figcaption b { display: block; font-size: 13px; font-weight: 700; }
+    .voice figcaption small { display: block; color: var(--muted); font-size: 11px; }
+
+    /* CLOSING */
+    .closing { padding: 95px 0; background: var(--ink); color: white; }
+    .closing__grid { display: grid; grid-template-columns: 1.1fr 1fr; align-items: end; gap: 70px; }
+    .closing .section-title em { color: var(--accent); }
+    .closing p { max-width: 440px; color: #bfcbc5; font-size: 14px; line-height: 1.85; }
+    .closing__actions { display: flex; align-items: center; gap: 26px; margin-top: 30px; }
+    .closing__stats { display: flex; flex-wrap: wrap; gap: 37px; margin-top: 38px; }
+    .closing__stats strong { display: block; color: var(--accent); font: 35px var(--serif); font-weight: 400; }
+    .closing__stats span { color: #bfcbc5; font-size: 11px; }
+
+    footer { padding: 28px 0; background: #0a1b20; color: #bdc8c3; }
+    .footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 11px; flex-wrap: wrap; }
+    .footer__links { display: flex; flex-wrap: wrap; gap: 7px 22px; }
+    .footer__links a { transition: color .2s; }
+    .footer__links a:hover { color: var(--accent); }
+    footer .logo { color: white; font-size: 21px; }
+    footer .logo__mark { font-size: 27px; }
+    footer .logo span:last-child { color: white; }
+
+    /* VERIFICATION DIALOG */
+    .dialog {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(4,19,22,.78);
+      backdrop-filter: blur(5px);
+    }
+    .dialog__panel { width: min(520px, 100%); max-height: 90vh; overflow: auto; background: var(--cream); color: var(--ink); box-shadow: 0 30px 90px rgba(0,0,0,.4); padding: 35px; position: relative; }
+    .dialog__close { position: absolute; top: 12px; right: 17px; border: 0; background: transparent; font-size: 28px; color: var(--muted); }
+    .dialog__close:hover { color: var(--ink); }
+    .dialog h3 { margin: 16px 0 9px; font-size: 42px; letter-spacing: -.05em; font-family: var(--serif); font-weight: 400; }
+    .dialog > p { color: var(--muted); font-size: 13px; line-height: 1.7; }
+    .pass-lookup { display: grid; grid-template-columns: 1fr auto; gap: 12px; margin-top: 23px; }
+    .pass-lookup input { width: 100%; height: 50px; padding: 0 12px; border: 1px solid #d8d6ce; background: white; color: var(--ink); font-size: 13px; font-weight: 600; }
+    .pass-lookup input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .pass-lookup .button { min-height: 50px; }
+    .lookup-note { min-height: 18px; margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+    .looking { display: inline-flex; align-items: center; gap: 8px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .package-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero__scene { right: -5%; transform: translate3d(var(--scene-x), var(--scene-y), 0) scale(.88); }
+      .hero__copy { width: 78%; }
+      .calc-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 900px) {
+      .container { width: min(100% - 44px, 1320px); }
+      .nav__links { gap: 17px; }
+      .hero__scene { right: -12%; opacity: .65; }
+      .hero__copy { width: 85%; }
+      .trip-finder { width: min(680px, 84%); }
+      .scroll-cue { display: none; }
+      .voices__grid { grid-template-columns: 1fr; }
+      .pass__body { grid-template-columns: 1fr; }
+      .pass__stub { border-left: 0; border-top: 2px dashed #d8d5cc; }
+      .closing__grid { grid-template-columns: 1fr; gap: 25px; }
+    }
+    @media (max-width: 700px) {
+      .container { width: min(100% - 36px, 1320px); }
+      .nav { height: 76px; }
+      .nav__lang button { padding: 6px 8px; }
+      .nav__cta { padding: 10px 13px; }
+      .hero { min-height: 820px; min-height: max(820px, 100svh); }
+      .hero__slide img { object-position: 58% center; }
+      .hero__shade {
+        background:
+          linear-gradient(90deg, rgba(8,25,29,.84), rgba(8,25,29,.44)),
+          linear-gradient(0deg, rgba(8,25,29,.95), transparent 57%, rgba(8,25,29,.27));
+      }
+      .hero__main { align-items: flex-start; min-height: 630px; padding-top: 96px; padding-bottom: 150px; }
+      .hero__copy { width: 100%; }
+      .hero h1 { max-width: 620px; font-size: clamp(58px, 11vw, 83px); }
+      .hero__description { max-width: 385px; }
+      .hero__scene { top: 44%; right: -10%; opacity: .42; transform: translate3d(var(--scene-x), var(--scene-y), 0) scale(.66); transform-origin: right center; }
+      .hero__bottom-inner { display: block; }
+      .trip-finder { width: 100%; grid-template-columns: 1fr 1fr; }
+      .trip-finder__field { padding: 7px 10px; }
+      .trip-finder .button { grid-column: 1 / -1; min-height: 46px; margin-top: 7px; }
+      .hero__controls { position: absolute; right: 0; bottom: 118px; padding: 0; }
+      .hero__location { display: none; }
+      .intro { padding: 84px 0 60px; }
+      .intro__grid { grid-template-columns: 1fr; gap: 18px; }
+      .intro__text { margin: 0; }
+      .pokemon-steps ol { grid-template-columns: 1fr; }
+      .steps ol { grid-template-columns: 1fr; gap: 22px; }
+      .packages { padding: 80px 0 95px; }
+      .packages__heading { align-items: flex-start; flex-direction: column; gap: 15px; }
+      .packages__heading > p { margin: 0; }
+      .package-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .package-card__image { height: 245px; }
+      .calculator { padding: 70px 0 80px; }
+      .calculator__card { padding: 30px 20px; }
+      .circuit-selector { grid-template-columns: 1fr; }
+      .pass { padding: 80px 0 90px; }
+      .voices { padding: 80px 0 90px; }
+      .pass__grid { grid-template-columns: 1fr; }
+      .closing { padding: 70px 0; }
+    }
+    @media (max-width: 480px) {
+      .logo { font-size: 22px; }
+      .logo__mark { font-size: 28px; }
+      .nav__cta { padding: 10px 11px; font-size: 10px; }
+      .hero { min-height: 790px; min-height: max(790px, 100svh); }
+      .hero__main { padding-top: 86px; }
+      .hero h1 { font-size: clamp(53px, 12vw, 65px); }
+      .hero__description { font-size: 13px; }
+      .hero__actions { gap: 17px; flex-wrap: wrap; }
+      .hero__actions .button { padding: 0 15px; gap: 9px; }
+      .text-link { font-size: 11px; }
+      .hero__scene { top: 48%; right: -18%; opacity: .26; transform: translate3d(var(--scene-x), var(--scene-y), 0) scale(.55); }
+      .trip-finder select { font-size: 11px; }
+      .section-title { font-size: 46px; }
+      .interlude { min-height: 440px; }
+      .interlude h2 { font-size: 51px; }
+      .package-grid { grid-template-columns: 1fr; }
+      .package-card__image { height: 290px; }
+      .closing__stats { gap: 22px; }
+      .footer__inner { align-items: flex-start; flex-direction: column; }
+      .dialog__panel { padding: 27px 21px; }
+      .pass-lookup { grid-template-columns: 1fr; }
+      .calc-result { padding: 26px 22px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+      .hero__slide { transition: opacity 200ms ease-in-out, transform 8s linear; }
+    }
+
+    .js-reveal .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .js-reveal .reveal.is-visible { opacity: 1; transform: none; }
+    .js-reveal .reveal[data-reveal-delay] { transition-delay: var(--reveal-delay, 0ms); }
+    @media (prefers-reduced-motion: reduce) {
+      .js-reveal .reveal { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
 
   <!-- Core Interactive Scripts -->
   <script src="/js/htmx.min.js"></script>
+  <script src="/js/reveal.js"></script>
   <script src="/js/vanilla-tilt.min.js"></script>
   <script src="/js/landing.js"></script>
-  <script src="/js/reveal.js"></script>
   <script defer src="/js/alpine.min.js"></script>
-  <script>
-    // Enable reveal transitions only when IntersectionObserver is available.
-    if ("IntersectionObserver" in window) {
-      document.documentElement.classList.add("js-reveal");
-    }
-  </script>
 </head>
 
-<body class="bg-temple-base text-ink text-base leading-relaxed min-h-screen relative overflow-x-hidden" x-data="landingApp()">
-  <a href="#hero-section" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-amber-600 focus:px-4 focus:py-2 focus:text-white focus:font-bold">Skip to content</a>
+<body x-data="landingApp()">
+  <a class="skip-link" href="#circuits">Skip to content</a>
 
-  <!-- ========================================================================= -->
-  <!-- 1. HEADER (scroll-aware, mobile menu, reading-progress hairline)         -->
-  <!-- ========================================================================= -->
-  <header
-    class="sticky top-0 z-40 border-b transition-all duration-300"
-    :class="scrolled ? 'bg-white/90 border-line shadow-sm backdrop-blur-md' : 'bg-temple-base/60 border-transparent backdrop-blur-sm'">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-      <!-- Brand -->
-      <a class="flex items-center gap-2.5 group" href="/">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
-          <span class="material-symbols-outlined text-[22px]">temple_hindu</span>
-        </div>
-        <div class="flex flex-col leading-tight">
-          <div class="flex items-center gap-1.5">
-            <span class="font-display-lg text-xl sm:text-2xl text-ink font-semibold tracking-tight">Bharat<span class="text-amber-700">Yatra</span></span>
-            <span class="hidden sm:inline-block px-2 py-0.5 rounded-full border border-amber-200 bg-amber-50 text-[10px] font-bold uppercase tracking-widest text-amber-800">
-              <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶା ସ୍ପେଶାଲ' : 'Odisha Special'"></span>
-            </span>
-          </div>
-          <span class="hidden sm:block text-[10px] font-bold uppercase tracking-[0.22em] text-muted">
-            <span x-text="lang === 'odia' ? 'ହର ଗାଁ ରୁ ଚାରି ଧାମ' : 'Har Gaon Ru Char Dham'"></span>
-          </span>
-        </div>
-      </a>
-
-      <!-- Desktop Navigation -->
-      <nav class="hidden lg:flex items-center gap-8 text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-600" aria-label="Primary">
-        <a class="nav-link hover:text-amber-700 transition-colors" href="#circuits" x-text="t('nav', 'circuits')"></a>
-        <a class="nav-link hover:text-amber-700 transition-colors" href="#journey-highway" x-text="t('nav', 'highway')"></a>
-        <a class="nav-link hover:text-amber-700 transition-colors" href="#advantage" x-text="t('nav', 'advantage')"></a>
-        <a class="nav-link hover:text-amber-700 transition-colors" href="#emi-calculator-section" x-text="t('nav', 'calculator')"></a>
-        <a class="nav-link hover:text-amber-700 transition-colors" href="#verification-pass" x-text="t('nav', 'pass')"></a>
-      </nav>
-
-      <!-- Actions -->
-      <div class="flex items-center gap-2">
-        <div class="flex items-center rounded-full p-0.5 bg-white/80 border border-line" role="group" aria-label="Language">
-          <button
-            type="button"
-            @click="setLanguage('odia')"
-            :class="lang === 'odia' ? 'bg-ink text-white shadow font-bold' : 'text-slate-600 hover:text-ink font-semibold'"
-            class="px-2.5 py-1 rounded-full text-xs transition active:scale-95 border-none">
-            <span>ଓଡ଼ିଆ</span>
-          </button>
-          <button
-            type="button"
-            @click="setLanguage('en')"
-            :class="lang === 'en' ? 'bg-ink text-white shadow font-bold' : 'text-slate-600 hover:text-ink font-semibold'"
-            class="px-2.5 py-1 rounded-full text-xs transition active:scale-95 border-none">
-            <span>English</span>
-          </button>
-        </div>
-
-        <button
-          @click="statusModalOpen = true"
-          class="btn-primary hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-white font-bold text-xs shadow-md shadow-amber-500/25 active:scale-95">
-          <span class="material-symbols-outlined text-[17px]">confirmation_number</span>
-          <span x-text="t('nav', 'checkPassBtn')"></span>
-        </button>
-        <button
-          @click="statusModalOpen = true"
-          aria-label="Check Travel Pass"
-          class="btn-primary sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full text-white shadow-md shadow-amber-500/25 active:scale-95">
-          <span class="material-symbols-outlined text-[18px]">confirmation_number</span>
-        </button>
-
-        <button
-          @click="mobileMenuOpen = !mobileMenuOpen"
-          :aria-expanded="mobileMenuOpen"
-          aria-label="Toggle navigation menu"
-          class="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl border border-line bg-white text-slate-700 hover:text-amber-700 transition active:scale-95">
-          <span class="material-symbols-outlined text-[20px]" x-text="mobileMenuOpen ? 'close' : 'menu'"></span>
-        </button>
+  <!-- ============================ HERO ============================ -->
+  <header class="hero" id="home">
+    <div class="hero__slides" aria-hidden="true">
+      <div class="hero__slide hero-slide is-active">
+        <img src="/images/hero-1.jpg" alt="" width="1600" height="1142" fetchpriority="high" decoding="async"/>
+      </div>
+      <div class="hero__slide hero-slide">
+        <img src="/images/hero-2.jpg" alt="" width="1600" height="1082" loading="lazy" decoding="async"/>
+      </div>
+      <div class="hero__slide hero-slide">
+        <img src="/images/hero-3.jpg" alt="" width="1600" height="1118" loading="lazy" decoding="async"/>
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" x-transition class="lg:hidden border-t border-line bg-white/95 backdrop-blur-md">
-      <nav class="px-4 py-3 flex flex-col gap-1" :aria-hidden="mobileMenuOpen ? 'false' : 'true'" aria-label="Mobile">
-        <a @click="mobileMenuOpen = false" href="#circuits" x-text="t('nav', 'circuits')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
-        <a @click="mobileMenuOpen = false" href="#journey-highway" x-text="t('nav', 'highway')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
-        <a @click="mobileMenuOpen = false" href="#advantage" x-text="t('nav', 'advantage')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
-        <a @click="mobileMenuOpen = false" href="#emi-calculator-section" x-text="t('nav', 'calculator')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
-        <a @click="mobileMenuOpen = false" href="#verification-pass" x-text="t('nav', 'pass')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
-        <button @click="statusModalOpen = true; mobileMenuOpen = false" class="btn-primary mt-2 inline-flex items-center justify-center gap-1.5 py-3 rounded-xl text-white font-bold text-sm active:scale-95">
-          <span class="material-symbols-outlined text-[18px]">confirmation_number</span>
-          <span x-text="t('nav', 'checkPassBtn')"></span>
-        </button>
-      </nav>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="hero__grain" aria-hidden="true"></div>
+
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="logo" href="#home" aria-label="BharatYatra home">
+        <span class="logo__mark" aria-hidden="true">✳</span>
+        <span>BharatYatra <small>Har Gaon Ru Char Dham</small></span>
+      </a>
+
+      <div class="nav__lang">
+        <button type="button" @click="setLanguage('odia')" :aria-current="lang === 'odia' ? 'true' : 'false'">ଓଡ଼ିଆ</button>
+        <button type="button" @click="setLanguage('en')" :aria-current="lang === 'en' ? 'true' : 'false'">English</button>
+      </div>
+
+      <div class="nav__links">
+        <a href="#circuits" x-text="t('nav', 'circuits')"></a>
+        <a href="#emi-calculator-section" x-text="t('nav', 'calculator')"></a>
+        <a href="#pass" x-text="t('nav', 'pass')"></a>
+      </div>
+
+      <button class="nav__cta" type="button" @click="statusModalOpen = true">
+        <span x-text="t('nav', 'checkPassBtn')"></span> &nbsp;↗
+      </button>
+    </nav>
+
+    <div class="hero__main container">
+      <div class="hero__copy">
+        <div class="eyebrow">A different way to <span x-text="lang === 'odia' ? 'ଭାରତ ଦେଖିବାର' : 'discover India'"></span></div>
+        <h1>
+          <span x-text="t('hero', 'titleA')"></span>
+          <span><em x-text="t('hero', 'titleB')"></em></span>
+        </h1>
+        <p class="hero__description" x-text="t('hero', 'punchline')"></p>
+
+        <div class="hero__points">
+          <span><i>✓</i><span x-text="t('hero', 'point1')"></span></span>
+          <span><i>✓</i><span x-text="t('hero', 'point2')"></span></span>
+          <span><i>✓</i><span x-text="t('hero', 'point3')"></span></span>
+        </div>
+
+        <div class="hero__actions">
+          <a class="button" href="#circuits">
+            <span x-text="t('hero', 'btnExplore')"></span> <span aria-hidden="true">↗</span>
+          </a>
+          <button class="text-link" type="button" @click="statusModalOpen = true" x-text="t('hero', 'btnVerify')"></button>
+        </div>
+      </div>
+
+      <div class="hero__scene" aria-hidden="true">
+        <div class="scene__ring"></div>
+        <div class="scene__photo scene__photo--back">
+          <img src="/images/hero-2.jpg" alt=""/>
+        </div>
+        <div class="scene__photo scene__photo--front">
+          <img src="/images/hero-3.jpg" alt=""/>
+        </div>
+        <div class="scene__seal">Jai<br/>Jagannath<br/>✳</div>
+      </div>
     </div>
 
-    <!-- Reading progress hairline -->
-    <div class="h-0.5 w-full bg-amber-100/60" aria-hidden="true">
-      <div
-        class="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-[width] duration-150 ease-out"
-        :style="'width: ' + scrollProgress + '%'"></div>
+    <div class="scroll-cue" aria-hidden="true">Scroll to explore</div>
+
+    <div class="hero__bottom">
+      <div class="hero__bottom-inner container">
+        <form class="trip-finder" @submit.prevent="scrollToSection('circuits')">
+          <div class="trip-finder__field">
+            <label for="destination">Destination</label>
+            <select id="destination" x-model="finderDest">
+              <option value="all" x-text="t('finder', 'allDest')"></option>
+              <option value="char dham">Char Dham</option>
+              <option value="ayodhya">Ayodhya / Kashi</option>
+              <option value="jyotirlinga">Jyotirlinga</option>
+              <option value="rameswaram">Rameswaram</option>
+            </select>
+          </div>
+
+          <div class="trip-finder__field">
+            <label for="travel-style">Travel style</label>
+            <select id="travel-style" x-model="finderStyle">
+              <option value="all" x-text="t('finder', 'allStyle')"></option>
+              <option value="devotion">Devotion</option>
+              <option value="coastal">Coastal</option>
+            </select>
+          </div>
+
+          <button class="button" type="submit"><span x-text="t('finder', 'btn')"></span> <span aria-hidden="true">↗</span></button>
+        </form>
+
+        <div class="hero__controls" aria-label="Hero slideshow controls">
+          <span class="hero__location" id="slide-location" aria-live="polite">Puri, Odisha</span>
+          <button class="hero__dot" type="button" data-slide="0" aria-label="Show Puri image" aria-current="true"></button>
+          <button class="hero__dot" type="button" data-slide="1" aria-label="Show temple image" aria-current="false"></button>
+          <button class="hero__dot" type="button" data-slide="2" aria-label="Show mountain image" aria-current="false"></button>
+          <button class="hero__pause" id="slideshow-toggle" type="button" aria-label="Pause slideshow">Ⅱ</button>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- ========================================================================= -->
-  <!-- 2. HERO: full-bleed Ken Burns crossfade, editorial entrance              -->
-  <!-- ========================================================================= -->
-  <main id="hero-section" class="relative flex min-h-[88svh] flex-col overflow-hidden">
-    <!-- Warm gradient base (visible during crossfade stitching) -->
-    <div class="absolute inset-0 bg-gradient-to-br from-amber-100 via-temple-warm to-orange-100" aria-hidden="true"></div>
-
-    <!-- Parallax media stack -->
-    <div id="hero-media" class="absolute inset-x-0 -top-[8%] h-[116%]" aria-hidden="true">
-      <div class="hero-slide absolute inset-0">
-        <img src="/images/hero-1.jpg" alt="" width="1600" height="1142" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-center"/>
-      </div>
-      <div class="hero-slide absolute inset-0">
-        <img src="/images/hero-2.jpg" alt="" width="1600" height="1082" loading="lazy" decoding="async" class="w-full h-full object-cover object-center"/>
-      </div>
-      <div class="hero-slide absolute inset-0">
-        <img src="/images/hero-3.jpg" alt="" width="1600" height="1118" loading="lazy" decoding="async" class="w-full h-full object-cover object-center"/>
-      </div>
-    </div>
-
-    <!-- Ivory scrim: image reads through the middle, type stays legible -->
-    <div class="absolute inset-0 bg-gradient-to-b from-temple-base/92 via-temple-base/68 to-temple-base/95" aria-hidden="true"></div>
-    <div class="absolute inset-0 hero-grain pointer-events-none" aria-hidden="true"></div>
-
-    <!-- Hero Content -->
-    <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-16 pb-6 text-center sm:px-6">
-      <!-- Divine Badge -->
-      <div class="hero-enter relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-amber-300/80 text-amber-900 text-xs font-bold tracking-wide shadow-sm backdrop-blur-md shine shine-auto">
-        <span class="material-symbols-outlined text-base">temple_hindu</span>
-        <span x-text="t('hero', 'badge')"></span>
-      </div>
-
-      <!-- Headline: serif display, gold italic accent line -->
-      <h1 class="hero-enter font-display-lg text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-ink leading-[1.06] mt-6 text-balance" style="animation-delay: 80ms">
-        <span class="block" x-text="t('hero', 'titleA')"></span>
-        <span class="block text-amber-700" :class="lang === 'en' ? 'italic' : ''" x-text="t('hero', 'titleB')"></span>
-      </h1>
-
-      <!-- Gold hairline ornament -->
-      <div class="hero-enter rule-gold mt-6" style="animation-delay: 140ms" aria-hidden="true"></div>
-
-      <!-- Punchline -->
-      <p class="hero-enter text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed mt-5" style="animation-delay: 160ms" x-text="t('hero', 'punchline')"></p>
-
-      <!-- 3 Pillar Points (hairline, no pills) -->
-      <div class="hero-enter flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 pt-4 text-sm font-medium text-slate-700" style="animation-delay: 240ms">
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
-          <span x-text="t('hero', 'point1')"></span>
-        </span>
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
-          <span x-text="t('hero', 'point2')"></span>
-        </span>
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
-          <span x-text="t('hero', 'point3')"></span>
-        </span>
-      </div>
-
-      <!-- Actions -->
-      <div class="hero-enter flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 pt-7 w-full sm:w-auto" style="animation-delay: 320ms">
-        <a class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-600/20" href="#circuits">
-          <span class="material-symbols-outlined text-[20px]">explore</span>
-          <span x-text="t('hero', 'btnExplore')"></span>
-        </a>
-        <button
-          @click="statusModalOpen = true"
-          class="btn-ghost inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-ink font-bold text-sm sm:text-base">
-          <span class="material-symbols-outlined text-[20px] text-amber-700">verified_user</span>
-          <span x-text="t('hero', 'btnVerify')"></span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Statistics strip anchored to the hero base -->
-    <div class="relative z-10 mx-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
-      <div class="hero-enter grid grid-cols-2 md:grid-cols-4 gap-px bg-amber-200/70 rounded-2xl overflow-hidden border border-white/70 backdrop-blur-md shadow-card" style="animation-delay: 420ms">
-        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat1"></span>
-          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat1Lbl')"></span>
-        </div>
-        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat2"></span>
-          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat2Lbl')"></span>
-        </div>
-        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat3"></span>
-          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat3Lbl')"></span>
-        </div>
-        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat4"></span>
-          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat4Lbl')"></span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ========================================================================= -->
-  <!-- 3. DESTINATION MARQUEE                                                   -->
-  <!-- ========================================================================= -->
-  <div class="border-y border-line bg-white/50 py-3.5">
-    <div class="marquee">
-      <div class="marquee-track">
-        <div class="flex shrink-0 items-center gap-4 pr-4">
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Kashi</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Puri</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Rameswaram</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tirupati</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Shirdi</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Haridwar</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Dwarka</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Somnath</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Ujjain</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Gaya</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Mathura</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Vrindavan</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tanjore</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Connaur</span><span class="text-[9px] text-amber-500">&#9670;</span>
-        </div>
-        <div class="flex shrink-0 items-center gap-4 pr-4" aria-hidden="true">
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Kashi</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Puri</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Rameswaram</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tirupati</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Shirdi</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Haridwar</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Dwarka</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Somnath</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Ujjain</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Gaya</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Mathura</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Vrindavan</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tanjore</span><span class="text-[9px] text-amber-500">&#9670;</span>
-          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Connaur</span><span class="text-[9px] text-amber-500">&#9670;</span>
-        </div>
-      </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Kashi <i>✳</i></span><span>Puri <i>✳</i></span><span>Kedarnath <i>✳</i></span><span>Ayodhya <i>✳</i></span><span>Rameswaram <i>✳</i></span><span>Badrinath <i>✳</i></span><span>Ujjain <i>✳</i></span><span>Gangotri <i>✳</i></span><span>Omkareshwar <i>✳</i></span><span>Yamunotri <i>✳</i></span>
+      <span>Kashi <i>✳</i></span><span>Puri <i>✳</i></span><span>Kedarnath <i>✳</i></span><span>Ayodhya <i>✳</i></span><span>Rameswaram <i>✳</i></span><span>Badrinath <i>✳</i></span><span>Ujjain <i>✳</i></span><span>Gangotri <i>✳</i></span><span>Omkareshwar <i>✳</i></span><span>Yamunotri <i>✳</i></span>
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- 4. THE JOURNEY: four-step editorial timeline                             -->
-  <!-- ========================================================================= -->
-  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20" id="journey-highway">
-    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
-      <span class="eyebrow" x-text="t('highway', 'tag')"></span>
-      <div class="rule-gold mt-3" aria-hidden="true"></div>
-      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance" x-text="t('highway', 'title')"></h2>
-      <p class="text-base sm:text-lg text-muted mt-4" x-text="t('highway', 'desc')"></p>
-    </div>
-
-    <ol class="relative mx-auto grid max-w-6xl gap-12 md:grid-cols-4 md:gap-8" data-reveal-stagger>
-      <!-- Drawn hairline connector (desktop) -->
-      <div class="reveal reveal-fade absolute left-[12.5%] right-[12.5%] top-8 hidden md:block" aria-hidden="true">
-        <div class="draw-line w-full"></div>
+  <main>
+    <!-- ============================ INTRO / ROADMAP ============================ -->
+    <section class="intro" id="journey">
+      <div class="intro__grid container">
+        <div>
+          <div class="eyebrow eyebrow--dark" x-text="t('highway', 'tag')"></div>
+          <h2 class="section-title" x-text="t('highway', 'title')"></h2>
+        </div>
+        <p class="intro__text" x-text="t('highway', 'desc')"></p>
       </div>
 
-      <li class="reveal reveal-up flex flex-col items-center text-center">
-        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">01</span>
-        <span class="eyebrow mt-4"><span x-text="t('highway', 'step1') + ' • ' + t('highway', 'p1Month')"></span></span>
-        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p1Name')"></h3>
-        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm1Desc')"></p>
-      </li>
+      <div class="steps container">
+        <ol>
+          <li class="reveal">
+            <span class="step__num">01</span>
+            <h3 x-text="t('highway', 'p1Name')"></h3>
+            <p x-text="lang === 'odia' ? t('highway', 'step1') + ' • ' + t('highway', 'p1Month') : t('highway', 'step1') + ' • ' + t('highway', 'p1Month')"></p>
+            <p x-text="t('highway', 'm1Desc')"></p>
+          </li>
+          <li class="reveal">
+            <span class="step__num">02</span>
+            <h3 x-text="t('highway', 'p2Name')"></h3>
+            <p x-text="t('highway', 'step2') + ' • ' + t('highway', 'p2Month')"></p>
+            <p x-text="t('highway', 'm2Desc')"></p>
+          </li>
+          <li class="reveal">
+            <span class="step__num">03</span>
+            <h3 x-text="t('highway', 'p3Name')"></h3>
+            <p x-text="t('highway', 'step3') + ' • ' + t('highway', 'p3Month')"></p>
+            <p x-text="t('highway', 'm3Desc')"></p>
+          </li>
+          <li class="reveal">
+            <span class="step__num">04</span>
+            <h3 x-text="t('highway', 'p4Name')"></h3>
+            <p x-text="t('highway', 'step4') + ' • ' + t('highway', 'p4Month')"></p>
+            <p x-text="t('highway', 'm4Desc')"></p>
+          </li>
+        </ol>
+      </div>
+    </section>
 
-      <li class="reveal reveal-up flex flex-col items-center text-center">
-        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">02</span>
-        <span class="eyebrow mt-4"><span x-text="t('highway', 'step2') + ' • ' + t('highway', 'p2Month')"></span></span>
-        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p2Name')"></h3>
-        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm2Desc')"></p>
-      </li>
+    <!-- ============================ INTERLUDE ============================ -->
+    <section class="interlude" id="interlude">
+      <div class="interlude__image" aria-hidden="true"></div>
+      <div class="interlude__content container">
+        <div class="eyebrow">Pahile Yatra, Pachhare Shodha</div>
+        <h2>Travel first.<br/><em>Settle later.</em></h2>
+        <p x-text="lang === 'odia' ? 'ବିନା ଆର୍ଥିକ ଚିନ୍ତାରେ ବାପା-ମା’ଙ୍କୁ ତୀର୍ଥ କରାନ୍ତୁ' : 'Fulfill your parents’ sacred pilgrimage dream — without the financial worry.'"></p>
+      </div>
+    </section>
 
-      <li class="reveal reveal-up flex flex-col items-center text-center">
-        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">03</span>
-        <span class="eyebrow mt-4"><span x-text="t('highway', 'step3') + ' • ' + t('highway', 'p3Month')"></span></span>
-        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p3Name')"></h3>
-        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm3Desc')"></p>
-      </li>
-
-      <li class="reveal reveal-up flex flex-col items-center text-center">
-        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">04</span>
-        <span class="eyebrow mt-4"><span x-text="t('highway', 'step4') + ' • ' + t('highway', 'p4Month')"></span></span>
-        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p4Name')"></h3>
-        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm4Desc')"></p>
-      </li>
-    </ol>
-
-    <div class="reveal reveal-up mx-auto mt-14 flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-line pt-7 text-center text-xs text-muted">
-      <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-lg text-amber-600">directions_bus</span>
-        <span x-text="t('highway', 'banner')"></span>
-      </span>
-      <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-lg text-amber-600">handyman</span>
-        <span x-text="lang === 'odia' ? 'ସମସ୍ତ ଧାପ ଆପଣଙ୍କ ଗାଁ ସହାୟକଙ୍କ ସହାୟତାରେ' : 'Every step handled with your village Sahayak'"></span>
-      </span>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 5. THE MICRO-EMI ADVANTAGE                                               -->
-  <!-- ========================================================================= -->
-  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20 border-t border-line bg-temple-warm/50" id="advantage">
-    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
-      <span class="eyebrow">
-        <span x-text="lang === 'odia' ? 'ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ' : 'TRAVEL FIRST, SETTLE LATER'"></span>
-      </span>
-      <div class="rule-gold mt-3" aria-hidden="true"></div>
-      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance">
-        <span x-text="lang === 'odia' ? 'ବିନା ଆର୍ଥିକ ଚିନ୍ତାରେ ବାପା-ମା’ଙ୍କୁ ତୀର୍ଥ କରାନ୍ତୁ' : 'Fulfill Your Parents Sacred Pilgrimage Dream with Ease'"></span>
-      </h2>
-      <p class="text-base sm:text-lg text-muted mt-4">
-        <span x-text="lang === 'odia' ? 'କୌଣସି ବ୍ୟାଙ୍କ ଋଣ ନାହିଁ, କୌଣସି କାଗଜପତ୍ର ଝମେଲା ନାହିଁ। କେବଳ ୨ଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ!' : 'No bank loans, zero paperwork hassle. Board your premium deluxe bus after paying just 2 installments!'"></span>
-      </p>
-    </div>
-
-    <div class="mx-auto grid max-w-6xl gap-6 md:grid-cols-3" data-reveal-stagger>
-      <!-- Bento 1: Travel First (Spans 2 cols) -->
-      <div class="reveal reveal-scale md:col-span-2">
-        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between relative overflow-hidden">
+    <!-- ============================ PACKAGES ============================ -->
+    <section class="packages" id="circuits" aria-labelledby="circuits-title">
+      <div class="container">
+        <div class="packages__heading">
           <div>
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <span class="eyebrow">
-                <span x-text="lang === 'odia' ? 'ଭାରତଯାତ୍ରା ସ୍ପେଶାଲ୍ ନିୟମ' : 'BharatYatra Flagship Rule'"></span>
-              </span>
-              <span class="text-xs font-bold flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 text-emerald-700">
-                <span class="material-symbols-outlined text-[16px]">lock_open</span>
-                <span x-text="lang === 'odia' ? '୨୦% ପରେ ବୋର୍ଡିଂ ଅନୁମତି' : 'Boarding Granted at 20%'"></span>
-              </span>
-            </div>
-            <h3 class="font-headline-md text-2xl sm:text-3xl text-ink font-medium">
-              <span x-text="lang === 'odia' ? 'ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ (Travel First, Settle Later)' : 'Travel First, Settle Later (Pahile Yatra, Pachhare Shodha)'"></span>
-            </h3>
-            <p class="text-sm sm:text-base text-muted mt-3 max-w-xl leading-relaxed">
-              <span x-text="lang === 'odia' ? 'ଅନ୍ୟ ଟ୍ରାଭେଲ ଏଜେନ୍ସି ପୂରା ଟଙ୍କା ଆଗୁଆ ମାଗନ୍ତି। କିନ୍ତୁ ଏଠାରେ ମାତ୍ର ଦୁଇଟି କିସ୍ତି ପରେ ଯାତ୍ରା ସିଟ୍ କନଫର୍ମ!' : 'Traditional tour agencies require 100% upfront fees. BharatYatra clears your boarding pass as soon as Month 2 is cleared.'"></span>
-            </p>
+            <div class="eyebrow eyebrow--dark" x-text="lang === 'odia' ? 'ତୀର୍ଥ ପ୍ୟାକେଜ୍ ସମୂହ' : 'CURATED PILGRIMAGE CIRCUITS'"></div>
+            <h2 class="section-title" id="circuits-title"><span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରୁ ଆରମ୍ଭ ହେଉଥିବା ପବିତ୍ର ଯାତ୍ରା' : 'Sacred journeys from Odisha'"></span><em>.</em></h2>
           </div>
-
-          <div class="mt-6 pt-5 border-t border-line">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="p-4 rounded-xl bg-temple-warm border border-line">
-                <div class="eyebrow text-[10px]">
-                  <span x-text="lang === 'odia' ? 'ମାସ ୦୧ (ଆରମ୍ଭ)' : 'MONTH 01 (START)'"></span>
-                </div>
-                <div class="font-semibold text-sm text-ink mt-1">
-                  <span x-text="lang === 'odia' ? 'ଯାତ୍ରା ସଂକଳ୍ପ' : 'Yatra Token'"></span>
-                </div>
-                <p class="text-xs text-muted mt-1">
-                  <span x-text="lang === 'odia' ? 'ଘରେ ବସି ପାସବୁକ୍ ପାଆନ୍ତୁ।' : 'Receive your physical passbook at doorstep.'"></span>
-                </p>
-              </div>
-              <div class="p-4 rounded-xl bg-amber-50/70 border-2 border-amber-400">
-                <div class="text-[11px] uppercase font-bold tracking-widest text-amber-800">
-                  <span x-text="lang === 'odia' ? 'ମାସ ୦୨ (କ୍ଲିୟର୍)' : 'MONTH 02 (CLEARED)'"></span>
-                </div>
-                <div class="font-semibold text-sm text-ink mt-1">
-                  <span x-text="lang === 'odia' ? 'ବସ୍ ଚଢ଼ିବା ଅନୁମତି!' : 'Coach Boarding Active!'"></span>
-                </div>
-                <p class="text-xs text-slate-600 mt-1">
-                  <span x-text="lang === 'odia' ? 'ଟିକେଟ୍ ଅନଲକ୍। ସପରିବାର ଯାତ୍ରା କରନ୍ତୁ।' : 'Board the premium deluxe bus with family.'"></span>
-                </p>
-              </div>
-              <div class="p-4 rounded-xl bg-white border border-line">
-                <div class="eyebrow text-[10px]">
-                  <span x-text="lang === 'odia' ? 'ମାସ ୦୩-୧୦' : 'MONTH 03 - 10'"></span>
-                </div>
-                <div class="font-semibold text-sm text-ink mt-1">
-                  <span x-text="lang === 'odia' ? 'ଫେରିବା ପରେ ଶୋଧ' : 'Post-Travel EMIs'"></span>
-                </div>
-                <p class="text-xs text-muted mt-1">
-                  <span x-text="lang === 'odia' ? 'ଫସଲ ଅମଳ ଅନୁସାରେ ସହଜରେ ଶୁଝନ୍ତୁ।' : 'Clear remaining dues with harvest income.'"></span>
-                </p>
-              </div>
-            </div>
-          </div>
+          <p x-text="lang === 'odia' ? 'ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'Premium deluxe bus, VIP darshan, and satvik meals on every journey.'"></p>
         </div>
-      </div>
 
-      <!-- Bento 2: Zero Banking Friction -->
-      <div class="reveal reveal-scale">
-        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-xl bg-temple-warm border border-amber-200 flex items-center justify-center text-amber-700 mb-4">
-              <span class="material-symbols-outlined text-[26px]">fingerprint</span>
-            </div>
-            <h3 class="font-headline-md text-2xl text-ink font-medium">
-              <span x-text="lang === 'odia' ? 'ବ୍ୟାଙ୍କ CIBIL ର ଚିନ୍ତା ନାହିଁ' : 'Zero Banking Friction'"></span>
-            </h3>
-            <p class="text-sm text-muted mt-3 leading-relaxed">
-              <span x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ କିମ୍ବା ବ୍ୟାଙ୍କ ଚକ୍କର କାଟିବା ଦରକାର ନାହିଁ।' : 'No credit score checks or complicated banking paperwork.'"></span>
-            </p>
-            <div class="mt-5 space-y-3">
-              <div class="flex items-center gap-2.5 text-sm text-slate-700">
-                <span class="material-symbols-outlined text-amber-600 text-[18px]">check_circle</span>
-                <span x-text="lang === 'odia' ? '୩ ମିନିଟ୍ ରେ ଆଧାର ଯାଞ୍ଚ' : '3-Minute Aadhaar e-KYC'"></span>
-              </div>
-              <div class="flex items-center gap-2.5 text-sm text-slate-700">
-                <span class="material-symbols-outlined text-amber-600 text-[18px]">check_circle</span>
-                <span x-text="lang === 'odia' ? 'ଫସଲ ଡେରିରେ କୌଣସି ପେନାଲ୍ଟି ନାହିଁ' : 'No delay penalties during harvest seasons'"></span>
-              </div>
-              <div class="flex items-center gap-2.5 text-sm text-slate-700">
-                <span class="material-symbols-outlined text-amber-600 text-[18px]">check_circle</span>
-                <span x-text="lang === 'odia' ? '୧୦୦% ସଂରକ୍ଷିତ ସ୍ଲିପର ସିଟ୍ ଟୋକନ୍' : '100% Guaranteed Sleeper Seat Token'"></span>
-              </div>
-            </div>
-          </div>
-          <div class="mt-6 pt-4 border-t border-line flex items-center justify-between text-[11px] uppercase tracking-widest text-muted">
-            <span class="font-bold">Odisha Trust Code</span>
-            <span class="font-mono font-bold text-amber-700 normal-case">JAGANNATH-2026</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bento 3: Doorstep Sahayak -->
-      <div class="reveal reveal-scale">
-        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between">
-          <div>
-            <div class="w-12 h-12 rounded-xl bg-temple-warm border border-amber-200 flex items-center justify-center text-amber-700 mb-4">
-              <span class="material-symbols-outlined text-[26px]">home_pin</span>
-            </div>
-            <h3 class="font-headline-md text-2xl text-ink font-medium">
-              <span x-text="lang === 'odia' ? 'ଘରେ ବସି ସହାୟକ ଭାଇ' : 'Doorstep Village Sahayak'"></span>
-            </h3>
-            <p class="text-sm text-muted mt-3 leading-relaxed">
-              <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ନିଜ ପଞ୍ଚାୟତର ସହାୟକ ଭାଇ ମେସିନ୍ ଧରି ଘରକୁ ଆସିବେ।' : 'Trained youth from your own Gram Panchayat visit your home with hand-held POS.'"></span>
-            </p>
-            <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-outlined text-amber-600 text-[17px]">receipt_long</span>
-                <span x-text="lang === 'odia' ? 'ହାତୋହାତ ଥର୍ମାଲ ପ୍ରିଣ୍ଟ୍ ରସିଦ୍ ସ୍ଲିପ୍' : 'Instant thermal print receipt slip'"></span>
-              </li>
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-outlined text-amber-600 text-[17px]">chat</span>
-                <span x-text="lang === 'odia' ? 'ଓଡ଼ିଆ SMS ଓ WhatsApp ସୂଚନା' : 'Instant regional SMS and WhatsApp confirmations'"></span>
-              </li>
-              <li class="flex items-center gap-2.5">
-                <span class="material-symbols-outlined text-amber-600 text-[17px]">verified</span>
-                <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ସୁରକ୍ଷିତ ଖାତା ରେଜିଷ୍ଟର' : 'Offline verified cryptographic security'"></span>
-              </li>
-            </ul>
-          </div>
-          <div class="mt-6 pt-4 border-t border-line">
-            <span class="text-xs font-bold text-amber-700 flex items-center gap-2 uppercase tracking-wide">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରେ ୧,୪୫୦+ ଗ୍ରାମ ପଞ୍ଚାୟତ' : '1,450+ Gram Panchayats in Odisha'"></span>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bento 4: 100% Satvik Food (Spans 2 cols) -->
-      <div class="reveal reveal-scale md:col-span-2">
-        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between relative overflow-hidden">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-            <div>
-              <span class="eyebrow">
-                <span x-text="lang === 'odia' ? 'ଆହାର ଶୁଦ୍ଧତା' : 'SATVIK PURITY'"></span>
-              </span>
-              <h3 class="font-headline-md text-2xl sm:text-3xl text-ink font-medium mt-3">
-                <span x-text="lang === 'odia' ? '୧୦୦% ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ଆହାର' : '100% Pure Satvik Meals'"></span>
-              </h3>
-              <p class="text-sm text-muted mt-3 leading-relaxed">
-                <span x-text="lang === 'odia' ? 'ବାପା-ମା’ଙ୍କ ଖାଦ୍ୟପେୟରେ କୌଣସି ସାଲିସ୍ ନାହିଁ। ବସ୍ ସହିତ ଓଡ଼ିଶାର ରୋଷେୟା (ମହାରାଜ) ଓ ପୁରୋହିତ ଯାଆନ୍ତି।' : 'Dedicated Odia cooks (Maharaj) and priests accompany every tour with kitchen trailers.'"></span>
-              </p>
-              <div class="mt-5 grid grid-cols-2 gap-3">
-                <div class="p-3.5 rounded-xl bg-temple-warm border border-line">
-                  <div class="text-amber-800 font-bold text-xs flex items-center gap-1.5 uppercase tracking-wide">
-                    <span class="material-symbols-outlined text-amber-700 text-[17px]">eco</span>
-                    <span x-text="lang === 'odia' ? 'ବିନା ପିଆଜ-ରସୁଣ' : 'No Onion, No Garlic'"></span>
-                  </div>
-                  <div class="text-xs text-muted mt-1">
-                    <span x-text="lang === 'odia' ? 'ଘରୋଇ ରୋଷେଇ ବ୍ୟବସ୍ଥା' : 'Fresh kitchen setup'"></span>
-                  </div>
-                </div>
-                <div class="p-3.5 rounded-xl bg-temple-warm border border-line">
-                  <div class="text-amber-800 font-bold text-xs flex items-center gap-1.5 uppercase tracking-wide">
-                    <span class="material-symbols-outlined text-amber-700 text-[17px]">temple_hindu</span>
-                    <span x-text="lang === 'odia' ? 'ଭିଆଇପି ଦର୍ଶନ ସୁବିଧା' : 'VIP Darshan Pass'"></span>
-                  </div>
-                  <div class="text-xs text-muted mt-1">
-                    <span x-text="lang === 'odia' ? 'ବୟସ୍କ ସେବା ସୁବିଧା' : 'Elderly care assistance'"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-temple-warm border border-amber-200/70 flex flex-col items-start">
-              <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 mb-3 border border-amber-200">
-                <span class="material-symbols-outlined text-2xl">self_improvement</span>
-              </div>
-              <div class="font-headline-md text-xl text-amber-900 font-medium italic">"Moksha Bina Bojh Re"</div>
-              <p class="text-xs text-muted mt-1.5 max-w-xs">
-                <span x-text="lang === 'odia' ? 'ଗଙ୍ଗା ସ୍ନାନ, ଆଳତି ଓ ପ୍ରସାଦ ସମ୍ପୂର୍ଣ୍ଣ ମର୍ଯ୍ୟାଦା ସହିତ ପରିଚାଳିତ।' : 'Every snan, aarti, and sacred prasad box is reverently pre-arranged.'"></span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 6. CURATED SACRED TOUR CIRCUITS (Vanilla-Tilt 3D CARDS)                   -->
-  <!-- ========================================================================= -->
-  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20" id="circuits">
-    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
-      <span class="eyebrow">
-        <span x-text="lang === 'odia' ? 'ତୀର୍ଥ ପ୍ୟାକେଜ୍ ସମୂହ' : 'CURATED PILGRIMAGE CIRCUITS'"></span>
-      </span>
-      <div class="rule-gold mt-3" aria-hidden="true"></div>
-      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance">
-        <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରୁ ଆରମ୍ଭ ହେଉଥିବା ପବିତ୍ର ଯାତ୍ରା' : 'Sacred Tirtha Packages from Odisha'"></span>
-      </h2>
-      <p class="text-base sm:text-lg text-muted mt-4">
-        <span x-text="lang === 'odia' ? 'ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍, ଆଶ୍ରମ ରହଣି, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'All packages include premium deluxe bus berths, hotel stays, VIP darshan protocol, and 3 satvik meals daily.'"></span>
-      </p>
-    </div>
-
-    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal-stagger>
-      <template x-for="pkg in packages" :key="pkg.id">
-        <div
-          class="reveal reveal-up group cursor-pointer"
-          @click="selectPackage(pkg)">
-          <div class="package-tilt-card h-full rounded-2xl bg-white border border-line overflow-hidden flex flex-col justify-between shadow-card transition-shadow duration-300 hover:shadow-card-hover">
-            <div>
-              <!-- Visual -->
-              <div class="relative h-56 w-full overflow-hidden bg-slate-100">
+        <div class="package-grid" id="package-grid">
+          <template x-for="pkg in filteredPackages" :key="pkg.id">
+            <article
+              class="package-card package-tilt-card reveal"
+              @click="selectPackage(pkg)">
+              <div class="package-card__image">
                 <img
-                  :alt="pkg.title"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   :src="pkg.image"
+                  :alt="pkg.title"
                   loading="lazy"
                   decoding="async"
                   onerror="this.onerror=null;this.src='/images/hero-1.jpg'"/>
-                <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"></div>
-
-                <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-line text-[10px] uppercase tracking-widest text-slate-700 font-bold">
-                  <span x-text="lang === 'odia' ? pkg.duration_days + ' ଦିନ' : pkg.duration_days + ' Days'"></span>
-                </div>
-                <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-charcoal/85 backdrop-blur text-[10px] uppercase tracking-widest text-amber-300 font-bold">
-                  <span x-text="pkg.badge"></span>
+                <span class="package-card__tag" x-text="pkg.badge"></span>
+              </div>
+              <div class="package-card__body">
+                <div class="package-card__meta" x-text="pkg.duration_days + ' Days'"></div>
+                <h3 x-text="pkg.title"></h3>
+                <p class="package-card__description" x-text="pkg.odia_destination || pkg.destination"></p>
+                <div class="package-card__footer">
+                  <div class="package-card__price"><small>From ₹<span x-text="Math.round(pkg.total_price / pkg.allowed_tenures[0]).toLocaleString('en-IN')"></span>/mo</small>₹<span x-text="pkg.total_price.toLocaleString('en-IN')"></span></div>
+                  <button
+                    class="package-card__button"
+                    type="button"
+                    @click.stop="selectPackage(pkg)"
+                    :aria-label="'Plan ' + pkg.title">↗</button>
                 </div>
               </div>
-
-              <!-- Content -->
-              <div class="p-5">
-                <div class="eyebrow text-[10px]" x-text="pkg.odia_title"></div>
-                <h3 class="font-headline-md text-xl text-ink font-medium mt-1 leading-snug" x-text="pkg.title"></h3>
-                <p class="text-xs text-muted mt-1.5 line-clamp-2" x-text="lang === 'odia' ? pkg.odia_destination : pkg.destination"></p>
-
-                <div class="mt-3 flex flex-wrap gap-1.5">
-                  <template x-for="hl in pkg.highlights" :key="hl">
-                    <span class="px-2 py-0.5 rounded border border-line bg-temple-warm text-[11px] text-slate-600 font-medium" x-text="hl"></span>
-                  </template>
-                </div>
-
-                <div class="mt-4 pt-4 border-t border-line flex items-baseline justify-between">
-                  <div>
-                    <div class="text-[10px] uppercase font-bold tracking-widest text-muted">
-                      <span x-text="lang === 'odia' ? 'ମାସିକ କିସ୍ତି' : 'Monthly EMI'"></span>
-                    </div>
-                    <div class="font-finance-display text-xl text-amber-700 font-bold tabular-nums">
-                      ₹<span x-text="Math.round(pkg.total_price / 9).toLocaleString('en-IN')"></span>
-                      <span class="text-xs font-normal text-muted">/ mo</span>
-                    </div>
-                  </div>
-                  <div class="text-right">
-                    <div class="text-[10px] uppercase font-bold tracking-widest text-muted">
-                      <span x-text="lang === 'odia' ? 'ଦୈନିକ ଖର୍ଚ୍ଚ' : 'Daily Cost'"></span>
-                    </div>
-                    <span class="font-finance-body text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold tabular-nums">
-                      ₹<span x-text="Math.round(pkg.total_price / 270)"></span>
-                      <span x-text="lang === 'odia' ? '/ ଦିନ' : '/ day'"></span>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="p-4 pt-0">
-              <button
-                class="w-full py-2.5 rounded-xl border border-amber-600/60 text-amber-700 hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
-                <span x-text="lang === 'odia' ? 'ଯାତ୍ରା ସଞ୍ଚୟ ପ୍ଲାନ୍ କରନ୍ତୁ' : 'Plan Yatra Sanchay'"></span>
-                <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 7. DYNAMIC MICRO-SAVINGS TRAVEL SIMULATOR (EMI CALCULATOR)                -->
-  <!-- ========================================================================= -->
-  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-24 border-t border-line bg-temple-warm/50" id="emi-calculator-section">
-    <div class="reveal reveal-up mx-auto max-w-6xl rounded-3xl bg-white border border-line shadow-card overflow-hidden relative">
-      <div class="p-6 sm:p-10">
-        <div class="max-w-3xl mx-auto mb-12 text-center">
-          <span class="eyebrow" x-text="t('calculator', 'tag')"></span>
-          <div class="rule-gold mt-3" aria-hidden="true"></div>
-          <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance" x-text="t('calculator', 'title')"></h2>
-          <p class="text-base sm:text-lg text-muted mt-4" x-text="t('calculator', 'desc')"></p>
+            </article>
+          </template>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          <!-- Controls -->
-          <div class="lg:col-span-7 space-y-6">
-            <!-- Circuit -->
+        <p class="empty-state" id="empty-state" :class="filteredPackages.length ? '' : 'is-visible'" x-text="lang === 'odia' ? 'କୌଣସି ପ୍ୟାକେଜ୍ ମିଳିଲା ନାହିଁ। ଅନ୍ୟ ଗନ୍ତବ୍ୟ ଚେଷ୍ଟା କରନ୍ତୁ।' : 'No trips match that combination. Try another destination or travel style.'"></p>
+      </div>
+    </section>
+
+    <!-- ============================ EMI CALCULATOR ============================ -->
+    <section class="calculator" id="emi-calculator-section" aria-labelledby="calculator-title">
+      <div class="container">
+        <div class="calc-head">
+          <div class="eyebrow eyebrow--dark" x-text="t('calculator', 'tag')"></div>
+          <h2 class="section-title" id="calculator-title" x-text="t('calculator', 'title')"></h2>
+          <p x-text="t('calculator', 'desc')"></p>
+        </div>
+
+        <div class="calculator__card">
+          <div class="calc-grid">
             <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-3" x-text="t('calculator', 'choosePkg')"></label>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="circuit-selector">
+              <p class="calc-label" x-text="t('calculator', 'choosePkg')"></p>
+              <div class="circuit-selector" id="circuit-selector">
                 <template x-for="p in packages" :key="p.id">
                   <button
+                    class="calc-option"
                     type="button"
                     @click="selectPackage(p)"
-                    :class="selectedPackage.id === p.id ? 'border-amber-500 bg-amber-50/70 text-amber-900 shadow-sm' : 'border-line bg-white text-slate-700 hover:border-amber-300'"
-                    class="p-4 rounded-xl text-left border transition-all">
-                    <div class="font-bold text-sm" x-text="lang === 'odia' ? p.odia_title : p.title"></div>
-                    <div class="text-xs text-muted mt-1">
-                      <span x-text="p.duration_days + ' Days • '"></span>
-                      <span class="font-finance-body font-bold text-amber-700 tabular-nums">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></span>
-                    </div>
+                    :aria-pressed="selectedPackage && selectedPackage.id === p.id ? 'true' : 'false'">
+                    <span class="calc-option__days" x-text="p.duration_days + ' Days'"></span>
+                    <b x-text="p.title"></b>
+                    <small>₹<span x-text="p.total_price.toLocaleString('en-IN')"></span> &nbsp;<b>EMI ₹<span x-text="Math.round(p.total_price / 9).toLocaleString('en-IN')"></span>/mo</b></small>
                   </button>
                 </template>
               </div>
+
+              <div class="tenure-choice">
+                <p class="calc-label" x-text="t('calculator', 'chooseTenure')"></p>
+                <div class="choice-pills" id="tenure-selector">
+                  <template x-for="ten in selectedPackage.allowed_tenures" :key="ten">
+                    <button
+                      class="choice-pill"
+                      type="button"
+                      @click="selectedTenure = ten"
+                      :aria-pressed="selectedTenure === ten ? 'true' : 'false'">
+                      <span x-text="ten + ' ' + (lang === 'odia' ? 'ମାସ' : 'Months')"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+
+              <div class="progress-box">
+                <div class="progress-box__head">
+                  <span x-text="t('calculator', 'statusLbl')"></span>
+                  <span class="gold" x-text="'₹' + travelUnlockCost.toLocaleString('en-IN')"></span>
+                </div>
+                <div class="progress-track" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :aria-label="t('calculator', 'statusLbl')">
+                  <div class="progress-fill" :style="'width:' + progressPercent + '%'"></div>
+                </div>
+                <div class="progress-box__foot">
+                  <span x-text="lang === 'odia' ? 'ଟୋକେନ ୧ (ଆରମ୍ଭ)' : 'Token 1 (Start)'"></span>
+                  <span x-text="t('calculator', 'unlockMsg')"></span>
+                  <span x-text="lang === 'odia' ? 'ଚୂଡ଼ାନ୍ତ ସେଟଲମେଣ୍ଟ' : 'Final Settlement'"></span>
+                </div>
+              </div>
             </div>
 
-            <!-- Tenure -->
             <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-3" x-text="t('calculator', 'chooseTenure')"></label>
-              <div class="flex flex-wrap gap-2.5" id="tenure-selector">
-                <template x-for="ten in selectedPackage.allowed_tenures" :key="ten">
-                  <button
-                    type="button"
-                    @click="selectedTenure = ten"
-                    :class="selectedTenure === ten ? 'border-amber-500 bg-amber-500 text-white font-bold shadow-md shadow-amber-500/20' : 'border-line bg-white text-slate-700 hover:border-amber-300 font-semibold'"
-                    class="px-6 py-2.5 rounded-xl text-sm border transition-all active:scale-95">
-                    <span x-text="ten + ' ' + (lang === 'odia' ? 'ମାସ' : 'Months')"></span>
-                  </button>
-                </template>
-              </div>
-            </div>
-
-            <!-- Boarding progress -->
-            <div class="p-5 rounded-2xl bg-temple-warm border border-line">
-              <div class="flex flex-wrap items-center justify-between gap-2 text-sm mb-2">
-                <span class="text-slate-700 font-medium" x-text="t('calculator', 'statusLbl')"></span>
-                <span class="text-emerald-700 font-finance-body font-bold tabular-nums text-xs">
-                  <span x-text="lang === 'odia' ? 'ବୋର୍ଡିଂ ଅନଲକ୍' : 'Boarding Unlocked at'"></span> ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span>
-                  <span x-text="lang === 'odia' ? 'ପୈଠ!' : 'Paid!'"></span>
-                </span>
-              </div>
-              <div
-                class="w-full h-2.5 bg-amber-100 rounded-full overflow-hidden border border-amber-200"
-                role="progressbar"
-                :aria-valuenow="progressPercent"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                :aria-label="t('calculator', 'statusLbl')">
-                <div
-                  class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500"
-                  :style="'width: ' + progressPercent + '%'"></div>
-              </div>
-              <div class="flex items-center justify-between text-[11px] text-muted mt-2">
-                <span x-text="lang === 'odia' ? 'ଟୋକେନ ୧ (ଆରମ୍ଭ)' : 'Token 1 (Start)'"></span>
-                <span class="text-emerald-700 font-bold" x-text="t('calculator', 'unlockMsg')"></span>
-                <span x-text="lang === 'odia' ? 'ଚୂଡ଼ାନ୍ତ ସେଟଲମେଣ୍ଟ' : 'Final Settlement'"></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Result: charcoal panel with gold figure -->
-          <div class="lg:col-span-5">
-            <div class="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-charcoal p-6 sm:p-7 text-white shadow-xl">
-              <!-- Ambient gold glow -->
-              <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-amber-500/20 blur-3xl pointer-events-none" aria-hidden="true"></div>
-
-              <div class="relative flex items-center justify-between">
-                <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300" x-text="t('calculator', 'estEmiLbl')"></span>
-                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold">
-                  <span x-text="lang === 'odia' ? 'ସ୍ୱୟଂଚାଳିତ ଅନୁମୋଦିତ' : 'Auto Approved'"></span>
-                </span>
-              </div>
-
-              <div class="relative mt-4 flex items-baseline gap-2">
-                <span class="font-finance-display text-5xl font-bold text-amber-400 tabular-nums" :class="emiPulse ? 'pop-change' : ''">
-                  ₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span>
-                </span>
-                <span class="text-stone-400 text-sm font-medium" x-text="t('calculator', 'perMonth')"></span>
-              </div>
-
-              <div class="relative mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/10 border border-white/15 text-amber-100 font-finance-body text-xs font-bold">
-                <span class="material-symbols-outlined text-amber-400 text-[15px]">local_cafe</span>
-                <span><span x-text="t('calculator', 'teaCompare')"></span> (₹<span x-text="dailyCost"></span>/day)</span>
-              </div>
-
-              <div class="relative my-5 border-t border-white/10"></div>
-
-              <div class="relative space-y-2.5 text-sm">
-                <div class="flex justify-between gap-3">
-                  <span class="text-stone-400" x-text="t('calculator', 'toBoardLbl')"></span>
-                  <span class="font-finance-body text-amber-300 font-bold tabular-nums text-right">
-                    ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> <span x-text="lang === 'odia' ? '(ମାସ ୧ + ମାସ ୨)' : '(Month 1 + 2)'"></span>
-                  </span>
+              <div class="calc-result">
+                <div class="calc-result__head">
+                  <span x-text="t('calculator', 'estEmiLbl')"></span>
+                  <span class="calc-result__badge" x-text="lang === 'odia' ? 'ସ୍ୱୟଂଚାଳିତ ଅନୁମୋଦିତ' : 'Auto Approved'"></span>
                 </div>
-                <div class="flex justify-between gap-3">
-                  <span class="text-stone-400" x-text="t('calculator', 'postTravelLbl')"></span>
-                  <span class="font-finance-body text-white font-bold tabular-nums text-right">
-                    ₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> (<span x-text="remainingTenure + ' ' + (lang === 'odia' ? 'ପରବର୍ତ୍ତୀ କିସ୍ତି' : 'post-trip EMIs')"></span>)
-                  </span>
-                </div>
-                <div class="flex justify-between gap-3">
-                  <span class="text-stone-400" x-text="t('calculator', 'channelLbl')"></span>
-                  <span class="font-semibold text-white text-right" x-text="t('calculator', 'channelVal')"></span>
-                </div>
-              </div>
+                <div class="calc-result__emi">₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span> <small x-text="t('calculator', 'perMonth')"></small></div>
 
-              <button
-                @click="statusModalOpen = true"
-                class="btn-primary relative w-full mt-6 py-3.5 rounded-xl text-white font-bold text-sm"
-                x-text="t('calculator', 'bookBtn')">
-              </button>
-              <p class="relative text-xs text-center text-stone-500 mt-2.5">
-                <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଗାଁ ସହାୟକ ଭାଇ ଘରେ ଆସି ରସିଦ୍ ଦେବେ' : 'Printed paper slip issued right at your doorstep'"></span>
-              </p>
+                <div class="calc-result__rows">
+                  <div class="calc-result__row">
+                    <span x-text="t('calculator', 'toBoardLbl')"></span>
+                    <b>₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span></b>
+                  </div>
+                  <div class="calc-result__row">
+                    <span x-text="t('calculator', 'postTravelLbl')"></span>
+                    <b>₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> <span x-text="'(' + remainingTenure + ')'"></span></b>
+                  </div>
+                  <div class="calc-result__row">
+                    <span x-text="t('calculator', 'channelLbl')"></span>
+                    <b class="gold" x-text="t('calculator', 'channelVal')"></b>
+                  </div>
+                </div>
+
+                <p class="calc-result__footnote">➤ <span x-text="t('calculator', 'teaCompare')"></span></p>
+
+                <button class="button" type="button" @click="statusModalOpen = true" x-text="t('calculator', 'bookBtn')"></button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================================= -->
-  <!-- 8. GOLDEN VIP TRAVEL PASS PREVIEW                                        -->
-  <!-- ========================================================================= -->
-  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20" id="verification-pass">
-    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
-      <span class="eyebrow">
-        <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ପ୍ରମାଣପତ୍ର' : 'OFFLINE TRAVEL CERTIFICATE'"></span>
-      </span>
-      <div class="rule-gold mt-3" aria-hidden="true"></div>
-      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance">
-        <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଅଧିକୃତ ତୀର୍ଥଯାତ୍ରୀ ବୋର୍ଡିଂ ପାସ୍' : 'Your Official Pilgrim Boarding Pass'"></span>
-      </h2>
-      <p class="text-base sm:text-lg text-muted mt-4">
-        <span x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ ଦରକାର ନାହିଁ। ଗାଁ ସହାୟକ ଭାଇ ଷ୍ଟାମ୍ପ୍ ଓ ବାରକୋଡ୍ ସହିତ ଫିଜିକାଲ୍ ପାସ୍ ଘରେ ପ୍ରଦାନ କରିବେ।' : 'Smartphone not required. Devotees receive a physical gold-embossed travel pass stamped by their village Sahayak.'"></span>
-      </p>
-    </div>
+    <!-- ============================ TRAVEL PASS ============================ -->
+    <section class="pass" id="pass" aria-labelledby="pass-title">
+      <div class="container">
+        <div class="pass-head">
+          <div class="eyebrow eyebrow--dark" x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ପ୍ରମାଣପତ୍ର' : 'OFFLINE TRAVEL CERTIFICATE'"></div>
+          <h2 class="section-title" id="pass-title" x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଅଧିକୃତ ତୀର୍ଥଯାତ୍ରୀ ବୋର୍ଡିଂ ପାସ୍' : 'Your Official Pilgrim Boarding Pass'"></h2>
+          <p x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ ଦରକାର ନାହିଁ। ଗାଁ ସହାୟକ ଭାଇ ଷ୍ଟାମ୍ପ୍ ଓ ବାରକୋଡ୍ ସହିତ ଫିଜିକାଲ୍ ପାସ୍ ଘରେ ପ୍ରଦାନ କରିବେ।' : 'Smartphone not required. Devotees receive a physical gold-embossed travel pass stamped by their village Sahayak.'"></p>
+        </div>
 
-    <div class="reveal reveal-up max-w-4xl mx-auto">
-      <div class="rounded-3xl bg-white border border-line shadow-card relative overflow-hidden">
-        <div class="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 shine"></div>
+        <div class="pass__card">
+          <div class="pass__goldline" aria-hidden="true"></div>
+          <div class="pass__body">
+            <div class="pass__left">
+              <div class="pass__head">
+                <div class="pass__medal" aria-hidden="true">✳</div>
+                <div>
+                  <b>BharatYatra Royal Pass</b>
+                  <small>National Pilgrimage Micro-Credit Board • Odisha Division</small>
+                </div>
+              </div>
 
-        <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-          <!-- Pass body -->
-          <div class="md:col-span-8 space-y-4">
-            <div class="flex flex-wrap items-center justify-between border-b border-line pb-4 gap-3">
-              <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-full bg-temple-warm border border-amber-200 flex items-center justify-center text-amber-700">
-                  <span class="material-symbols-outlined text-[20px]">flag</span>
+              <div class="pass__grid">
+                <div>
+                  <label>Devotee Head of Family</label>
+                  <b>Pandit Rameshwar Mohapatra &amp; Parivar</b>
+                  <small>Village: Pipili, Puri District, Odisha</small>
                 </div>
                 <div>
-                  <span class="font-display-lg text-xl text-ink font-semibold">BharatYatra Royal Pass</span>
-                  <div class="text-[10px] text-amber-700 font-bold uppercase tracking-[0.18em]">National Pilgrimage Micro-Credit Board • Odisha Division</div>
+                  <label>Sacred Circuit</label>
+                  <b class="gold">Char Dham Himalayan Yatra</b>
+                  <small>Coach #OD-02-BY-108 (Premium Deluxe Bus)</small>
+                </div>
+                <div>
+                  <label>Pass Reference</label>
+                  <b>BY-OD-884920</b>
+                  <small>Pickup Hub: Bhubaneswar Baramunda</small>
+                </div>
+                <div>
+                  <label>Sleeper Berths</label>
+                  <b>L-04, L-05 (Lower)</b>
+                  <small>Verified by Sahayak Agent: Sanjay Sahu (OD-SHK-204)</small>
                 </div>
               </div>
-              <div class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                ELIGIBLE TO TRAVEL (Month 2 Cleared)
-              </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span class="text-xs text-muted uppercase font-bold tracking-wider">Devotee Head of Family</span>
-                <div class="text-ink font-semibold mt-1">Pandit Rameshwar Mohapatra &amp; Parivar</div>
-                <div class="text-xs text-muted mt-0.5">Village: Pipili, Puri District, Odisha</div>
-              </div>
-              <div>
-                <span class="text-xs text-muted uppercase font-bold tracking-wider">Sacred Circuit</span>
-                <div class="text-amber-700 font-semibold mt-1">Char Dham Himalayan Yatra</div>
-                <div class="text-xs text-muted mt-0.5">Coach #OD-02-BY-108 (Premium Deluxe Bus)</div>
-              </div>
+            <div class="pass__stub">
+              <div class="pass__qr" aria-hidden="true">✳</div>
+              <span class="caption">OFFLINE AUTHENTICATED</span>
+              <span class="token">TOKEN: 7490-AX-OD</span>
+              <p>Scan via Sahayak POS Device without internet connection.</p>
+              <button class="button" type="button" @click="statusModalOpen = true">
+                <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ପାସ୍ ଦେଖନ୍ତୁ' : 'Lookup Your Pass'"></span> ↗
+              </button>
             </div>
-
-            <div class="grid grid-cols-3 gap-3 pt-1 text-xs">
-              <div>
-                <span class="text-xs text-muted uppercase font-bold tracking-wider">Pass Reference</span>
-                <div class="font-mono text-ink font-bold mt-1 tabular-nums">BY-OD-884920</div>
-              </div>
-              <div>
-                <span class="text-xs text-muted uppercase font-bold tracking-wider">Pickup Hub</span>
-                <div class="text-ink font-bold mt-1">Bhubaneswar Baramunda</div>
-              </div>
-              <div>
-                <span class="text-xs text-muted uppercase font-bold tracking-wider">Sleeper Berths</span>
-                <div class="font-mono text-amber-700 font-bold mt-1">L-04, L-05 (Lower)</div>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 pt-4 border-t border-line text-xs text-muted">
-              <span class="material-symbols-outlined text-amber-600 text-[18px]">verified</span>
-              <span>Verified by Sahayak Agent: <strong class="text-slate-700">Sanjay Sahu (ID: OD-SHK-204)</strong> • Pipili Panchayat Desk</span>
-            </div>
-          </div>
-
-          <!-- Ticket stub -->
-          <div class="md:col-span-4 border-t md:border-t-0 md:border-l-2 md:border-dashed border-line md:pl-6 flex flex-col items-center justify-center text-center">
-            <div class="p-3 bg-temple-warm rounded-xl border border-line flex flex-col items-center">
-              <div class="w-32 h-32 bg-charcoal p-2 rounded-lg flex items-center justify-center relative">
-                <span class="material-symbols-outlined text-white text-[96px] select-none">qr_code_2</span>
-              </div>
-              <span class="font-mono text-[10px] text-ink font-bold mt-1.5 tracking-[0.18em]">OFFLINE AUTHENTICATED</span>
-            </div>
-
-            <div class="mt-3 font-mono text-xs text-amber-700 font-bold tabular-nums tracking-wider">
-              TOKEN: 7490-AX-OD
-            </div>
-            <p class="text-xs text-muted max-w-[210px] mt-1">
-              Scan via Sahayak POS Device without internet connection.
-            </p>
-            <button
-              @click="statusModalOpen = true"
-              class="btn-primary mt-3 px-5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow">
-              <span class="material-symbols-outlined text-[15px]">search</span>
-              <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ପାସ୍ ଦେଖନ୍ତୁ' : 'Lookup Your Pass'"></span>
-            </button>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================================= -->
-  <!-- 9. TESTIMONIALS                                                           -->
-  <!-- ========================================================================= -->
-  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 border-t border-line bg-temple-warm/50 scroll-mt-20">
-    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
-      <span class="eyebrow" x-text="t('testimonials', 'tag')"></span>
-      <div class="rule-gold mt-3" aria-hidden="true"></div>
-      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance" x-text="t('testimonials', 'title')"></h2>
-      <p class="text-base sm:text-lg text-muted mt-4" x-text="t('testimonials', 'desc')"></p>
-    </div>
+    <!-- ============================ TESTIMONIALS ============================ -->
+    <section class="voices" id="voices" aria-labelledby="voices-title">
+      <div class="container">
+        <div class="voices-head">
+          <div class="eyebrow eyebrow--dark" x-text="t('testimonials', 'tag')"></div>
+          <h2 class="section-title" id="voices-title" x-text="t('testimonials', 'title')"></h2>
+          <p x-text="t('testimonials', 'desc')"></p>
+        </div>
 
-    <div class="mx-auto grid max-w-6xl gap-6 md:grid-cols-3" data-reveal-stagger>
-      <figure class="reveal reveal-up h-full rounded-2xl bg-white border border-line shadow-card p-7 flex flex-col">
-        <div class="text-amber-500 text-sm tracking-[0.25em]" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote class="font-headline-md text-lg italic leading-relaxed text-ink mt-4" x-text="'“' + t('testimonials', 'q1') + '”'"></blockquote>
-        <figcaption class="mt-auto pt-5 border-t border-line flex items-center gap-3 mt-6">
-          <span class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-sm font-bold flex items-center justify-center shrink-0" x-text="t('testimonials', 'n1').slice(0, 1)"></span>
-          <span>
-            <span class="block text-sm font-bold text-ink" x-text="t('testimonials', 'n1')"></span>
-            <span class="block text-xs text-muted" x-text="t('testimonials', 'p1')"></span>
-          </span>
-        </figcaption>
-      </figure>
+        <div class="voices__grid">
+          <figure class="voice reveal">
+            <div class="voice__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote x-text="'“' + t('testimonials', 'q1') + '”'"></blockquote>
+            <figcaption>
+              <span class="voice__avatar" x-text="t('testimonials', 'n1').slice(0, 1)"></span>
+              <span>
+                <b x-text="t('testimonials', 'n1')"></b>
+                <small x-text="t('testimonials', 'p1')"></small>
+              </span>
+            </figcaption>
+          </figure>
 
-      <figure class="reveal reveal-up h-full rounded-2xl bg-white border border-line shadow-card p-7 flex flex-col">
-        <div class="text-amber-500 text-sm tracking-[0.25em]" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote class="font-headline-md text-lg italic leading-relaxed text-ink mt-4" x-text="'“' + t('testimonials', 'q2') + '”'"></blockquote>
-        <figcaption class="mt-auto pt-5 border-t border-line flex items-center gap-3 mt-6">
-          <span class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-sm font-bold flex items-center justify-center shrink-0" x-text="t('testimonials', 'n2').slice(0, 1)"></span>
-          <span>
-            <span class="block text-sm font-bold text-ink" x-text="t('testimonials', 'n2')"></span>
-            <span class="block text-xs text-muted" x-text="t('testimonials', 'p2')"></span>
-          </span>
-        </figcaption>
-      </figure>
+          <figure class="voice reveal">
+            <div class="voice__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote x-text="'“' + t('testimonials', 'q2') + '”'"></blockquote>
+            <figcaption>
+              <span class="voice__avatar" x-text="t('testimonials', 'n2').slice(0, 1)"></span>
+              <span>
+                <b x-text="t('testimonials', 'n2')"></b>
+                <small x-text="t('testimonials', 'p2')"></small>
+              </span>
+            </figcaption>
+          </figure>
 
-      <figure class="reveal reveal-up h-full rounded-2xl bg-white border border-line shadow-card p-7 flex flex-col">
-        <div class="text-amber-500 text-sm tracking-[0.25em]" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <blockquote class="font-headline-md text-lg italic leading-relaxed text-ink mt-4" x-text="'“' + t('testimonials', 'q3') + '”'"></blockquote>
-        <figcaption class="mt-auto pt-5 border-t border-line flex items-center gap-3 mt-6">
-          <span class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-sm font-bold flex items-center justify-center shrink-0" x-text="t('testimonials', 'n3').slice(0, 1)"></span>
-          <span>
-            <span class="block text-sm font-bold text-ink" x-text="t('testimonials', 'n3')"></span>
-            <span class="block text-xs text-muted" x-text="t('testimonials', 'p3')"></span>
-          </span>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- 10. FINAL CTA BAND (charcoal)                                            -->
-  <!-- ========================================================================= -->
-  <section class="relative overflow-hidden bg-charcoal px-4 py-20 text-center sm:px-6 sm:py-24">
-    <div class="absolute left-1/2 top-0 h-72 w-[36rem] -translate-x-1/2 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
-
-    <div class="reveal reveal-up relative max-w-3xl mx-auto">
-      <span class="eyebrow text-amber-400" x-text="t('cta', 'tag')"></span>
-      <div class="rule-gold mt-4" aria-hidden="true"></div>
-      <h2 class="font-display-lg text-4xl sm:text-5xl font-medium tracking-tight text-white mt-6 text-balance" x-text="t('cta', 'title')"></h2>
-      <p class="text-base sm:text-lg text-stone-400 mt-4 max-w-2xl mx-auto" x-text="t('cta', 'desc')"></p>
-
-      <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5">
-        <a class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-700/30" href="#circuits">
-          <span class="material-symbols-outlined text-[20px]">route</span>
-          <span x-text="t('cta', 'btn')"></span>
-        </a>
-        <button
-          @click="statusModalOpen = true"
-          class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/25 text-white font-bold text-sm sm:text-base hover:border-amber-400 hover:bg-white/5 transition-colors">
-          <span class="material-symbols-outlined text-[20px] text-amber-400">confirmation_number</span>
-          <span x-text="t('cta', 'btnAlt')"></span>
-        </button>
+          <figure class="voice reveal">
+            <div class="voice__stars" aria-label="5 out of 5 stars">★★★★★</div>
+            <blockquote x-text="'“' + t('testimonials', 'q3') + '”'"></blockquote>
+            <figcaption>
+              <span class="voice__avatar" x-text="t('testimonials', 'n3').slice(0, 1)"></span>
+              <span>
+                <b x-text="t('testimonials', 'n3')"></b>
+                <small x-text="t('testimonials', 'p3')"></small>
+              </span>
+            </figcaption>
+          </figure>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================================= -->
-  <!-- 11. FOOTER (charcoal)                                                    -->
-  <!-- ========================================================================= -->
-  <footer class="bg-charcoal border-t border-white/10 text-stone-400">
-    <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-      <div class="reveal reveal-up flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-            BY
+    <!-- ============================ CLOSING ============================ -->
+    <section class="closing">
+      <div class="closing__grid container">
+        <div>
+          <div class="eyebrow" x-text="t('cta', 'tag')"></div>
+          <h2 class="section-title" x-text="t('cta', 'title')"></h2>
+        </div>
+        <div>
+          <p x-text="t('cta', 'desc')"></p>
+          <div class="closing__actions">
+            <a class="button" href="#circuits" x-text="t('cta', 'btn')"></a>
+            <button class="text-link" type="button" @click="statusModalOpen = true" x-text="t('cta', 'btnAlt')"></button>
           </div>
-          <div>
-            <span class="font-display-lg text-lg text-white font-semibold block leading-tight">BharatYatra — Odisha</span>
-            <span class="block text-xs text-stone-500">Pious Micro-EMI Bus Tourism &amp; Pilgrimage Platform</span>
+          <div class="closing__stats">
+            <div><strong x-text="statDisplay.stat1"></strong><span x-text="t('hero', 'stat1Lbl')"></span></div>
+            <div><strong x-text="statDisplay.stat2"></strong><span x-text="t('hero', 'stat2Lbl')"></span></div>
+            <div><strong x-text="statDisplay.stat3"></strong><span x-text="t('hero', 'stat3Lbl')"></span></div>
+            <div><strong x-text="statDisplay.stat4"></strong><span x-text="t('hero', 'stat4Lbl')"></span></div>
           </div>
         </div>
-
-        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold">
-          <a class="hover:text-amber-400 transition-colors" href="/agent/dashboard" x-text="t('nav', 'agentLogin')"></a>
-          <a class="hover:text-amber-400 transition-colors" href="/distributor/dashboard">
-            <span x-text="lang === 'odia' ? 'ଡିଷ୍ଟ୍ରିବ୍ୟୁଟର ଡ୍ୟାସବୋର୍ଡ' : 'Distributor Dashboard'"></span>
-          </a>
-          <a class="hover:text-amber-400 transition-colors" href="/_/">Admin Console</a>
-          <a class="hover:text-amber-400 transition-colors" href="#circuits" x-text="t('nav', 'circuits')"></a>
-          <a class="hover:text-amber-400 transition-colors" href="#verification-pass" x-text="t('nav', 'pass')"></a>
-        </div>
       </div>
+    </section>
+  </main>
 
-      <div class="border-t border-white/10 pt-5 mt-7 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
-        <p class="text-stone-500">© 2026 BharatYatra Technologies Ltd. Regulated under Rural Pilgrimage Micro-Credit Guidelines. Jai Jagannath!</p>
-        <div class="flex items-center gap-2 text-amber-400/90 font-semibold">
-          <span>
-            <span x-text="lang === 'odia' ? '୧୦୦% ସାତ୍ତ୍ୱିକ ପ୍ରମାଣିତ' : '100% Satvik Certified'"></span>
-          </span>
-          <span>&bull;</span>
-          <span>
-            <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ଲେଜର ଯାଞ୍ଚିତ' : 'Offline Ledger Verified'"></span>
-          </span>
-        </div>
-      </div>
+  <!-- ============================ FOOTER ============================ -->
+  <footer>
+    <div class="footer__inner container">
+      <a class="logo" href="#home">
+        <span class="logo__mark" aria-hidden="true">✳</span>
+        <span>BharatYatra <small>Har Gaon Ru Char Dham</small></span>
+      </a>
+
+      <nav class="footer__links" aria-label="Footer">
+        <a href="/agent/dashboard" x-text="t('nav', 'agentLogin')"></a>
+        <a href="/distributor/dashboard" x-text="lang === 'odia' ? 'ଡିଷ୍ଟ୍ରିବ୍ୟୁଟର' : 'Distributor'"></a>
+        <a href="/_/">Admin Console</a>
+        <a href="#circuits" x-text="t('nav', 'circuits')"></a>
+        <a href="#pass" x-text="t('nav', 'pass')"></a>
+      </nav>
+
+      <span>© <span id="year"></span> BharatYatra Technologies · Jai Jagannath!</span>
     </div>
   </footer>
 
-  <!-- ========================================================================= -->
-  <!-- 12. PILGRIM VERIFICATION PORTAL MODAL                                     -->
-  <!-- ========================================================================= -->
+  <!-- ============================ VERIFICATION DIALOG ============================ -->
   <div
     x-show="statusModalOpen"
     x-cloak
-    x-transition
-    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-charcoal/60 p-4 backdrop-blur-sm"
+    x-transition.opacity
+    class="dialog"
     role="dialog"
     aria-modal="true"
     aria-label="Travel Pass Verification"
     @keydown.escape.window="statusModalOpen = false">
 
-    <div
-      class="relative w-full max-w-xl rounded-3xl border border-line bg-white p-6 sm:p-8 shadow-2xl"
-      @click.outside="statusModalOpen = false">
-
-      <button
-        @click="statusModalOpen = false"
-        aria-label="Close"
-        class="absolute right-5 top-5 rounded-full bg-temple-warm border border-line p-1.5 text-slate-500 hover:text-ink transition">
-        <span class="material-symbols-outlined text-[20px]">close</span>
-      </button>
+    <div class="dialog__panel" @click.outside="statusModalOpen = false">
+      <button class="dialog__close" type="button" aria-label="Close" @click="statusModalOpen = false">×</button>
 
       <div>
-        <div class="eyebrow">
-          <span x-text="lang === 'odia' ? 'ତୀର୍ଥଯାତ୍ରୀ ଯାଞ୍ଚ ପୋର୍ଟାଲ୍ • VERIFICATION' : 'PILGRIM VERIFICATION PORTAL'"></span>
-        </div>
-        <h3 class="font-headline-md text-2xl text-ink font-medium mt-2">
-          <span x-text="lang === 'odia' ? 'ନିଜ ଟ୍ରାଭେଲ୍ ପାସ୍ ଯାଞ୍ଚ କରନ୍ତୁ' : 'Check Travel Eligibility Pass'"></span>
-        </h3>
-        <p class="text-xs text-muted mt-1.5">
-          <span x-text="lang === 'odia' ? 'ନିଜ ୧୦ ଅଙ୍କର ମୋବାଇଲ୍ ନମ୍ବର କିମ୍ବା ବୁକିଂ କୋଡ୍ (e.g. BY-2026-XXXX) ଦେଇ ଯାଞ୍ଚ କରନ୍ତୁ।' : 'Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.'"></span>
-        </p>
+        <div class="eyebrow eyebrow--dark" x-text="lang === 'odia' ? 'ତୀର୍ଥଯାତ୍ରୀ ଯାଞ୍ଚ ପୋର୍ଟାଲ୍' : 'PILGRIM VERIFICATION PORTAL'"></div>
+        <h3 x-text="lang === 'odia' ? 'ନିଜ ଟ୍ରାଭେଲ୍ ପାସ୍ ଯାଞ୍ଚ କରନ୍ତୁ' : 'Check Travel Eligibility Pass'"></h3>
+        <p x-text="lang === 'odia' ? 'ନିଜ ୧୦ ଅଙ୍କର ମୋବାଇଲ୍ ନମ୍ବର କିମ୍ବା ବୁକିଂ କୋଡ୍ (e.g. BY-2026-XXXX) ଦେଇ ଯାଞ୍ଚ କରନ୍ତୁ।' : 'Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.'"></p>
       </div>
 
       <form
-        class="mt-5 flex flex-col sm:flex-row gap-2.5"
+        class="pass-lookup"
         hx-get="/api/public/booking-status"
         hx-target="#booking-status-result"
         hx-indicator="#status-loading">
-        <div class="relative flex-1">
-          <input
-            x-ref="statusInput"
-            type="text"
-            name="query"
-            required
-            autocomplete="off"
-            placeholder="Mobile No. (e.g. 9876543210) or BY-2026-XXXX"
-            class="w-full rounded-xl border border-line bg-temple-warm/50 px-4 py-3 text-sm font-semibold text-ink placeholder-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
-        </div>
-        <button
-          type="submit"
-          class="btn-primary rounded-xl px-6 py-3 text-xs font-bold text-white shadow-md">
-          <span x-text="lang === 'odia' ? 'ପାସ୍ ଦେଖନ୍ତୁ' : 'Verify Pass'"></span>
-        </button>
+        <input
+          x-ref="statusInput"
+          type="text"
+          name="query"
+          required
+          autocomplete="off"
+          placeholder="Mobile No. (e.g. 9876543210) or BY-2026-XXXX"/>
+        <button class="button" type="submit" x-text="lang === 'odia' ? 'ପାସ୍ ଦେଖନ୍ତୁ' : 'Verify Pass'"></button>
       </form>
 
-      <div id="status-loading" class="htmx-indicator my-3 text-center">
-        <div class="inline-flex items-center gap-2 text-xs text-amber-700 font-semibold">
-          <span class="material-symbols-outlined animate-spin text-[16px]">sync</span>
-          <span x-text="lang === 'odia' ? 'ଯାଞ୍ଚିତ ଯାତ୍ରୀ ତଥ୍ୟ ଖୋଜୁଛୁ...' : 'Searching verified passenger database...'"></span>
-        </div>
-      </div>
+      <p id="status-loading" class="htmx-indicator lookup-note looking">✳ <span>Searching verified passenger database…</span></p>
 
-      <div id="booking-status-result" class="mt-4"></div>
+      <div id="booking-status-result"></div>
     </div>
   </div>
+
+  <script>
+    // Slideshow crossfade + per-slide location label
+    (function () {
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const slides = Array.prototype.slice.call(document.querySelectorAll(".hero__slide"));
+      const dots = Array.prototype.slice.call(document.querySelectorAll(".hero__dot"));
+      const locationLabel = document.getElementById("slide-location");
+      const toggle = document.getElementById("slideshow-toggle");
+      const locations = ["Puri, Odisha", "The Journey", "The Himalayas"];
+
+      let active = 0;
+      let timer = null;
+      let userPaused = false;
+
+      function showSlide(next) {
+        if (next === active) return;
+        const image = slides[next].querySelector("img");
+        if (image && !image.complete) { try { image.decode(); } catch (e) {} }
+        slides[active].classList.remove("is-active");
+        dots[active].setAttribute("aria-current", "false");
+        active = next;
+        slides[active].classList.add("is-active");
+        dots[active].setAttribute("aria-current", "true");
+        locationLabel.textContent = locations[active];
+      }
+
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      function start() {
+        stop();
+        if (userPaused || reduced.matches || document.hidden) return;
+        timer = setInterval(() => showSlide((active + 1) % slides.length), 6500);
+      }
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", () => {
+          showSlide(Number(dot.dataset.slide));
+          if (!userPaused) start();
+        });
+      });
+
+      toggle.addEventListener("click", () => {
+        userPaused = !userPaused;
+        toggle.textContent = userPaused ? "▶" : "Ⅱ";
+        toggle.setAttribute("aria-label", userPaused ? "Resume slideshow" : "Pause slideshow");
+        userPaused ? stop() : start();
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        document.hidden ? stop() : start();
+      });
+
+      if (reduced.matches) {
+        toggle.textContent = "▶";
+        toggle.setAttribute("aria-label", "Start slideshow");
+      }
+
+      start();
+    })();
+
+    // Parallax: hero + interlude, eased in RAF
+    (function () {
+      const hero = document.querySelector(".hero");
+      const interlude = document.getElementById("interlude");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+      if (!hero || reduced.matches) return;
+
+      const m = { tx: 0, x: 0, ty: 0, y: 0, ts: 0, s: 0, ti: 0, i: 0 };
+      let frame = null;
+
+      function updateTargets() {
+        m.ts = Math.min(window.scrollY, hero.offsetHeight);
+        if (interlude) {
+          const rect = interlude.getBoundingClientRect();
+          const d = rect.top + rect.height / 2 - window.innerHeight / 2;
+          m.ti = Math.max(-95, Math.min(95, -d * 0.15));
+        }
+        requestMotion();
+      }
+
+      function requestMotion() {
+        if (frame === null) frame = requestAnimationFrame(animate);
+      }
+
+      function animate() {
+        frame = null;
+        const ease = 0.085;
+        m.x += (m.tx - m.x) * ease;
+        m.y += (m.ty - m.y) * ease;
+        m.s += (m.ts - m.s) * ease;
+        m.i += (m.ti - m.i) * ease;
+
+        hero.style.setProperty("--bg-y", (m.s * 0.18) + "px");
+        hero.style.setProperty("--copy-y", (m.s * -0.11) + "px");
+        hero.style.setProperty("--scene-x", (m.x * -0.7) + "px");
+        hero.style.setProperty("--scene-y", (m.s * -0.29 + m.y * -0.7) + "px");
+        if (interlude) interlude.style.setProperty("--image-y", m.i + "px");
+
+        const stillMoving = [
+          Math.abs(m.tx - m.x),
+          Math.abs(m.ty - m.y),
+          Math.abs(m.ts - m.s),
+          Math.abs(m.ti - m.i)
+        ].some((v) => v > 0.15);
+
+        if (stillMoving) requestMotion();
+      }
+
+      window.addEventListener("scroll", updateTargets, { passive: true });
+      window.addEventListener("resize", updateTargets);
+
+      if (window.matchMedia("(pointer: fine)").matches) {
+        hero.addEventListener("pointermove", (e) => {
+          const rect = hero.getBoundingClientRect();
+          m.tx = (e.clientX - rect.left - rect.width / 2) / rect.width * 38;
+          m.ty = (e.clientY - rect.top - rect.height / 2) / rect.height * 30;
+          requestMotion();
+        });
+        hero.addEventListener("pointerleave", () => { m.tx = 0; m.ty = 0; requestMotion(); });
+      }
+
+      updateTargets();
+    })();
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
