@@ -5,14 +5,14 @@
 See: `.planning/PROJECT.md` (updated 2026-09-21)
 
 **Core value:** An agent in a village with no internet must be able to collect an EMI, print a receipt, and sync it to the server the moment connectivity returns — zero data loss, zero duplicate entries.
-**Current focus:** Phase 4 — Admin Dashboard & Production Polish
+**Current focus:** v1.0 release validation (all 4 phases complete — 38/38 requirements verified)
 
 ## Current Status
 
-**Phase:** 4 of 4
+**Phase:** 4 of 4 (all phases complete)
 **Phase name:** Admin Dashboard & Production Polish
-**Status:** Planning complete — ready to execute
-**Last action:** Generated Phase 4 context, research, and 4 execution plans (`.planning/phases/04-admin-dashboard-polish/`)
+**Status:** Complete — all 38 v1 requirements verified
+**Last action:** Completed plan 04-04 — branded 404 middleware, `docs/DEPLOYMENT.md`, `tests/phase4_verification.js` (84/84); regression gate green: phase1 33/33, phase2 29/29, phase3 46/46; summaries written for 04-01..04-04
 
 ## Roadmap Progress
 
@@ -21,16 +21,16 @@ See: `.planning/PROJECT.md` (updated 2026-09-21)
 | 1 | Foundation & Data | Complete |
 | 2 | Agent PWA Core | Complete |
 | 3 | Public Landing & Distributor | Complete |
-| 4 | Admin Dashboard & Production Polish | Planning complete |
+| 4 | Admin Dashboard & Production Polish | Complete |
 
 ## Phase 4 Plans
 
 | Plan | Wave | Description | Requirements | Status |
 |------|------|-------------|--------------|--------|
-| 04-01 | 1 | Admin portal shell, portfolio metrics & sortable risk watchlist | ADMN-01, ADMN-02 | Planned |
-| 04-02 | 2 | Package manager CRUD & live landing catalog reflection | ADMN-03 | Planned |
-| 04-03 | 2 | Bus manifest export (CSV + printable) | ADMN-04 | Planned |
-| 04-04 | 3 | Production hardening, deployment guide & Phase 4 verification suite | ADMN-01..04 | Planned |
+| 04-01 | 1 | Admin portal shell, portfolio metrics & sortable risk watchlist | ADMN-01, ADMN-02 | Complete |
+| 04-02 | 2 | Package manager CRUD & live landing catalog reflection | ADMN-03 | Complete |
+| 04-03 | 2 | Bus manifest export (CSV + printable) | ADMN-04 | Complete |
+| 04-04 | 3 | Production hardening, deployment guide & Phase 4 verification suite | ADMN-01..04 | Complete |
 
 ## Phase 3 Plans
 
@@ -53,4 +53,4 @@ See: `.planning/PROJECT.md` (updated 2026-09-21)
 - **Verifier:** Enabled
 
 ---
-*State updated: 2026-09-21*
+*State updated: 2026-09-29 after Phase 4 completion*

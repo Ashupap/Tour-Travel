@@ -247,9 +247,14 @@ routerAdd("GET", "/api/admin/risk-watchlist", (c) => {
 
       overdueAmount += Number(inst.get("amount")) || 0;
       overdueCount += 1;
-      const days = Math.floor(
-        (Date.parse(now.replace(" ", "T") + "Z") - Date.parse(dueDate.replace(" ", "T") + "Z")) / 86400000
-      );
+      // due_date and "now" are ISO strings with a trailing "Z" (e.g. "YYYY-MM-DD HH:MM:SS.mmmZ");
+      // only append Z when parsing a naive timestamp so Date.parse never returns NaN.
+      const parseStamp = (s) => {
+        const t = s.replace(" ", "T");
+        const v = Date.parse(t);
+        return isNaN(v) ? Date.parse(t + "Z") : v;
+      };
+      const days = Math.floor((parseStamp(now) - parseStamp(dueDate)) / 86400000);
       if (days > maxDaysOverdue) maxDaysOverdue = days;
     }
 

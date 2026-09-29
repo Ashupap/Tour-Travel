@@ -9,12 +9,14 @@
 
 ## Phase Summary
 
-| # | Phase | Goal | Requirements | Success Criteria |
-|---|-------|------|--------------|-----------------|
-| 1 | Foundation & Data | PocketBase schema, hooks, security rules, and SQLite views running locally | DAT-01 to DAT-07, HOOK-01 to HOOK-03, SEC-01 to SEC-03 | 3 |
-| 2 | Agent PWA Core | Full offline-capable agent dashboard with sync, receipts, handover workflow, and all API endpoints | API-01 to API-04, PWA-01 to PWA-05, AGNT-01 to AGNT-05, SEC-04 | 5 |
-| 3 | Public Landing & Distributor | 3D landing page, customer eligibility check, distributor dashboard | LAND-01 to LAND-05, DIST-01 to DIST-04 | 4 |
-| 4 | Admin Dashboard & Polish | Admin portal, bus manifest export, performance tuning, production readiness | ADMN-01 to ADMN-04 | 3 |
+| # | Phase | Goal | Requirements | Success Criteria | Status |
+|---|-------|------|--------------|-----------------|--------|
+| 1 | Foundation & Data | PocketBase schema, hooks, security rules, and SQLite views running locally | DAT-01 to DAT-07, HOOK-01 to HOOK-03, SEC-01 to SEC-03 | 3 | Complete |
+| 2 | Agent PWA Core | Full offline-capable agent dashboard with sync, receipts, handover workflow, and all API endpoints | API-01 to API-04, PWA-01 to PWA-05, AGNT-01 to AGNT-05, SEC-04 | 5 | Complete |
+| 3 | Public Landing & Distributor | 3D landing page, customer eligibility check, distributor dashboard | LAND-01 to LAND-05, DIST-01 to DIST-04 | 4 | Complete |
+| 4 | Admin Dashboard & Polish | Admin portal, bus manifest export, performance tuning, production readiness | ADMN-01 to ADMN-04 | 3 | Complete |
+
+**Verification evidence (2026-09-29):** `node tests/phase1_verification.js` 33/33 · `phase2` 29/29 · `phase3` 46/46 · `phase4` 84/84 — all 38 v1 requirements verified (see `.planning/REQUIREMENTS.md`).
 
 ---
 
@@ -94,6 +96,7 @@
 ### Phase 4: Admin Dashboard & Production Polish
 **Goal:** Deliver the admin master portal (portfolio metrics, risk watchlist, package CRUD, bus manifest export), then harden the app for production (performance tuning, error handling, deployment guide).
 **Mode:** mvp
+**Status:** Complete (2026-09-29) — `tests/phase4_verification.js` 84/84; plans 04-01..04-04 summaries in `.planning/phases/04-admin-dashboard-polish/`
 **Requirements:** ADMN-01, ADMN-02, ADMN-03, ADMN-04
 
 **Success Criteria:**
@@ -126,4 +129,4 @@
 
 ---
 *Roadmap created: 2026-09-21*
-*Last updated: 2026-09-21 after initialization*
+*Last updated: 2026-09-29 after Phase 4 completion — all phases complete, 38/38 requirements verified*
