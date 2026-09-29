@@ -1,603 +1,536 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#FFFDF7] text-slate-800 antialiased selection:bg-amber-400 selection:text-slate-900">
+<html lang="en" class="h-full bg-temple-base text-slate-800 antialiased">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>BharatYatra: Ama Odisha ru Char Dham — Premium Deluxe Bus &amp; Micro-EMI Tirthayatra</title>
   <meta name="description" content="Jai Jagannath! Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra Premium Deluxe Bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
+  <meta name="theme-color" content="#D97706"/>
 
   <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="/manifest.json"/>
   <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml"/>
-  <meta name="theme-color" content="#D97706"/>
 
-  <!-- Google Fonts: Anek Odia (Official Odia Script), EB Garamond, Plus Jakarta Sans, JetBrains Mono -->
+  <!-- Google Fonts: Plus Jakarta Sans (body), Anek Odia (Odia script), EB Garamond (display), JetBrains Mono (figures) -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
   <link href="https://fonts.googleapis.com/css2?family=Anek+Odia:wght@300;400;500;600;700;800&family=EB+Garamond:ital,wght@0,500..800;1,500..800&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 
-  <!-- Tailwind CSS CDN with plugins + Local Fallback -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Local compiled Tailwind build (single source of truth, works offline) -->
   <link rel="stylesheet" href="/css/tailwind.css"/>
-
-  <!-- Tailwind Config -->
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "temple-base": "#FFFDF7",
-            "temple-card": "#FFFFFF",
-            "temple-warm": "#FFF8EC",
-            "temple-gold": "#D97706",
-            "temple-amber": "#F59E0B",
-            "temple-saffron": "#EA580C",
-            "temple-green": "#059669",
-            "asphalt-road": "#181a20"
-          },
-          fontFamily: {
-            "odia": ["Anek Odia", "Plus Jakarta Sans", "sans-serif"],
-            "display-lg": ["EB Garamond", "Anek Odia", "serif"],
-            "headline-lg": ["EB Garamond", "Anek Odia", "serif"],
-            "headline-md": ["EB Garamond", "Anek Odia", "serif"],
-            "title-lg": ["Anek Odia", "Plus Jakarta Sans", "sans-serif"],
-            "body-lg": ["Anek Odia", "Plus Jakarta Sans", "sans-serif"],
-            "body-md": ["Anek Odia", "Plus Jakarta Sans", "sans-serif"],
-            "finance-display": ["JetBrains Mono", "monospace"],
-            "finance-body": ["JetBrains Mono", "monospace"]
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    /* Odia font rendering enhancement */
-    body, button, input, select {
-      font-family: 'Anek Odia', 'Plus Jakarta Sans', sans-serif;
-    }
-
-    .temple-shadow {
-      box-shadow: 0 10px 30px -5px rgba(217, 119, 6, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
-    }
-
-    .temple-gold-border {
-      border: 1px solid #FCD34D;
-    }
-
-    .temple-gold-border:hover {
-      border-color: #D97706;
-      box-shadow: 0 12px 28px -4px rgba(217, 119, 6, 0.15);
-    }
-
-    /* Black asphalt road styling */
-    .road-asphalt {
-      background-color: #1a1c23;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-      background-size: 8px 8px;
-    }
-
-    [x-cloak] { display: none !important; }
-    html { scroll-behavior: smooth; }
-  </style>
 
   <!-- Core Interactive Scripts -->
   <script src="/js/htmx.min.js"></script>
-  <script src="/js/three.min.js"></script>
   <script src="/js/vanilla-tilt.min.js"></script>
   <script src="/js/landing.js"></script>
+  <script src="/js/reveal.js"></script>
   <script defer src="/js/alpine.min.js"></script>
+  <script>
+    // Enable reveal transitions only when IntersectionObserver is available.
+    if ("IntersectionObserver" in window) {
+      document.documentElement.classList.add("js-reveal");
+    }
+  </script>
 </head>
 
-<body class="bg-[#FFFDF7] text-slate-800 text-[14px] leading-relaxed min-h-screen relative overflow-x-hidden selection:bg-amber-300 selection:text-slate-900 font-odia" x-data="landingApp()">
+<body class="bg-temple-base text-ink text-base leading-relaxed min-h-screen relative overflow-x-hidden" x-data="landingApp()">
+  <a href="#hero-section" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-amber-600 focus:px-4 focus:py-2 focus:text-white focus:font-bold">Skip to content</a>
 
   <!-- ========================================================================= -->
-  <!-- FULL-PAGE BLACK ROAD WITH WHITE MARKINGS & SCROLLING BUS                   -->
+  <!-- 1. HEADER (scroll-aware, mobile menu, reading-progress hairline)         -->
   <!-- ========================================================================= -->
-  <aside 
-    aria-label="Pilgrimage Highway Scroll Tracker"
-    class="fixed right-2 sm:right-4 top-20 bottom-8 z-40 w-10 sm:w-12 rounded-full road-asphalt border-2 border-amber-400/80 shadow-2xl flex flex-col items-center justify-between py-6 group select-none">
-    
-    <!-- White Dashed Center Line running down the black road -->
-    <div class="absolute inset-y-4 left-1/2 -translate-x-1/2 w-0.5 border-l-2 border-dashed border-white/80 pointer-events-none"></div>
-
-    <!-- Moving Luxury Sleeper Bus along the black road -->
-    <div 
-      class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 ease-out z-20 cursor-grab flex flex-col items-center"
-      :style="'top: ' + Math.min(88, Math.max(5, scrollProgress * 0.86)) + '%'">
-      <div class="relative bg-amber-500 text-white rounded-lg p-1 shadow-lg border border-white flex items-center justify-center transform hover:scale-125 transition-transform">
-        <span class="text-base sm:text-lg leading-none">🚌</span>
-      </div>
-      <div class="hidden sm:block absolute left-full ml-2 px-2 py-0.5 rounded bg-slate-900 text-amber-300 font-bold text-[9px] whitespace-nowrap shadow-md border border-amber-400/60" x-text="scrollProgress + '%'"></div>
-    </div>
-
-    <!-- Highway Milestone 1: Sankalpa -->
-    <button 
-      type="button"
-      @click="scrollToSection('hero-section')" 
-      title="Milestone 1: Sankalpa"
-      class="relative z-10 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-      :class="currentMilestone >= 1 ? 'bg-amber-400 text-slate-950 ring-2 ring-white scale-110 shadow' : 'bg-slate-700 text-white'">
-      🚩
-      <span class="hidden group-hover:block absolute right-full mr-2 px-2 py-0.5 rounded bg-white text-slate-900 text-[10px] font-bold shadow-md whitespace-nowrap border border-amber-300">
-        <span x-text="lang === 'odia' ? '୧. ସଂକଳ୍ପ (M1)' : '1. Sankalpa (M1)'"></span>
-      </span>
-    </button>
-
-    <!-- Highway Milestone 2: Bus Boarding -->
-    <button 
-      type="button"
-      @click="scrollToSection('journey-highway')" 
-      title="Milestone 2: Bus Boarding"
-      class="relative z-10 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-      :class="currentMilestone >= 2 ? 'bg-emerald-400 text-slate-950 ring-2 ring-white scale-110 shadow' : 'bg-slate-700 text-white'">
-      🚌
-      <span class="hidden group-hover:block absolute right-full mr-2 px-2 py-0.5 rounded bg-white text-slate-900 text-[10px] font-bold shadow-md whitespace-nowrap border border-amber-300">
-        <span x-text="lang === 'odia' ? '୨. ବସ୍ ଚଢ଼ିବା (M2)' : '2. Board Bus (M2)'"></span>
-      </span>
-    </button>
-
-    <!-- Highway Milestone 3: Dham Darshan -->
-    <button 
-      type="button"
-      @click="scrollToSection('circuits')" 
-      title="Milestone 3: Dham Darshan"
-      class="relative z-10 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-      :class="currentMilestone >= 3 ? 'bg-amber-400 text-slate-950 ring-2 ring-white scale-110 shadow' : 'bg-slate-700 text-white'">
-      🛕
-      <span class="hidden group-hover:block absolute right-full mr-2 px-2 py-0.5 rounded bg-white text-slate-900 text-[10px] font-bold shadow-md whitespace-nowrap border border-amber-300">
-        <span x-text="lang === 'odia' ? '୩. ଧାମ ଦର୍ଶନ' : '3. Dham Darshan'"></span>
-      </span>
-    </button>
-
-    <!-- Highway Milestone 4: Ghara ku Pheriba -->
-    <button 
-      type="button"
-      @click="scrollToSection('emi-calculator-section')" 
-      title="Milestone 4: Safe Return"
-      class="relative z-10 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-      :class="currentMilestone >= 4 ? 'bg-emerald-400 text-slate-950 ring-2 ring-white scale-110 shadow' : 'bg-slate-700 text-white'">
-      🏠
-      <span class="hidden group-hover:block absolute right-full mr-2 px-2 py-0.5 rounded bg-white text-slate-900 text-[10px] font-bold shadow-md whitespace-nowrap border border-amber-300">
-        <span x-text="lang === 'odia' ? '୪. ଘରକୁ ଫେରିବା' : '4. Safe Return'"></span>
-      </span>
-    </button>
-  </aside>
-
-  <!-- ========================================================================= -->
-  <!-- 1. TOP NAVIGATION BAR WITH DEDICATED LANGUAGE CHANGER (ODIA | ENGLISH)     -->
-  <!-- ========================================================================= -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/80 shadow-sm">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6 lg:px-8">
-      <!-- Brand Logo Anchor -->
+  <header
+    class="sticky top-0 z-40 border-b transition-all duration-300"
+    :class="scrolled ? 'bg-white/90 border-line shadow-sm backdrop-blur-md' : 'bg-temple-base/60 border-transparent backdrop-blur-sm'">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+      <!-- Brand -->
       <a class="flex items-center gap-2.5 group" href="/">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
-          <span class="material-symbols-outlined text-[24px]">temple_hindu</span>
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md shadow-amber-500/25 group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[22px]">temple_hindu</span>
         </div>
-        <div class="flex flex-col text-left">
+        <div class="flex flex-col leading-tight">
           <div class="flex items-center gap-1.5">
-            <span class="font-display-lg text-2xl text-slate-900 font-bold tracking-tight">Bharat<span class="text-amber-600">Yatra</span></span>
-            <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold border border-amber-300">
+            <span class="font-display-lg text-xl sm:text-2xl text-ink font-semibold tracking-tight">Bharat<span class="text-amber-700">Yatra</span></span>
+            <span class="hidden sm:inline-block px-2 py-0.5 rounded-full border border-amber-200 bg-amber-50 text-[10px] font-bold uppercase tracking-widest text-amber-800">
               <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶା ସ୍ପେଶାଲ' : 'Odisha Special'"></span>
             </span>
           </div>
-          <span class="text-[10px] font-bold text-amber-700 tracking-wider">
-            <span x-text="lang === 'odia' ? 'ହର ଗାଁ ରୁ ଚାରି ଧାମ' : 'HAR GAON RU CHAR DHAM'"></span>
+          <span class="hidden sm:block text-[10px] font-bold uppercase tracking-[0.22em] text-muted">
+            <span x-text="lang === 'odia' ? 'ହର ଗାଁ ରୁ ଚାରି ଧାମ' : 'Har Gaon Ru Char Dham'"></span>
           </span>
         </div>
       </a>
 
-      <!-- Desktop Navigation Links -->
-      <nav class="hidden lg:flex items-center gap-6 text-[14px] font-medium text-slate-700">
-        <a class="hover:text-amber-600 transition" href="#circuits" x-text="t('nav', 'circuits')"></a>
-        <a class="hover:text-amber-600 transition" href="#journey-highway" x-text="t('nav', 'highway')"></a>
-        <a class="hover:text-amber-600 transition" href="#advantage" x-text="t('nav', 'advantage')"></a>
-        <a class="hover:text-amber-600 transition" href="#emi-calculator-section" x-text="t('nav', 'calculator')"></a>
-        <a class="hover:text-amber-600 transition" href="#verification-pass" x-text="t('nav', 'pass')"></a>
+      <!-- Desktop Navigation -->
+      <nav class="hidden lg:flex items-center gap-8 text-[13px] font-semibold uppercase tracking-[0.14em] text-slate-600" aria-label="Primary">
+        <a class="nav-link hover:text-amber-700 transition-colors" href="#circuits" x-text="t('nav', 'circuits')"></a>
+        <a class="nav-link hover:text-amber-700 transition-colors" href="#journey-highway" x-text="t('nav', 'highway')"></a>
+        <a class="nav-link hover:text-amber-700 transition-colors" href="#advantage" x-text="t('nav', 'advantage')"></a>
+        <a class="nav-link hover:text-amber-700 transition-colors" href="#emi-calculator-section" x-text="t('nav', 'calculator')"></a>
+        <a class="nav-link hover:text-amber-700 transition-colors" href="#verification-pass" x-text="t('nav', 'pass')"></a>
       </nav>
 
-      <!-- Trailing Actions: LANGUAGE CHANGER + CTA -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Prominent Language Changer Switch (Odia & English) -->
-        <div class="flex items-center rounded-full p-1 bg-amber-100/90 border border-amber-300 shadow-inner">
-          <button 
+      <!-- Actions -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center rounded-full p-0.5 bg-white/80 border border-line" role="group" aria-label="Language">
+          <button
             type="button"
-            @click="setLanguage('odia')" 
-            :class="lang === 'odia' ? 'bg-amber-600 text-white shadow font-bold' : 'text-amber-900 hover:text-black font-semibold'" 
-            class="px-3 py-1 rounded-full text-xs transition active:scale-95 flex items-center gap-1">
+            @click="setLanguage('odia')"
+            :class="lang === 'odia' ? 'bg-ink text-white shadow font-bold' : 'text-slate-600 hover:text-ink font-semibold'"
+            class="px-2.5 py-1 rounded-full text-xs transition active:scale-95 border-none">
             <span>ଓଡ଼ିଆ</span>
           </button>
-          <button 
+          <button
             type="button"
-            @click="setLanguage('en')" 
-            :class="lang === 'en' ? 'bg-amber-600 text-white shadow font-bold' : 'text-amber-900 hover:text-black font-semibold'" 
-            class="px-3 py-1 rounded-full text-xs transition active:scale-95 flex items-center gap-1">
+            @click="setLanguage('en')"
+            :class="lang === 'en' ? 'bg-ink text-white shadow font-bold' : 'text-slate-600 hover:text-ink font-semibold'"
+            class="px-2.5 py-1 rounded-full text-xs transition active:scale-95 border-none">
             <span>English</span>
           </button>
         </div>
 
-        <!-- Check Travel Pass Button -->
-        <button 
+        <button
           @click="statusModalOpen = true"
-          class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-xs sm:text-sm shadow-md shadow-amber-500/25 hover:shadow-lg transition active:scale-95">
+          class="btn-primary hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-white font-bold text-xs shadow-md shadow-amber-500/25 active:scale-95">
           <span class="material-symbols-outlined text-[17px]">confirmation_number</span>
           <span x-text="t('nav', 'checkPassBtn')"></span>
         </button>
+        <button
+          @click="statusModalOpen = true"
+          aria-label="Check Travel Pass"
+          class="btn-primary sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-full text-white shadow-md shadow-amber-500/25 active:scale-95">
+          <span class="material-symbols-outlined text-[18px]">confirmation_number</span>
+        </button>
+
+        <button
+          @click="mobileMenuOpen = !mobileMenuOpen"
+          :aria-expanded="mobileMenuOpen"
+          aria-label="Toggle navigation menu"
+          class="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-xl border border-line bg-white text-slate-700 hover:text-amber-700 transition active:scale-95">
+          <span class="material-symbols-outlined text-[20px]" x-text="mobileMenuOpen ? 'close' : 'menu'"></span>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenuOpen" x-transition class="lg:hidden border-t border-line bg-white/95 backdrop-blur-md">
+      <nav class="px-4 py-3 flex flex-col gap-1" :aria-hidden="mobileMenuOpen ? 'false' : 'true'" aria-label="Mobile">
+        <a @click="mobileMenuOpen = false" href="#circuits" x-text="t('nav', 'circuits')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
+        <a @click="mobileMenuOpen = false" href="#journey-highway" x-text="t('nav', 'highway')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
+        <a @click="mobileMenuOpen = false" href="#advantage" x-text="t('nav', 'advantage')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
+        <a @click="mobileMenuOpen = false" href="#emi-calculator-section" x-text="t('nav', 'calculator')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
+        <a @click="mobileMenuOpen = false" href="#verification-pass" x-text="t('nav', 'pass')" class="px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition"></a>
+        <button @click="statusModalOpen = true; mobileMenuOpen = false" class="btn-primary mt-2 inline-flex items-center justify-center gap-1.5 py-3 rounded-xl text-white font-bold text-sm active:scale-95">
+          <span class="material-symbols-outlined text-[18px]">confirmation_number</span>
+          <span x-text="t('nav', 'checkPassBtn')"></span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Reading progress hairline -->
+    <div class="h-0.5 w-full bg-amber-100/60" aria-hidden="true">
+      <div
+        class="h-full bg-gradient-to-r from-amber-400 to-orange-500 transition-[width] duration-150 ease-out"
+        :style="'width: ' + scrollProgress + '%'"></div>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- 2. HERO SECTION WITH IMAGE BACKGROUND & CLEAN LEFT ALIGNMENT               -->
+  <!-- 2. HERO: full-bleed Ken Burns crossfade, editorial entrance              -->
   <!-- ========================================================================= -->
-  <main id="hero-section" class="relative overflow-hidden pt-12 pb-20 px-4 sm:px-6 lg:px-8 border-b border-amber-200/60">
-    <!-- Hero Background Image (Lord Jagannath Temple at Night) -->
-    <div class="absolute inset-0 z-0">
-      <img 
-        src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Lord_Jagannath_temple_at_night.jpg" 
-        alt="Shri Jagannath Temple Puri Illuminated at Night" 
-        class="w-full h-full object-cover object-center scale-105 filter saturate-[1.1] brightness-[0.95]"/>
-      <!-- Soft Light Mode Ivory Overlay for maximum readability -->
-      <div class="absolute inset-0 bg-gradient-to-r from-[#FFFDF7]/98 via-[#FFFDF7]/90 to-[#FFFDF7]/75 sm:to-[#FFFDF7]/50"></div>
-      <div class="absolute inset-0 bg-gradient-to-t from-[#FFFDF7] via-transparent to-transparent"></div>
+  <main id="hero-section" class="relative flex min-h-[88svh] flex-col overflow-hidden">
+    <!-- Warm gradient base (visible during crossfade stitching) -->
+    <div class="absolute inset-0 bg-gradient-to-br from-amber-100 via-temple-warm to-orange-100" aria-hidden="true"></div>
+
+    <!-- Parallax media stack -->
+    <div id="hero-media" class="absolute inset-x-0 -top-[8%] h-[116%]" aria-hidden="true">
+      <div class="hero-slide absolute inset-0">
+        <img src="/images/hero-1.jpg" alt="" width="1600" height="1142" fetchpriority="high" decoding="async" class="w-full h-full object-cover object-center"/>
+      </div>
+      <div class="hero-slide absolute inset-0">
+        <img src="/images/hero-2.jpg" alt="" width="1600" height="1082" loading="lazy" decoding="async" class="w-full h-full object-cover object-center"/>
+      </div>
+      <div class="hero-slide absolute inset-0">
+        <img src="/images/hero-3.jpg" alt="" width="1600" height="1118" loading="lazy" decoding="async" class="w-full h-full object-cover object-center"/>
+      </div>
     </div>
 
-    <!-- Hero Content (Pure Left Alignment, Single Punchy Title, Subtext as is) -->
-    <div class="relative z-10 max-w-4xl mx-auto flex flex-col items-start text-left mt-2">
+    <!-- Ivory scrim: image reads through the middle, type stays legible -->
+    <div class="absolute inset-0 bg-gradient-to-b from-temple-base/92 via-temple-base/68 to-temple-base/95" aria-hidden="true"></div>
+    <div class="absolute inset-0 hero-grain pointer-events-none" aria-hidden="true"></div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-16 pb-6 text-center sm:px-6">
       <!-- Divine Badge -->
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-bold shadow-sm backdrop-blur-md">
-        <span class="text-base">🙏</span>
+      <div class="hero-enter relative overflow-hidden inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-amber-300/80 text-amber-900 text-xs font-bold tracking-wide shadow-sm backdrop-blur-md shine shine-auto">
+        <span class="material-symbols-outlined text-base">temple_hindu</span>
         <span x-text="t('hero', 'badge')"></span>
       </div>
 
-      <!-- Main Headline: ONLY 'ଆମ ଓଡ଼ିଶାରୁ ଚାରିଧାମ ଯାତ୍ରା' as requested -->
-      <h1 class="font-display-lg text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight mt-4 text-left">
-        <span x-text="t('hero', 'title1')"></span>
+      <!-- Headline: serif display, gold italic accent line -->
+      <h1 class="hero-enter font-display-lg text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-ink leading-[1.06] mt-6 text-balance" style="animation-delay: 80ms">
+        <span class="block" x-text="t('hero', 'titleA')"></span>
+        <span class="block text-amber-700" :class="lang === 'en' ? 'italic' : ''" x-text="t('hero', 'titleB')"></span>
       </h1>
 
-      <!-- Punchy Subtext as it is -->
-      <p class="text-base sm:text-lg text-slate-700 max-w-2xl leading-relaxed mt-3 text-left" x-text="t('hero', 'punchline')"></p>
+      <!-- Gold hairline ornament -->
+      <div class="hero-enter rule-gold mt-6" style="animation-delay: 140ms" aria-hidden="true"></div>
 
-      <!-- 3 Punchy Pillars (Left Aligned) -->
-      <div class="flex flex-wrap items-center justify-start gap-2 pt-3 text-xs font-bold text-slate-800">
-        <span class="bg-white/90 backdrop-blur-md border border-amber-300 rounded-full px-3.5 py-1.5 shadow-sm flex items-center gap-1.5">
-          <span class="text-emerald-600 font-bold">✓</span> <span x-text="t('hero', 'point1')"></span>
+      <!-- Punchline -->
+      <p class="hero-enter text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed mt-5" style="animation-delay: 160ms" x-text="t('hero', 'punchline')"></p>
+
+      <!-- 3 Pillar Points (hairline, no pills) -->
+      <div class="hero-enter flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 pt-4 text-sm font-medium text-slate-700" style="animation-delay: 240ms">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+          <span x-text="t('hero', 'point1')"></span>
         </span>
-        <span class="bg-white/90 backdrop-blur-md border border-amber-300 rounded-full px-3.5 py-1.5 shadow-sm flex items-center gap-1.5">
-          <span class="text-emerald-600 font-bold">✓</span> <span x-text="t('hero', 'point2')"></span>
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+          <span x-text="t('hero', 'point2')"></span>
         </span>
-        <span class="bg-white/90 backdrop-blur-md border border-amber-300 rounded-full px-3.5 py-1.5 shadow-sm flex items-center gap-1.5">
-          <span class="text-emerald-600 font-bold">✓</span> <span x-text="t('hero', 'point3')"></span>
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-emerald-600">check_circle</span>
+          <span x-text="t('hero', 'point3')"></span>
         </span>
       </div>
 
-      <!-- Action Buttons (Left Aligned) -->
-      <div class="flex flex-wrap items-center justify-start gap-3.5 pt-5">
-        <a class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-500/30 hover:brightness-105 active:scale-95 transition" href="#circuits">
+      <!-- Actions -->
+      <div class="hero-enter flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 pt-7 w-full sm:w-auto" style="animation-delay: 320ms">
+        <a class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-600/20" href="#circuits">
           <span class="material-symbols-outlined text-[20px]">explore</span>
           <span x-text="t('hero', 'btnExplore')"></span>
         </a>
-        <button 
+        <button
           @click="statusModalOpen = true"
-          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white/95 hover:bg-amber-50 border-2 border-amber-400 text-amber-900 font-bold text-sm sm:text-base shadow-md transition active:scale-95 backdrop-blur-md">
-          <span class="material-symbols-outlined text-[20px] text-amber-600">verified_user</span>
+          class="btn-ghost inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-ink font-bold text-sm sm:text-base">
+          <span class="material-symbols-outlined text-[20px] text-amber-700">verified_user</span>
           <span x-text="t('hero', 'btnVerify')"></span>
         </button>
       </div>
+    </div>
 
-      <!-- Rural Devotee Statistics Bar (Left Aligned) -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full mt-8 p-4 rounded-2xl bg-white/95 border border-amber-200 shadow-md backdrop-blur-md text-left">
-        <div class="flex flex-col items-start border-r border-amber-100 last:border-0 px-2">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold" x-text="t('hero', 'stat1Val')"></span>
-          <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat1Lbl')"></span>
+    <!-- Statistics strip anchored to the hero base -->
+    <div class="relative z-10 mx-auto w-full max-w-6xl px-4 pb-8 sm:px-6">
+      <div class="hero-enter grid grid-cols-2 md:grid-cols-4 gap-px bg-amber-200/70 rounded-2xl overflow-hidden border border-white/70 backdrop-blur-md shadow-card" style="animation-delay: 420ms">
+        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
+          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat1"></span>
+          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat1Lbl')"></span>
         </div>
-        <div class="flex flex-col items-start border-r border-amber-100 last:border-0 px-2">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold" x-text="t('hero', 'stat2Val')"></span>
-          <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat2Lbl')"></span>
+        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
+          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat2"></span>
+          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat2Lbl')"></span>
         </div>
-        <div class="flex flex-col items-start border-r border-amber-100 last:border-0 px-2">
-          <span class="font-finance-display text-2xl sm:text-3xl text-amber-600 font-bold" x-text="t('hero', 'stat3Val')"></span>
-          <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat3Lbl')"></span>
+        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
+          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat3"></span>
+          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat3Lbl')"></span>
         </div>
-        <div class="flex flex-col items-start px-2">
-          <span class="font-finance-display text-2xl sm:text-3xl text-emerald-600 font-bold" x-text="t('hero', 'stat4Val')"></span>
-          <span class="text-xs text-slate-600 font-medium" x-text="t('hero', 'stat4Lbl')"></span>
+        <div class="bg-white/90 px-3 py-4 flex flex-col items-center text-center">
+          <span class="font-finance-display text-2xl sm:text-3xl text-amber-700 font-semibold tabular-nums" x-text="statDisplay.stat4"></span>
+          <span class="text-xs text-slate-600 font-medium mt-0.5" x-text="t('hero', 'stat4Lbl')"></span>
         </div>
       </div>
     </div>
-
-    <!-- Hidden compatibility canvas for Three.js requirement (LAND-01) -->
-    <div id="hero-bus-canvas-container" class="hidden"></div>
   </main>
 
   <!-- ========================================================================= -->
-  <!-- 3. THE BHARATYATRA HIGHWAY & MILESTONES (BLACK ROAD WITH WHITE MARKINGS)   -->
+  <!-- 3. DESTINATION MARQUEE                                                   -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="journey-highway">
-    <div class="text-left max-w-3xl mb-8">
-      <span class="text-xs font-bold text-amber-700 uppercase tracking-widest" x-text="t('highway', 'tag')"></span>
-      <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1" x-text="t('highway', 'title')"></h2>
-      <p class="text-sm sm:text-base text-slate-600 mt-1" x-text="t('highway', 'desc')"></p>
+  <div class="border-y border-line bg-white/50 py-3.5">
+    <div class="marquee">
+      <div class="marquee-track">
+        <div class="flex shrink-0 items-center gap-4 pr-4">
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Kashi</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Puri</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Rameswaram</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tirupati</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Shirdi</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Haridwar</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Dwarka</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Somnath</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Ujjain</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Gaya</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Mathura</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Vrindavan</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tanjore</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Connaur</span><span class="text-[9px] text-amber-500">&#9670;</span>
+        </div>
+        <div class="flex shrink-0 items-center gap-4 pr-4" aria-hidden="true">
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Kashi</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Puri</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Rameswaram</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tirupati</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Shirdi</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Haridwar</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Dwarka</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Somnath</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Ujjain</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Gaya</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Mathura</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Vrindavan</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Tanjore</span><span class="text-[9px] text-amber-500">&#9670;</span>
+          <span class="text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500 whitespace-nowrap">Connaur</span><span class="text-[9px] text-amber-500">&#9670;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. THE JOURNEY: four-step editorial timeline                             -->
+  <!-- ========================================================================= -->
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20" id="journey-highway">
+    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
+      <span class="eyebrow" x-text="t('highway', 'tag')"></span>
+      <div class="rule-gold mt-3" aria-hidden="true"></div>
+      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance" x-text="t('highway', 'title')"></h2>
+      <p class="text-base sm:text-lg text-muted mt-4" x-text="t('highway', 'desc')"></p>
     </div>
 
-    <!-- The Authentic Black Highway with White Lane Stripes -->
-    <div class="rounded-3xl road-asphalt border-4 border-slate-800 shadow-2xl p-6 sm:p-10 relative overflow-hidden text-white text-left">
-      <!-- White Dashed Center Line across the horizontal road -->
-      <div class="hidden md:block absolute left-8 right-8 top-1/2 -translate-y-1/2 border-t-2 border-dashed border-white/80 pointer-events-none z-0"></div>
-
-      <!-- 4 NH Milestone Pillars along the Black Road -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10 text-left">
-        <!-- Milestone 1 -->
-        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('advantage')">
-          <div class="w-24 h-32 rounded-t-full bg-white border-2 border-slate-300 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform">
-            <div class="w-full h-10 rounded-t-full bg-amber-400 flex items-center justify-center font-bold text-slate-950 text-xs border-b border-slate-300">
-              🚩 NH-01
-            </div>
-            <div class="flex flex-col items-center my-auto">
-              <span class="text-[10px] font-bold text-slate-500 uppercase">STEP 1</span>
-              <span class="text-xs font-black text-slate-900 leading-tight">ସଂକଳ୍ପ</span>
-            </div>
-            <div class="w-full text-center text-[9px] font-bold text-slate-600 border-t border-slate-200 pt-0.5">
-              ମାସ ୦୧
-            </div>
-          </div>
-          <div class="mt-3 text-left">
-            <h4 class="font-bold text-sm text-amber-300" x-text="t('highway', 'm1Title')"></h4>
-            <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm1Desc')"></p>
-          </div>
-        </div>
-
-        <!-- Milestone 2 (Golden Coach Clearance) -->
-        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('advantage')">
-          <div class="w-24 h-32 rounded-t-full bg-white border-2 border-emerald-400 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform ring-4 ring-emerald-400/30">
-            <div class="w-full h-10 rounded-t-full bg-emerald-500 flex items-center justify-center font-bold text-white text-xs border-b border-slate-300">
-              🚌 UNLOCKED
-            </div>
-            <div class="flex flex-col items-center my-auto">
-              <span class="text-[10px] font-bold text-emerald-600 uppercase">STEP 2</span>
-              <span class="text-xs font-black text-slate-900 leading-tight">ବସ୍ ଚଢ଼ିବା</span>
-            </div>
-            <div class="w-full text-center text-[9px] font-bold text-emerald-700 border-t border-slate-200 pt-0.5">
-              ମାସ ୦୨
-            </div>
-          </div>
-          <div class="mt-3 text-left">
-            <h4 class="font-bold text-sm text-emerald-400" x-text="t('highway', 'm2Title')"></h4>
-            <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm2Desc')"></p>
-          </div>
-        </div>
-
-        <!-- Milestone 3 (Dham Darshan) -->
-        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('circuits')">
-          <div class="w-24 h-32 rounded-t-full bg-white border-2 border-slate-300 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform">
-            <div class="w-full h-10 rounded-t-full bg-amber-400 flex items-center justify-center font-bold text-slate-950 text-xs border-b border-slate-300">
-              🛕 DARSHAN
-            </div>
-            <div class="flex flex-col items-center my-auto">
-              <span class="text-[10px] font-bold text-slate-500 uppercase">STEP 3</span>
-              <span class="text-xs font-black text-slate-900 leading-tight">ଧାମ ଦର୍ଶନ</span>
-            </div>
-            <div class="w-full text-center text-[9px] font-bold text-slate-600 border-t border-slate-200 pt-0.5">
-              ଚାରିଧାମ
-            </div>
-          </div>
-          <div class="mt-3 text-left">
-            <h4 class="font-bold text-sm text-amber-300" x-text="t('highway', 'm3Title')"></h4>
-            <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm3Desc')"></p>
-          </div>
-        </div>
-
-        <!-- Milestone 4 (Safe Return) -->
-        <div class="flex flex-col items-start group cursor-pointer" @click="scrollToSection('emi-calculator-section')">
-          <div class="w-24 h-32 rounded-t-full bg-white border-2 border-slate-300 shadow-xl overflow-hidden flex flex-col items-center justify-between p-1 transform group-hover:-translate-y-2 transition-transform">
-            <div class="w-full h-10 rounded-t-full bg-amber-400 flex items-center justify-center font-bold text-slate-950 text-xs border-b border-slate-300">
-              🏠 PHERIBA
-            </div>
-            <div class="flex flex-col items-center my-auto">
-              <span class="text-[10px] font-bold text-slate-500 uppercase">STEP 4</span>
-              <span class="text-xs font-black text-slate-900 leading-tight">ଶାନ୍ତିରେ ଶୋଧ</span>
-            </div>
-            <div class="w-full text-center text-[9px] font-bold text-slate-600 border-t border-slate-200 pt-0.5">
-              ମାସ ୦୩-୧୦
-            </div>
-          </div>
-          <div class="mt-3 text-left">
-            <h4 class="font-bold text-sm text-amber-300" x-text="t('highway', 'm4Title')"></h4>
-            <p class="text-xs text-slate-300 mt-1" x-text="t('highway', 'm4Desc')"></p>
-          </div>
-        </div>
+    <ol class="relative mx-auto grid max-w-6xl gap-12 md:grid-cols-4 md:gap-8" data-reveal-stagger>
+      <!-- Drawn hairline connector (desktop) -->
+      <div class="reveal reveal-fade absolute left-[12.5%] right-[12.5%] top-8 hidden md:block" aria-hidden="true">
+        <div class="draw-line w-full"></div>
       </div>
 
-      <!-- Roadside Bus Indicator Banner -->
-      <div class="mt-8 pt-4 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🚌</span>
-          <span>Premium Deluxe Bus with Emergency Paramedic &amp; Satvik Kitchen</span>
-        </div>
-        <div class="flex items-center gap-2 font-mono text-amber-400 font-bold">
-          <span>● GPS SATELLITE TRACKED HIGHWAY</span>
-        </div>
-      </div>
+      <li class="reveal reveal-up flex flex-col items-center text-center">
+        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">01</span>
+        <span class="eyebrow mt-4"><span x-text="t('highway', 'step1') + ' • ' + t('highway', 'p1Month')"></span></span>
+        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p1Name')"></h3>
+        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm1Desc')"></p>
+      </li>
+
+      <li class="reveal reveal-up flex flex-col items-center text-center">
+        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">02</span>
+        <span class="eyebrow mt-4"><span x-text="t('highway', 'step2') + ' • ' + t('highway', 'p2Month')"></span></span>
+        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p2Name')"></h3>
+        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm2Desc')"></p>
+      </li>
+
+      <li class="reveal reveal-up flex flex-col items-center text-center">
+        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">03</span>
+        <span class="eyebrow mt-4"><span x-text="t('highway', 'step3') + ' • ' + t('highway', 'p3Month')"></span></span>
+        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p3Name')"></h3>
+        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm3Desc')"></p>
+      </li>
+
+      <li class="reveal reveal-up flex flex-col items-center text-center">
+        <span class="font-display-lg relative z-10 bg-temple-base px-3 text-6xl font-medium leading-none text-amber-700/40">04</span>
+        <span class="eyebrow mt-4"><span x-text="t('highway', 'step4') + ' • ' + t('highway', 'p4Month')"></span></span>
+        <h3 class="font-headline-lg mt-2 text-2xl font-semibold text-ink" x-text="t('highway', 'p4Name')"></h3>
+        <p class="mt-2 max-w-[30ch] text-sm leading-relaxed text-muted" x-text="t('highway', 'm4Desc')"></p>
+      </li>
+    </ol>
+
+    <div class="reveal reveal-up mx-auto mt-14 flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 border-t border-line pt-7 text-center text-xs text-muted">
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg text-amber-600">directions_bus</span>
+        <span x-text="t('highway', 'banner')"></span>
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg text-amber-600">handyman</span>
+        <span x-text="lang === 'odia' ? 'ସମସ୍ତ ଧାପ ଆପଣଙ୍କ ଗାଁ ସହାୟକଙ୍କ ସହାୟତାରେ' : 'Every step handled with your village Sahayak'"></span>
+      </span>
     </div>
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 4. THE MICRO-EMI ADVANTAGE: BENTO GRID                                    -->
+  <!-- 5. THE MICRO-EMI ADVANTAGE                                               -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" id="advantage">
-    <div class="text-left max-w-3xl mb-10">
-      <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20 border-t border-line bg-temple-warm/50" id="advantage">
+    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
+      <span class="eyebrow">
         <span x-text="lang === 'odia' ? 'ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ' : 'TRAVEL FIRST, SETTLE LATER'"></span>
       </span>
-      <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">
+      <div class="rule-gold mt-3" aria-hidden="true"></div>
+      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance">
         <span x-text="lang === 'odia' ? 'ବିନା ଆର୍ଥିକ ଚିନ୍ତାରେ ବାପା-ମା’ଙ୍କୁ ତୀର୍ଥ କରାନ୍ତୁ' : 'Fulfill Your Parents Sacred Pilgrimage Dream with Ease'"></span>
       </h2>
-      <p class="text-sm sm:text-base text-slate-600 mt-2">
+      <p class="text-base sm:text-lg text-muted mt-4">
         <span x-text="lang === 'odia' ? 'କୌଣସି ବ୍ୟାଙ୍କ ଋଣ ନାହିଁ, କୌଣସି କାଗଜପତ୍ର ଝମେଲା ନାହିଁ। କେବଳ ୨ଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ!' : 'No bank loans, zero paperwork hassle. Board your premium deluxe bus after paying just 2 installments!'"></span>
       </p>
     </div>
 
-    <!-- Bento Grid Container -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+    <div class="mx-auto grid max-w-6xl gap-6 md:grid-cols-3" data-reveal-stagger>
       <!-- Bento 1: Travel First (Spans 2 cols) -->
-      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden text-left">
-        <div>
-          <div class="flex items-center justify-between mb-3">
-            <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-bold">
-              <span x-text="lang === 'odia' ? 'ଭାରତଯାତ୍ରା ସ୍ପେଶାଲ୍ ନିୟମ' : 'BharatYatra Flagship Rule'"></span>
-            </span>
-            <span class="text-xs text-emerald-700 font-bold flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              <span class="material-symbols-outlined text-[16px]">lock_open</span> Boarding Granted at 20%
-            </span>
+      <div class="reveal reveal-scale md:col-span-2">
+        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between relative overflow-hidden">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <span class="eyebrow">
+                <span x-text="lang === 'odia' ? 'ଭାରତଯାତ୍ରା ସ୍ପେଶାଲ୍ ନିୟମ' : 'BharatYatra Flagship Rule'"></span>
+              </span>
+              <span class="text-xs font-bold flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 text-emerald-700">
+                <span class="material-symbols-outlined text-[16px]">lock_open</span>
+                <span x-text="lang === 'odia' ? '୨୦% ପରେ ବୋର୍ଡିଂ ଅନୁମତି' : 'Boarding Granted at 20%'"></span>
+              </span>
+            </div>
+            <h3 class="font-headline-md text-2xl sm:text-3xl text-ink font-medium">
+              <span x-text="lang === 'odia' ? 'ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ (Travel First, Settle Later)' : 'Travel First, Settle Later (Pahile Yatra, Pachhare Shodha)'"></span>
+            </h3>
+            <p class="text-sm sm:text-base text-muted mt-3 max-w-xl leading-relaxed">
+              <span x-text="lang === 'odia' ? 'ଅନ୍ୟ ଟ୍ରାଭେଲ ଏଜେନ୍ସି ପୂରା ଟଙ୍କା ଆଗୁଆ ମାଗନ୍ତି। କିନ୍ତୁ ଏଠାରେ ମାତ୍ର ଦୁଇଟି କିସ୍ତି ପରେ ଯାତ୍ରା ସିଟ୍ କନଫର୍ମ!' : 'Traditional tour agencies require 100% upfront fees. BharatYatra clears your boarding pass as soon as Month 2 is cleared.'"></span>
+            </p>
           </div>
-          <h3 class="font-headline-md text-2xl text-slate-900 font-bold">
-            <span x-text="lang === 'odia' ? 'ପହିଲେ ଯାତ୍ରା, ପଛରେ ଶୋଧ (Travel First, Settle Later)' : 'Travel First, Settle Later (Pahile Yatra, Pachhare Shodha)'"></span>
-          </h3>
-          <p class="text-sm text-slate-600 mt-2 max-w-xl leading-relaxed">
-            <span x-text="lang === 'odia' ? 'ଅନ୍ୟ ଟ୍ରାଭେଲ ଏଜେନ୍ସି ପୂରା ଟଙ୍କା ଆଗୁଆ ମାଗନ୍ତି। କିନ୍ତୁ ଏଠାରେ ମାତ୍ର ଦୁଇଟି କିସ୍ତି ପରେ ଯାତ୍ରା ସିଟ୍ କନଫର୍ମ!' : 'Traditional tour agencies require 100% upfront fees. BharatYatra clears your boarding pass as soon as Month 2 is cleared.'"></span>
-          </p>
-        </div>
 
-        <div class="mt-6 pt-5 border-t border-amber-100">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200">
-              <div class="text-[11px] text-amber-800 font-bold">MASO 01 (START)</div>
-              <div class="font-bold text-sm text-slate-900">
-                <span x-text="lang === 'odia' ? 'ଯାତ୍ରା ସଂକଳ୍ପ' : 'Yatra Token'"></span>
+          <div class="mt-6 pt-5 border-t border-line">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div class="p-4 rounded-xl bg-temple-warm border border-line">
+                <div class="eyebrow text-[10px]">
+                  <span x-text="lang === 'odia' ? 'ମାସ ୦୧ (ଆରମ୍ଭ)' : 'MONTH 01 (START)'"></span>
+                </div>
+                <div class="font-semibold text-sm text-ink mt-1">
+                  <span x-text="lang === 'odia' ? 'ଯାତ୍ରା ସଂକଳ୍ପ' : 'Yatra Token'"></span>
+                </div>
+                <p class="text-xs text-muted mt-1">
+                  <span x-text="lang === 'odia' ? 'ଘରେ ବସି ପାସବୁକ୍ ପାଆନ୍ତୁ।' : 'Receive your physical passbook at doorstep.'"></span>
+                </p>
               </div>
-              <p class="text-[11px] text-slate-600 mt-1">
-                <span x-text="lang === 'odia' ? 'ଘରେ ବସି ପାସବୁକ୍ ପାଆନ୍ତୁ।' : 'Receive your physical passbook at doorstep.'"></span>
-              </p>
-            </div>
-            <div class="p-3.5 rounded-xl bg-amber-100/80 border-2 border-amber-500 shadow-sm">
-              <div class="text-[11px] text-emerald-800 font-bold">MASO 02 (CLEARED)</div>
-              <div class="font-bold text-sm text-slate-900">
-                <span x-text="lang === 'odia' ? 'ବସ୍ ଚଢ଼ିବା ଅନୁମତି!' : 'Coach Boarding Active!'"></span>
+              <div class="p-4 rounded-xl bg-amber-50/70 border-2 border-amber-400">
+                <div class="text-[11px] uppercase font-bold tracking-widest text-amber-800">
+                  <span x-text="lang === 'odia' ? 'ମାସ ୦୨ (କ୍ଲିୟର୍)' : 'MONTH 02 (CLEARED)'"></span>
+                </div>
+                <div class="font-semibold text-sm text-ink mt-1">
+                  <span x-text="lang === 'odia' ? 'ବସ୍ ଚଢ଼ିବା ଅନୁମତି!' : 'Coach Boarding Active!'"></span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1">
+                  <span x-text="lang === 'odia' ? 'ଟିକେଟ୍ ଅନଲକ୍। ସପରିବାର ଯାତ୍ରା କରନ୍ତୁ।' : 'Board the premium deluxe bus with family.'"></span>
+                </p>
               </div>
-              <p class="text-[11px] text-slate-700 mt-1">
-                <span x-text="lang === 'odia' ? 'ଟିକେଟ୍ ଅନଲକ୍। ସପରିବାର ଯାତ୍ରା କରନ୍ତୁ।' : 'Board the premium deluxe bus with family.'"></span>
-              </p>
-            </div>
-            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-              <div class="text-[11px] text-slate-600 font-bold">MASO 03 - 10</div>
-              <div class="font-bold text-sm text-slate-900">
-                <span x-text="lang === 'odia' ? 'ଫେରିବା ପରେ ଶୋଧ' : 'Post-Travel EMIs'"></span>
+              <div class="p-4 rounded-xl bg-white border border-line">
+                <div class="eyebrow text-[10px]">
+                  <span x-text="lang === 'odia' ? 'ମାସ ୦୩-୧୦' : 'MONTH 03 - 10'"></span>
+                </div>
+                <div class="font-semibold text-sm text-ink mt-1">
+                  <span x-text="lang === 'odia' ? 'ଫେରିବା ପରେ ଶୋଧ' : 'Post-Travel EMIs'"></span>
+                </div>
+                <p class="text-xs text-muted mt-1">
+                  <span x-text="lang === 'odia' ? 'ଫସଲ ଅମଳ ଅନୁସାରେ ସହଜରେ ଶୁଝନ୍ତୁ।' : 'Clear remaining dues with harvest income.'"></span>
+                </p>
               </div>
-              <p class="text-[11px] text-slate-600 mt-1">
-                <span x-text="lang === 'odia' ? 'ଫସଲ ଅମଳ ଅନୁସାରେ ସହଜରେ ଶୁଝନ୍ତୁ।' : 'Clear remaining dues with harvest income.'"></span>
-              </p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Bento 2: Zero Banking Friction -->
-      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg text-left">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 mb-4 shadow-sm">
-            <span class="material-symbols-outlined text-[26px]">fingerprint</span>
+      <div class="reveal reveal-scale">
+        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-temple-warm border border-amber-200 flex items-center justify-center text-amber-700 mb-4">
+              <span class="material-symbols-outlined text-[26px]">fingerprint</span>
+            </div>
+            <h3 class="font-headline-md text-2xl text-ink font-medium">
+              <span x-text="lang === 'odia' ? 'ବ୍ୟାଙ୍କ CIBIL ର ଚିନ୍ତା ନାହିଁ' : 'Zero Banking Friction'"></span>
+            </h3>
+            <p class="text-sm text-muted mt-3 leading-relaxed">
+              <span x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ କିମ୍ବା ବ୍ୟାଙ୍କ ଚକ୍କର କାଟିବା ଦରକାର ନାହିଁ।' : 'No credit score checks or complicated banking paperwork.'"></span>
+            </p>
+            <div class="mt-5 space-y-3">
+              <div class="flex items-center gap-2.5 text-sm text-slate-700">
+                <span class="material-symbols-outlined text-amber-600 text-[18px]">check_circle</span>
+                <span x-text="lang === 'odia' ? '୩ ମିନିଟ୍ ରେ ଆଧାର ଯାଞ୍ଚ' : '3-Minute Aadhaar e-KYC'"></span>
+              </div>
+              <div class="flex items-center gap-2.5 text-sm text-slate-700">
+                <span class="material-symbols-outlined text-amber-600 text-[18px]">check_circle</span>
+                <span x-text="lang === 'odia' ? 'ଫସଲ ଡେରିରେ କୌଣସି ପେନାଲ୍ଟି ନାହିଁ' : 'No delay penalties during harvest seasons'"></span>
+              </div>
+              <div class="flex items-center gap-2.5 text-sm text-slate-700">
+                <span class="material-symbols-outlined text-amber-600 text-[18px]">check_circle</span>
+                <span x-text="lang === 'odia' ? '୧୦୦% ସଂରକ୍ଷିତ ସ୍ଲିପର ସିଟ୍ ଟୋକନ୍' : '100% Guaranteed Sleeper Seat Token'"></span>
+              </div>
+            </div>
           </div>
-          <h3 class="font-headline-md text-2xl text-slate-900 font-bold">
-            <span x-text="lang === 'odia' ? 'ବ୍ୟାଙ୍କ CIBIL ର ଚିନ୍ତା ନାହିଁ' : 'Zero Banking Friction'"></span>
-          </h3>
-          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-            <span x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ କିମ୍ବା ବ୍ୟାଙ୍କ ଚକ୍କର କାଟିବା ଦରକାର ନାହିଁ।' : 'No credit score checks or complicated banking paperwork.'"></span>
-          </p>
-          <div class="mt-4 space-y-2.5">
-            <div class="flex items-center gap-2 text-xs text-slate-800 font-medium">
-              <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
-              <span x-text="lang === 'odia' ? '୩ ମିନିଟ୍ ରେ ଆଧାର ଯାଞ୍ଚ' : '3-Minute Aadhaar e-KYC'"></span>
-            </div>
-            <div class="flex items-center gap-2 text-xs text-slate-800 font-medium">
-              <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
-              <span x-text="lang === 'odia' ? 'ଫସଲ ଡେରିରେ କୌଣସି ପେନାଲ୍ଟି ନାହିଁ' : 'No delay penalties during harvest seasons'"></span>
-            </div>
-            <div class="flex items-center gap-2 text-xs text-slate-800 font-medium">
-              <span class="material-symbols-outlined text-emerald-600 text-[18px]">check_circle</span>
-              <span x-text="lang === 'odia' ? '୧୦୦% ସଂରକ୍ଷିତ ସ୍ଲିପର ସିଟ୍ ଟୋକନ୍' : '100% Guaranteed Sleeper Seat Token'"></span>
-            </div>
+          <div class="mt-6 pt-4 border-t border-line flex items-center justify-between text-[11px] uppercase tracking-widest text-muted">
+            <span class="font-bold">Odisha Trust Code</span>
+            <span class="font-mono font-bold text-amber-700 normal-case">JAGANNATH-2026</span>
           </div>
-        </div>
-        <div class="mt-6 pt-3 border-t border-amber-100 flex items-center justify-between text-xs text-slate-500">
-          <span class="font-bold">ODISHA TRUST CODE</span>
-          <span class="font-mono font-bold text-amber-700">JAGANNATH-2026</span>
         </div>
       </div>
 
       <!-- Bento 3: Doorstep Sahayak -->
-      <div class="rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg text-left">
-        <div>
-          <div class="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 mb-4 shadow-sm">
-            <span class="material-symbols-outlined text-[26px]">home_pin</span>
+      <div class="reveal reveal-scale">
+        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between">
+          <div>
+            <div class="w-12 h-12 rounded-xl bg-temple-warm border border-amber-200 flex items-center justify-center text-amber-700 mb-4">
+              <span class="material-symbols-outlined text-[26px]">home_pin</span>
+            </div>
+            <h3 class="font-headline-md text-2xl text-ink font-medium">
+              <span x-text="lang === 'odia' ? 'ଘରେ ବସି ସହାୟକ ଭାଇ' : 'Doorstep Village Sahayak'"></span>
+            </h3>
+            <p class="text-sm text-muted mt-3 leading-relaxed">
+              <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ନିଜ ପଞ୍ଚାୟତର ସହାୟକ ଭାଇ ମେସିନ୍ ଧରି ଘରକୁ ଆସିବେ।' : 'Trained youth from your own Gram Panchayat visit your home with hand-held POS.'"></span>
+            </p>
+            <ul class="mt-5 space-y-2.5 text-sm text-slate-700">
+              <li class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-amber-600 text-[17px]">receipt_long</span>
+                <span x-text="lang === 'odia' ? 'ହାତୋହାତ ଥର୍ମାଲ ପ୍ରିଣ୍ଟ୍ ରସିଦ୍ ସ୍ଲିପ୍' : 'Instant thermal print receipt slip'"></span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-amber-600 text-[17px]">chat</span>
+                <span x-text="lang === 'odia' ? 'ଓଡ଼ିଆ SMS ଓ WhatsApp ସୂଚନା' : 'Instant regional SMS and WhatsApp confirmations'"></span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-amber-600 text-[17px]">verified</span>
+                <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ସୁରକ୍ଷିତ ଖାତା ରେଜିଷ୍ଟର' : 'Offline verified cryptographic security'"></span>
+              </li>
+            </ul>
           </div>
-          <h3 class="font-headline-md text-2xl text-slate-900 font-bold">
-            <span x-text="lang === 'odia' ? 'ଘରେ ବସି ସହାୟକ ଭାଇ' : 'Doorstep Village Sahayak'"></span>
-          </h3>
-          <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-            <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ନିଜ ପଞ୍ଚାୟତର ସହାୟକ ଭାଇ ମେସିନ୍ ଧରି ଘରକୁ ଆସିବେ।' : 'Trained youth from your own Gram Panchayat visit your home with hand-held POS.'"></span>
-          </p>
-          <ul class="mt-4 space-y-2 text-xs text-slate-800">
-            <li class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-amber-600 text-[17px]">receipt_long</span>
-              <span x-text="lang === 'odia' ? 'ହାତୋହାତ ଥର୍ମାଲ ପ୍ରିଣ୍ଟ୍ ରସିଦ୍ ସ୍ଲିପ୍' : 'Instant thermal print receipt slip'"></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-amber-600 text-[17px]">chat</span>
-              <span x-text="lang === 'odia' ? 'ଓଡ଼ିଆ SMS ଓ WhatsApp ସୂଚନା' : 'Instant regional SMS and WhatsApp confirmations'"></span>
-            </li>
-            <li class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-amber-600 text-[17px]">verified</span>
-              <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ସୁରକ୍ଷିତ ଖାତା ରେଜିଷ୍ଟର' : 'Offline verified cryptographic security'"></span>
-            </li>
-          </ul>
-        </div>
-        <div class="mt-6 pt-3 border-t border-amber-100">
-          <span class="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 1,450+ Gram Panchayats in Odisha
-          </span>
+          <div class="mt-6 pt-4 border-t border-line">
+            <span class="text-xs font-bold text-amber-700 flex items-center gap-2 uppercase tracking-wide">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରେ ୧,୪୫୦+ ଗ୍ରାମ ପଞ୍ଚାୟତ' : '1,450+ Gram Panchayats in Odisha'"></span>
+            </span>
+          </div>
         </div>
       </div>
 
-      <!-- Bento 4: 100% Satvik Food -->
-      <div class="md:col-span-2 rounded-3xl bg-white p-7 temple-gold-border flex flex-col justify-between shadow-lg relative overflow-hidden text-left">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
-          <div>
-            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
-              <span x-text="lang === 'odia' ? 'ଆହାର ଶୁଦ୍ଧତା' : 'SATVIK PURITY'"></span>
-            </span>
-            <h3 class="font-headline-md text-2xl text-slate-900 font-bold mt-2">
-              <span x-text="lang === 'odia' ? '୧୦୦% ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ଆହାର' : '100% Pure Satvik Meals'"></span>
-            </h3>
-            <p class="text-sm text-slate-600 mt-2 leading-relaxed">
-              <span x-text="lang === 'odia' ? 'ବାପା-ମା’ଙ୍କ ଖାଦ୍ୟପେୟରେ କୌଣସି ସାଲିସ୍ ନାହିଁ। ବସ୍ ସହିତ ଓଡ଼ିଶାର ରୋଷେୟା (ମହାରାଜ) ଓ ପୁରୋହିତ ଯାଆନ୍ତି।' : 'Dedicated Odia cooks (Maharaj) and priests accompany every tour with kitchen trailers.'"></span>
-            </p>
-            <div class="mt-4 grid grid-cols-2 gap-2.5">
-              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                <div class="text-amber-900 font-bold text-xs flex items-center gap-1">
-                  <span>🧅❌</span> <span x-text="lang === 'odia' ? 'ବିନା ପିଆଜ-ରସୁଣ' : 'No Onion, No Garlic'"></span>
+      <!-- Bento 4: 100% Satvik Food (Spans 2 cols) -->
+      <div class="reveal reveal-scale md:col-span-2">
+        <div class="h-full rounded-2xl bg-white p-7 border border-line shadow-card card-lift flex flex-col justify-between relative overflow-hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+            <div>
+              <span class="eyebrow">
+                <span x-text="lang === 'odia' ? 'ଆହାର ଶୁଦ୍ଧତା' : 'SATVIK PURITY'"></span>
+              </span>
+              <h3 class="font-headline-md text-2xl sm:text-3xl text-ink font-medium mt-3">
+                <span x-text="lang === 'odia' ? '୧୦୦% ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ଆହାର' : '100% Pure Satvik Meals'"></span>
+              </h3>
+              <p class="text-sm text-muted mt-3 leading-relaxed">
+                <span x-text="lang === 'odia' ? 'ବାପା-ମା’ଙ୍କ ଖାଦ୍ୟପେୟରେ କୌଣସି ସାଲିସ୍ ନାହିଁ। ବସ୍ ସହିତ ଓଡ଼ିଶାର ରୋଷେୟା (ମହାରାଜ) ଓ ପୁରୋହିତ ଯାଆନ୍ତି।' : 'Dedicated Odia cooks (Maharaj) and priests accompany every tour with kitchen trailers.'"></span>
+              </p>
+              <div class="mt-5 grid grid-cols-2 gap-3">
+                <div class="p-3.5 rounded-xl bg-temple-warm border border-line">
+                  <div class="text-amber-800 font-bold text-xs flex items-center gap-1.5 uppercase tracking-wide">
+                    <span class="material-symbols-outlined text-amber-700 text-[17px]">eco</span>
+                    <span x-text="lang === 'odia' ? 'ବିନା ପିଆଜ-ରସୁଣ' : 'No Onion, No Garlic'"></span>
+                  </div>
+                  <div class="text-xs text-muted mt-1">
+                    <span x-text="lang === 'odia' ? 'ଘରୋଇ ରୋଷେଇ ବ୍ୟବସ୍ଥା' : 'Fresh kitchen setup'"></span>
+                  </div>
                 </div>
-                <div class="text-[10px] text-slate-600 mt-0.5">Fresh kitchen setup</div>
-              </div>
-              <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                <div class="text-amber-900 font-bold text-xs flex items-center gap-1">
-                  <span>🛕★</span> <span x-text="lang === 'odia' ? 'ଭିଆଇପି ଦର୍ଶନ ସୁବିଧା' : 'VIP Darshan Pass'"></span>
+                <div class="p-3.5 rounded-xl bg-temple-warm border border-line">
+                  <div class="text-amber-800 font-bold text-xs flex items-center gap-1.5 uppercase tracking-wide">
+                    <span class="material-symbols-outlined text-amber-700 text-[17px]">temple_hindu</span>
+                    <span x-text="lang === 'odia' ? 'ଭିଆଇପି ଦର୍ଶନ ସୁବିଧା' : 'VIP Darshan Pass'"></span>
+                  </div>
+                  <div class="text-xs text-muted mt-1">
+                    <span x-text="lang === 'odia' ? 'ବୟସ୍କ ସେବା ସୁବିଧା' : 'Elderly care assistance'"></span>
+                  </div>
                 </div>
-                <div class="text-[10px] text-slate-600 mt-0.5">Elderly care assistance</div>
               </div>
             </div>
-          </div>
 
-          <div class="p-5 rounded-2xl bg-amber-50/80 border border-amber-300 text-left flex flex-col items-start">
-            <div class="w-12 h-12 rounded-full bg-amber-200 flex items-center justify-center text-amber-800 mb-2 font-bold text-xl">
-              🙏
+            <div class="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-temple-warm border border-amber-200/70 flex flex-col items-start">
+              <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-800 mb-3 border border-amber-200">
+                <span class="material-symbols-outlined text-2xl">self_improvement</span>
+              </div>
+              <div class="font-headline-md text-xl text-amber-900 font-medium italic">"Moksha Bina Bojh Re"</div>
+              <p class="text-xs text-muted mt-1.5 max-w-xs">
+                <span x-text="lang === 'odia' ? 'ଗଙ୍ଗା ସ୍ନାନ, ଆଳତି ଓ ପ୍ରସାଦ ସମ୍ପୂର୍ଣ୍ଣ ମର୍ଯ୍ୟାଦା ସହିତ ପରିଚାଳିତ।' : 'Every snan, aarti, and sacred prasad box is reverently pre-arranged.'"></span>
+              </p>
             </div>
-            <div class="font-headline-md text-lg text-amber-900 font-bold italic">"Moksha Bina Bojh Re"</div>
-            <p class="text-xs text-slate-700 mt-1 max-w-xs">
-              <span x-text="lang === 'odia' ? 'ଗଙ୍ଗା ସ୍ନାନ, ଆଳତି ଓ ପ୍ରସାଦ ସମ୍ପୂର୍ଣ୍ଣ ମର୍ଯ୍ୟାଦା ସହିତ ପରିଚାଳିତ।' : 'Every snan, aarti, and sacred prasad box is reverently pre-arranged.'"></span>
-            </p>
           </div>
         </div>
       </div>
@@ -605,88 +538,90 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 5. CURATED SACRED TOUR CIRCUITS (LAND-03 3D TILT CARDS)                   -->
+  <!-- 6. CURATED SACRED TOUR CIRCUITS (Vanilla-Tilt 3D CARDS)                   -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left" id="circuits">
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 text-left">
-      <div>
-        <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">
-          <span x-text="lang === 'odia' ? 'ତୀର୍ଥ ପ୍ୟାକେଜ୍ ସମୂହ' : 'CURATED PILGRIMAGE CIRCUITS'"></span>
-        </span>
-        <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">
-          <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରୁ ଆରମ୍ଭ ହେଉଥିବା ପବିତ୍ର ଯାତ୍ରା' : 'Sacred Tirtha Packages from Odisha'"></span>
-        </h2>
-        <p class="text-sm text-slate-600 mt-1">
-          <span x-text="lang === 'odia' ? 'ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍, ଆଶ୍ରମ ରହଣି, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'All packages include premium deluxe bus berths, hotel stays, VIP darshan protocol, and 3 satvik meals daily.'"></span>
-        </p>
-      </div>
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20" id="circuits">
+    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
+      <span class="eyebrow">
+        <span x-text="lang === 'odia' ? 'ତୀର୍ଥ ପ୍ୟାକେଜ୍ ସମୂହ' : 'CURATED PILGRIMAGE CIRCUITS'"></span>
+      </span>
+      <div class="rule-gold mt-3" aria-hidden="true"></div>
+      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance">
+        <span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରୁ ଆରମ୍ଭ ହେଉଥିବା ପବିତ୍ର ଯାତ୍ରା' : 'Sacred Tirtha Packages from Odisha'"></span>
+      </h2>
+      <p class="text-base sm:text-lg text-muted mt-4">
+        <span x-text="lang === 'odia' ? 'ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍, ଆଶ୍ରମ ରହଣି, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'All packages include premium deluxe bus berths, hotel stays, VIP darshan protocol, and 3 satvik meals daily.'"></span>
+      </p>
     </div>
 
-    <!-- Tour Cards Grid with Vanilla-Tilt (LAND-03) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-reveal-stagger>
       <template x-for="pkg in packages" :key="pkg.id">
-        <div 
-          class="package-tilt-card rounded-3xl bg-white temple-gold-border overflow-hidden flex flex-col justify-between group transition-all duration-300 shadow-md hover:shadow-xl cursor-pointer text-left"
+        <div
+          class="reveal reveal-up group cursor-pointer"
           @click="selectPackage(pkg)">
-          <div>
-            <!-- High-Res Visual Photo Container -->
-            <div class="relative h-52 w-full overflow-hidden bg-slate-100">
-              <img 
-                :alt="pkg.title" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                :src="pkg.image"/>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              
-              <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-amber-300 text-[10px] text-amber-900 font-bold">
-                <span x-text="pkg.duration_days + ' Days • Odisha Pickup'"></span>
+          <div class="package-tilt-card h-full rounded-2xl bg-white border border-line overflow-hidden flex flex-col justify-between shadow-card transition-shadow duration-300 hover:shadow-card-hover">
+            <div>
+              <!-- Visual -->
+              <div class="relative h-56 w-full overflow-hidden bg-slate-100">
+                <img
+                  :alt="pkg.title"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  :src="pkg.image"
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='/images/hero-1.jpg'"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent"></div>
+
+                <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-line text-[10px] uppercase tracking-widest text-slate-700 font-bold">
+                  <span x-text="lang === 'odia' ? pkg.duration_days + ' ଦିନ' : pkg.duration_days + ' Days'"></span>
+                </div>
+                <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded bg-charcoal/85 backdrop-blur text-[10px] uppercase tracking-widest text-amber-300 font-bold">
+                  <span x-text="pkg.badge"></span>
+                </div>
               </div>
-              <div class="absolute bottom-3 right-3 px-2 py-0.5 rounded bg-amber-600 text-white text-[10px] font-bold shadow">
-                <span x-text="pkg.badge"></span>
+
+              <!-- Content -->
+              <div class="p-5">
+                <div class="eyebrow text-[10px]" x-text="pkg.odia_title"></div>
+                <h3 class="font-headline-md text-xl text-ink font-medium mt-1 leading-snug" x-text="pkg.title"></h3>
+                <p class="text-xs text-muted mt-1.5 line-clamp-2" x-text="lang === 'odia' ? pkg.odia_destination : pkg.destination"></p>
+
+                <div class="mt-3 flex flex-wrap gap-1.5">
+                  <template x-for="hl in pkg.highlights" :key="hl">
+                    <span class="px-2 py-0.5 rounded border border-line bg-temple-warm text-[11px] text-slate-600 font-medium" x-text="hl"></span>
+                  </template>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-line flex items-baseline justify-between">
+                  <div>
+                    <div class="text-[10px] uppercase font-bold tracking-widest text-muted">
+                      <span x-text="lang === 'odia' ? 'ମାସିକ କିସ୍ତି' : 'Monthly EMI'"></span>
+                    </div>
+                    <div class="font-finance-display text-xl text-amber-700 font-bold tabular-nums">
+                      ₹<span x-text="Math.round(pkg.total_price / 9).toLocaleString('en-IN')"></span>
+                      <span class="text-xs font-normal text-muted">/ mo</span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[10px] uppercase font-bold tracking-widest text-muted">
+                      <span x-text="lang === 'odia' ? 'ଦୈନିକ ଖର୍ଚ୍ଚ' : 'Daily Cost'"></span>
+                    </div>
+                    <span class="font-finance-body text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold tabular-nums">
+                      ₹<span x-text="Math.round(pkg.total_price / 270)"></span>
+                      <span x-text="lang === 'odia' ? '/ ଦିନ' : '/ day'"></span>
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- Card Content -->
-            <div class="p-4 text-left">
-              <div class="text-[12px] font-bold text-amber-700" x-text="pkg.odia_title"></div>
-              <h3 class="font-headline-md text-lg text-slate-900 font-bold mt-0.5 leading-snug" x-text="pkg.title"></h3>
-              <p class="text-xs text-slate-500 mt-1 line-clamp-2" x-text="lang === 'odia' ? pkg.odia_destination : pkg.destination"></p>
-
-              <!-- Inclusions Chips -->
-              <div class="mt-3 flex flex-wrap gap-1">
-                <template x-for="hl in pkg.highlights" :key="hl">
-                  <span class="px-2 py-0.5 rounded bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-medium" x-text="hl"></span>
-                </template>
-              </div>
-
-              <!-- Pricing Calculation -->
-              <div class="mt-4 pt-3 border-t border-amber-100 flex items-baseline justify-between">
-                <div>
-                  <div class="text-[10px] uppercase font-bold text-slate-500">
-                    <span x-text="lang === 'odia' ? 'ମାସିକ କିସ୍ତି' : 'Monthly EMI'"></span>
-                  </div>
-                  <div class="font-finance-display text-xl text-amber-700 font-bold">
-                    ₹<span x-text="Math.round(pkg.total_price / 9).toLocaleString('en-IN')"></span>
-                    <span class="text-xs font-normal text-slate-500">/ mo</span>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <div class="text-[10px] uppercase font-bold text-emerald-700">
-                    <span x-text="lang === 'odia' ? 'ଦୈନିକ ଖର୍ଚ୍ଚ' : 'Daily Cost'"></span>
-                  </div>
-                  <span class="font-finance-body text-xs text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
-                    ₹<span x-text="Math.round(pkg.total_price / 270)"></span> / day
-                  </span>
-                </div>
-              </div>
+            <div class="p-4 pt-0">
+              <button
+                class="w-full py-2.5 rounded-xl border border-amber-600/60 text-amber-700 hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-colors font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5">
+                <span x-text="lang === 'odia' ? 'ଯାତ୍ରା ସଞ୍ଚୟ ପ୍ଲାନ୍ କରନ୍ତୁ' : 'Plan Yatra Sanchay'"></span>
+                <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
+              </button>
             </div>
-          </div>
-
-          <div class="p-4 pt-0">
-            <button 
-              class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow transition active:scale-95 flex items-center justify-center gap-1">
-              <span x-text="lang === 'odia' ? 'ଯାତ୍ରା ସଞ୍ଚୟ ପ୍ଲାନ୍ କରନ୍ତୁ' : 'Plan Yatra Sanchay'"></span>
-              <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
-            </button>
           </div>
         </div>
       </template>
@@ -694,130 +629,140 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 6. DYNAMIC MICRO-SAVINGS TRAVEL SIMULATOR (LAND-02 CALCULATOR)            -->
+  <!-- 7. DYNAMIC MICRO-SAVINGS TRAVEL SIMULATOR (EMI CALCULATOR)                -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left" id="emi-calculator-section">
-    <div class="rounded-3xl bg-white p-6 sm:p-10 temple-gold-border shadow-xl relative overflow-hidden text-left">
-      <!-- Background Ambient Amber Glow -->
-      <div class="absolute right-0 bottom-0 w-80 h-80 bg-amber-100/70 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="max-w-3xl mb-8 text-left">
-        <span class="text-xs font-bold text-amber-700 uppercase tracking-wider" x-text="t('calculator', 'tag')"></span>
-        <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1" x-text="t('calculator', 'title')"></h2>
-        <p class="text-sm text-slate-600 mt-1" x-text="t('calculator', 'desc')"></p>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center text-left">
-        <!-- Controls Side (7 cols) -->
-        <div class="lg:col-span-7 space-y-5 text-left">
-          <!-- Select Circuit -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-2" x-text="t('calculator', 'choosePkg')"></label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="circuit-selector">
-              <template x-for="p in packages" :key="p.id">
-                <button 
-                  type="button"
-                  @click="selectPackage(p)"
-                  :class="selectedPackage.id === p.id ? 'border-2 border-amber-500 bg-amber-50 text-amber-900 shadow-sm' : 'border border-amber-200 bg-white text-slate-700 hover:border-amber-300'"
-                  class="p-3 rounded-xl text-left transition-all">
-                  <div class="font-bold text-xs sm:text-sm" x-text="lang === 'odia' ? p.odia_title : p.title"></div>
-                  <div class="text-[11px] text-slate-500 mt-0.5">
-                    <span x-text="p.duration_days + ' Days • '"></span>
-                    <span class="font-finance-body font-bold text-amber-700">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></span>
-                  </div>
-                </button>
-              </template>
-            </div>
-          </div>
-
-          <!-- Select Tenure Months -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase mb-2" x-text="t('calculator', 'chooseTenure')"></label>
-            <div class="flex flex-wrap gap-2.5" id="tenure-selector">
-              <template x-for="t in selectedPackage.allowed_tenures" :key="t">
-                <button 
-                  type="button"
-                  @click="selectedTenure = t"
-                  :class="selectedTenure === t ? 'border-2 border-amber-500 bg-amber-500 text-white font-bold shadow-md shadow-amber-500/20' : 'border border-amber-200 bg-white text-slate-700 hover:border-amber-300 font-semibold'"
-                  class="px-5 py-2 rounded-xl text-xs sm:text-sm transition-all active:scale-95">
-                  <span x-text="t + ' Months'"></span>
-                </button>
-              </template>
-            </div>
-          </div>
-
-          <!-- Boarding Progress Visual Explanation -->
-          <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-left">
-            <div class="flex items-center justify-between text-xs sm:text-sm mb-1.5">
-              <span class="text-slate-700 font-medium" x-text="t('calculator', 'statusLbl')"></span>
-              <span class="text-emerald-700 font-finance-body font-bold">
-                Boarding Unlocked at ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> Paid!
-              </span>
-            </div>
-            <!-- Dual Stop Gradient Gauge Bar -->
-            <div class="w-full h-3 bg-amber-200/60 rounded-full overflow-hidden p-0.5 border border-amber-300">
-              <div 
-                class="h-full rounded-full bg-gradient-to-r from-amber-500 to-emerald-500 transition-all duration-500" 
-                :style="'width: ' + progressPercent + '%'"></div>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-slate-600 mt-1.5">
-              <span>Token 1 (Start)</span>
-              <span class="text-emerald-700 font-bold" x-text="t('calculator', 'unlockMsg')"></span>
-              <span>Final Settlement</span>
-            </div>
-          </div>
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-24 border-t border-line bg-temple-warm/50" id="emi-calculator-section">
+    <div class="reveal reveal-up mx-auto max-w-6xl rounded-3xl bg-white border border-line shadow-card overflow-hidden relative">
+      <div class="p-6 sm:p-10">
+        <div class="max-w-3xl mx-auto mb-12 text-center">
+          <span class="eyebrow" x-text="t('calculator', 'tag')"></span>
+          <div class="rule-gold mt-3" aria-hidden="true"></div>
+          <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance" x-text="t('calculator', 'title')"></h2>
+          <p class="text-base sm:text-lg text-muted mt-4" x-text="t('calculator', 'desc')"></p>
         </div>
 
-        <!-- Calculated Live Result Box (5 cols) -->
-        <div class="lg:col-span-5 text-left">
-          <div class="p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-amber-50 to-amber-100/60 border-2 border-amber-400 shadow-lg relative text-left">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-amber-900 uppercase tracking-wide" x-text="t('calculator', 'estEmiLbl')"></span>
-              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-300">Auto Approved</span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Controls -->
+          <div class="lg:col-span-7 space-y-6">
+            <!-- Circuit -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-3" x-text="t('calculator', 'choosePkg')"></label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="circuit-selector">
+                <template x-for="p in packages" :key="p.id">
+                  <button
+                    type="button"
+                    @click="selectPackage(p)"
+                    :class="selectedPackage.id === p.id ? 'border-amber-500 bg-amber-50/70 text-amber-900 shadow-sm' : 'border-line bg-white text-slate-700 hover:border-amber-300'"
+                    class="p-4 rounded-xl text-left border transition-all">
+                    <div class="font-bold text-sm" x-text="lang === 'odia' ? p.odia_title : p.title"></div>
+                    <div class="text-xs text-muted mt-1">
+                      <span x-text="p.duration_days + ' Days • '"></span>
+                      <span class="font-finance-body font-bold text-amber-700 tabular-nums">₹<span x-text="p.total_price.toLocaleString('en-IN')"></span></span>
+                    </div>
+                  </button>
+                </template>
+              </div>
             </div>
 
-            <div class="mt-3 flex items-baseline gap-2">
-              <span class="font-finance-display text-4xl sm:text-5xl font-extrabold text-amber-800">
-                ₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span>
-              </span>
-              <span class="text-slate-600 text-sm font-medium" x-text="t('calculator', 'perMonth')"></span>
+            <!-- Tenure -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-3" x-text="t('calculator', 'chooseTenure')"></label>
+              <div class="flex flex-wrap gap-2.5" id="tenure-selector">
+                <template x-for="ten in selectedPackage.allowed_tenures" :key="ten">
+                  <button
+                    type="button"
+                    @click="selectedTenure = ten"
+                    :class="selectedTenure === ten ? 'border-amber-500 bg-amber-500 text-white font-bold shadow-md shadow-amber-500/20' : 'border-line bg-white text-slate-700 hover:border-amber-300 font-semibold'"
+                    class="px-6 py-2.5 rounded-xl text-sm border transition-all active:scale-95">
+                    <span x-text="ten + ' ' + (lang === 'odia' ? 'ମାସ' : 'Months')"></span>
+                  </button>
+                </template>
+              </div>
             </div>
 
-            <!-- Chai Affordability Tag -->
-            <div class="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-amber-300 text-emerald-800 font-finance-body text-xs font-bold shadow-sm">
-              <span>☕</span>
-              <span><span x-text="t('calculator', 'teaCompare')"></span> (₹<span x-text="dailyCost"></span>/day)</span>
-            </div>
-
-            <div class="my-5 border-t border-amber-200"></div>
-
-            <div class="space-y-2 text-xs sm:text-sm text-slate-700 text-left">
-              <div class="flex justify-between">
-                <span class="text-slate-600" x-text="t('calculator', 'toBoardLbl')"></span>
-                <span class="font-finance-body text-amber-800 font-bold">
-                  ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> (Month 1 + Month 2)
+            <!-- Boarding progress -->
+            <div class="p-5 rounded-2xl bg-temple-warm border border-line">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-sm mb-2">
+                <span class="text-slate-700 font-medium" x-text="t('calculator', 'statusLbl')"></span>
+                <span class="text-emerald-700 font-finance-body font-bold tabular-nums text-xs">
+                  <span x-text="lang === 'odia' ? 'ବୋର୍ଡିଂ ଅନଲକ୍' : 'Boarding Unlocked at'"></span> ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span>
+                  <span x-text="lang === 'odia' ? 'ପୈଠ!' : 'Paid!'"></span>
                 </span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-slate-600" x-text="t('calculator', 'postTravelLbl')"></span>
-                <span class="font-finance-body text-slate-800 font-bold">
-                  ₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> (<span x-text="remainingTenure"></span> post-trip EMIs)
-                </span>
+              <div
+                class="w-full h-2.5 bg-amber-100 rounded-full overflow-hidden border border-amber-200"
+                role="progressbar"
+                :aria-valuenow="progressPercent"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                :aria-label="t('calculator', 'statusLbl')">
+                <div
+                  class="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500"
+                  :style="'width: ' + progressPercent + '%'"></div>
               </div>
-              <div class="flex justify-between">
-                <span class="text-slate-600" x-text="t('calculator', 'channelLbl')"></span>
-                <span class="font-semibold text-slate-800" x-text="t('calculator', 'channelVal')"></span>
+              <div class="flex items-center justify-between text-[11px] text-muted mt-2">
+                <span x-text="lang === 'odia' ? 'ଟୋକେନ ୧ (ଆରମ୍ଭ)' : 'Token 1 (Start)'"></span>
+                <span class="text-emerald-700 font-bold" x-text="t('calculator', 'unlockMsg')"></span>
+                <span x-text="lang === 'odia' ? 'ଚୂଡ଼ାନ୍ତ ସେଟଲମେଣ୍ଟ' : 'Final Settlement'"></span>
               </div>
             </div>
+          </div>
 
-            <button 
-              @click="statusModalOpen = true"
-              class="w-full mt-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 text-white font-bold text-sm shadow-md hover:brightness-105 transition active:scale-95"
-              x-text="t('calculator', 'bookBtn')">
-            </button>
-            <p class="text-[11px] text-center text-slate-500 mt-2">
-              <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଗାଁ ସହାୟକ ଭାଇ ଘରେ ଆସି ରସିଦ୍ ଦେବେ' : 'Printed paper slip issued right at your doorstep'"></span>
-            </p>
+          <!-- Result: charcoal panel with gold figure -->
+          <div class="lg:col-span-5">
+            <div class="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-charcoal p-6 sm:p-7 text-white shadow-xl">
+              <!-- Ambient gold glow -->
+              <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-amber-500/20 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+              <div class="relative flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-300" x-text="t('calculator', 'estEmiLbl')"></span>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 text-[11px] font-bold">
+                  <span x-text="lang === 'odia' ? 'ସ୍ୱୟଂଚାଳିତ ଅନୁମୋଦିତ' : 'Auto Approved'"></span>
+                </span>
+              </div>
+
+              <div class="relative mt-4 flex items-baseline gap-2">
+                <span class="font-finance-display text-5xl font-bold text-amber-400 tabular-nums" :class="emiPulse ? 'pop-change' : ''">
+                  ₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span>
+                </span>
+                <span class="text-stone-400 text-sm font-medium" x-text="t('calculator', 'perMonth')"></span>
+              </div>
+
+              <div class="relative mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white/10 border border-white/15 text-amber-100 font-finance-body text-xs font-bold">
+                <span class="material-symbols-outlined text-amber-400 text-[15px]">local_cafe</span>
+                <span><span x-text="t('calculator', 'teaCompare')"></span> (₹<span x-text="dailyCost"></span>/day)</span>
+              </div>
+
+              <div class="relative my-5 border-t border-white/10"></div>
+
+              <div class="relative space-y-2.5 text-sm">
+                <div class="flex justify-between gap-3">
+                  <span class="text-stone-400" x-text="t('calculator', 'toBoardLbl')"></span>
+                  <span class="font-finance-body text-amber-300 font-bold tabular-nums text-right">
+                    ₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> <span x-text="lang === 'odia' ? '(ମାସ ୧ + ମାସ ୨)' : '(Month 1 + 2)'"></span>
+                  </span>
+                </div>
+                <div class="flex justify-between gap-3">
+                  <span class="text-stone-400" x-text="t('calculator', 'postTravelLbl')"></span>
+                  <span class="font-finance-body text-white font-bold tabular-nums text-right">
+                    ₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> (<span x-text="remainingTenure + ' ' + (lang === 'odia' ? 'ପରବର୍ତ୍ତୀ କିସ୍ତି' : 'post-trip EMIs')"></span>)
+                  </span>
+                </div>
+                <div class="flex justify-between gap-3">
+                  <span class="text-stone-400" x-text="t('calculator', 'channelLbl')"></span>
+                  <span class="font-semibold text-white text-right" x-text="t('calculator', 'channelVal')"></span>
+                </div>
+              </div>
+
+              <button
+                @click="statusModalOpen = true"
+                class="btn-primary relative w-full mt-6 py-3.5 rounded-xl text-white font-bold text-sm"
+                x-text="t('calculator', 'bookBtn')">
+              </button>
+              <p class="relative text-xs text-center text-stone-500 mt-2.5">
+                <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଗାଁ ସହାୟକ ଭାଇ ଘରେ ଆସି ରସିଦ୍ ଦେବେ' : 'Printed paper slip issued right at your doorstep'"></span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -825,210 +770,292 @@
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 7. GOLDEN VIP TRAVEL PASS PREVIEW (OFFLINE TRAVEL TICKET)                 -->
+  <!-- 8. GOLDEN VIP TRAVEL PASS PREVIEW                                        -->
   <!-- ========================================================================= -->
-  <section class="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-left" id="verification-pass">
-    <div class="text-left max-w-3xl mb-10">
-      <span class="text-xs font-bold text-amber-700 uppercase tracking-widest">
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 scroll-mt-20" id="verification-pass">
+    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
+      <span class="eyebrow">
         <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ପ୍ରମାଣପତ୍ର' : 'OFFLINE TRAVEL CERTIFICATE'"></span>
       </span>
-      <h2 class="font-headline-lg text-3xl sm:text-4xl text-slate-900 font-bold mt-1">
+      <div class="rule-gold mt-3" aria-hidden="true"></div>
+      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance">
         <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଅଧିକୃତ ତୀର୍ଥଯାତ୍ରୀ ବୋର୍ଡିଂ ପାସ୍' : 'Your Official Pilgrim Boarding Pass'"></span>
       </h2>
-      <p class="text-sm text-slate-600 mt-1">
+      <p class="text-base sm:text-lg text-muted mt-4">
         <span x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ ଦରକାର ନାହିଁ। ଗାଁ ସହାୟକ ଭାଇ ଷ୍ଟାମ୍ପ୍ ଓ ବାରକୋଡ୍ ସହିତ ଫିଜିକାଲ୍ ପାସ୍ ଘରେ ପ୍ରଦାନ କରିବେ।' : 'Smartphone not required. Devotees receive a physical gold-embossed travel pass stamped by their village Sahayak.'"></span>
       </p>
     </div>
 
-    <!-- The Embossed Boarding Pass Stub Card (Light Mode Ivory) -->
-    <div class="max-w-4xl mx-auto rounded-3xl bg-white border-2 border-amber-300 shadow-xl relative overflow-hidden text-left">
-      <div class="h-2.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600"></div>
+    <div class="reveal reveal-up max-w-4xl mx-auto">
+      <div class="rounded-3xl bg-white border border-line shadow-card relative overflow-hidden">
+        <div class="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 shine"></div>
 
-      <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center text-left">
-        <!-- Left Pass Body (8 cols) -->
-        <div class="md:col-span-8 space-y-4 text-left">
-          <div class="flex flex-wrap items-center justify-between border-b border-amber-100 pb-3 gap-2">
-            <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-800 text-lg">
-                🚩
+        <div class="p-6 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <!-- Pass body -->
+          <div class="md:col-span-8 space-y-4">
+            <div class="flex flex-wrap items-center justify-between border-b border-line pb-4 gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-full bg-temple-warm border border-amber-200 flex items-center justify-center text-amber-700">
+                  <span class="material-symbols-outlined text-[20px]">flag</span>
+                </div>
+                <div>
+                  <span class="font-display-lg text-xl text-ink font-semibold">BharatYatra Royal Pass</span>
+                  <div class="text-[10px] text-amber-700 font-bold uppercase tracking-[0.18em]">National Pilgrimage Micro-Credit Board • Odisha Division</div>
+                </div>
               </div>
-              <div class="text-left">
-                <span class="font-display-lg text-xl text-slate-900 font-bold">BharatYatra Royal Pass</span>
-                <div class="text-[10px] text-amber-800 font-bold uppercase tracking-wider">National Pilgrimage Micro-Credit Board • Odisha Division</div>
+              <div class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                ELIGIBLE TO TRAVEL (Month 2 Cleared)
               </div>
             </div>
-            <!-- Status Pill -->
-            <div class="px-3 py-1 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              ELIGIBLE TO TRAVEL (Month 2 Cleared)
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-xs text-muted uppercase font-bold tracking-wider">Devotee Head of Family</span>
+                <div class="text-ink font-semibold mt-1">Pandit Rameshwar Mohapatra &amp; Parivar</div>
+                <div class="text-xs text-muted mt-0.5">Village: Pipili, Puri District, Odisha</div>
+              </div>
+              <div>
+                <span class="text-xs text-muted uppercase font-bold tracking-wider">Sacred Circuit</span>
+                <div class="text-amber-700 font-semibold mt-1">Char Dham Himalayan Yatra</div>
+                <div class="text-xs text-muted mt-0.5">Coach #OD-02-BY-108 (Premium Deluxe Bus)</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 pt-1 text-xs">
+              <div>
+                <span class="text-xs text-muted uppercase font-bold tracking-wider">Pass Reference</span>
+                <div class="font-mono text-ink font-bold mt-1 tabular-nums">BY-OD-884920</div>
+              </div>
+              <div>
+                <span class="text-xs text-muted uppercase font-bold tracking-wider">Pickup Hub</span>
+                <div class="text-ink font-bold mt-1">Bhubaneswar Baramunda</div>
+              </div>
+              <div>
+                <span class="text-xs text-muted uppercase font-bold tracking-wider">Sleeper Berths</span>
+                <div class="font-mono text-amber-700 font-bold mt-1">L-04, L-05 (Lower)</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-4 border-t border-line text-xs text-muted">
+              <span class="material-symbols-outlined text-amber-600 text-[18px]">verified</span>
+              <span>Verified by Sahayak Agent: <strong class="text-slate-700">Sanjay Sahu (ID: OD-SHK-204)</strong> • Pipili Panchayat Desk</span>
             </div>
           </div>
 
-          <!-- Devotee Details Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-left">
-            <div>
-              <span class="text-[10px] text-slate-500 uppercase font-bold">Devotee Head of Family</span>
-              <div class="text-sm text-slate-900 font-bold mt-0.5">Pandit Rameshwar Mohapatra &amp; Parivar</div>
-              <div class="text-[11px] text-slate-600">Village: Pipili, Puri District, Odisha</div>
+          <!-- Ticket stub -->
+          <div class="md:col-span-4 border-t md:border-t-0 md:border-l-2 md:border-dashed border-line md:pl-6 flex flex-col items-center justify-center text-center">
+            <div class="p-3 bg-temple-warm rounded-xl border border-line flex flex-col items-center">
+              <div class="w-32 h-32 bg-charcoal p-2 rounded-lg flex items-center justify-center relative">
+                <span class="material-symbols-outlined text-white text-[96px] select-none">qr_code_2</span>
+              </div>
+              <span class="font-mono text-[10px] text-ink font-bold mt-1.5 tracking-[0.18em]">OFFLINE AUTHENTICATED</span>
             </div>
-            <div>
-              <span class="text-[10px] text-slate-500 uppercase font-bold">Sacred Circuit</span>
-              <div class="text-sm text-amber-800 font-bold mt-0.5">Char Dham Himalayan Yatra</div>
-              <div class="text-[11px] text-slate-600">Coach #OD-02-BY-108 (Premium Deluxe Bus)</div>
-            </div>
-          </div>
 
-          <div class="grid grid-cols-3 gap-2 pt-1 text-xs text-left">
-            <div>
-              <span class="text-[10px] text-slate-500 uppercase font-bold">Pass Reference</span>
-              <div class="font-mono text-xs text-slate-900 font-bold mt-0.5">BY-OD-884920</div>
+            <div class="mt-3 font-mono text-xs text-amber-700 font-bold tabular-nums tracking-wider">
+              TOKEN: 7490-AX-OD
             </div>
-            <div>
-              <span class="text-[10px] text-slate-500 uppercase font-bold">Pickup Hub</span>
-              <div class="text-xs text-slate-900 font-bold mt-0.5">Bhubaneswar Baramunda</div>
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-500 uppercase font-bold">Sleeper Berths</span>
-              <div class="font-mono text-xs text-amber-800 font-bold mt-0.5">L-04, L-05 (Lower)</div>
-            </div>
+            <p class="text-xs text-muted max-w-[210px] mt-1">
+              Scan via Sahayak POS Device without internet connection.
+            </p>
+            <button
+              @click="statusModalOpen = true"
+              class="btn-primary mt-3 px-5 py-1.5 rounded-full text-white text-xs font-bold flex items-center gap-1 shadow">
+              <span class="material-symbols-outlined text-[15px]">search</span>
+              <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ପାସ୍ ଦେଖନ୍ତୁ' : 'Lookup Your Pass'"></span>
+            </button>
           </div>
-
-          <!-- Sahayak Signature Stamp -->
-          <div class="flex items-center gap-2 pt-3 border-t border-amber-100 text-xs text-slate-600">
-            <span class="material-symbols-outlined text-amber-600 text-[18px]">verified</span>
-            <span>Verified by Sahayak Agent: <strong>Sanjay Sahu (ID: OD-SHK-204)</strong> • Pipili Panchayat Desk</span>
-          </div>
-        </div>
-
-        <!-- Right Perforated Ticket Stub (4 cols) with High Contrast QR -->
-        <div class="md:col-span-4 border-t md:border-t-0 md:border-l-2 md:border-dashed border-amber-200 md:pl-6 flex flex-col items-center justify-center text-center">
-          <div class="p-3 bg-amber-50 rounded-xl shadow-inner border border-amber-200 flex flex-col items-center">
-            <div class="w-32 h-32 bg-slate-950 p-2 rounded-lg flex items-center justify-center relative">
-              <span class="material-symbols-outlined text-white text-[96px] select-none">qr_code_2</span>
-            </div>
-            <span class="font-mono text-[10px] text-slate-900 font-bold mt-1 tracking-wider">OFFLINE AUTHENTICATED</span>
-          </div>
-
-          <div class="mt-2.5 font-mono text-xs text-amber-800 font-bold">
-            TOKEN: 7490-AX-OD
-          </div>
-          <p class="text-[10px] text-slate-500 max-w-[190px] mt-0.5">
-            Scan via Sahayak POS Device without internet connection.
-          </p>
-          <button 
-            @click="statusModalOpen = true"
-            class="mt-2.5 px-4 py-1.5 rounded-full bg-amber-500 text-white hover:bg-amber-600 transition text-xs font-bold flex items-center gap-1 shadow">
-            <span class="material-symbols-outlined text-[15px]">search</span>
-            <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ପାସ୍ ଦେଖନ୍ତୁ' : 'Lookup Your Pass'"></span>
-          </button>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ========================================================================= -->
-  <!-- 8. FOOTER                                                                 -->
+  <!-- 9. TESTIMONIALS                                                           -->
   <!-- ========================================================================= -->
-  <footer class="w-full px-4 sm:px-6 lg:px-8 py-10 max-w-7xl mx-auto border-t border-amber-200 bg-white/80 text-left">
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-left">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-white text-sm font-bold">
-          BY
-        </div>
-        <div class="text-left">
-          <span class="font-display-lg text-lg text-slate-900 font-bold">BharatYatra — Odisha</span>
-          <span class="block text-[11px] text-slate-500">Pious Micro-EMI Bus Tourism &amp; Pilgrimage Platform</span>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-600">
-        <a class="hover:text-amber-600 transition" href="/agent/dashboard" x-text="t('nav', 'agentLogin')"></a>
-        <a class="hover:text-amber-600 transition" href="/distributor/dashboard">Distributor Dashboard</a>
-        <a class="hover:text-amber-600 transition" href="/_/">Admin Console</a>
-        <a class="hover:text-amber-600 transition" href="#circuits" x-text="t('nav', 'circuits')"></a>
-        <a class="hover:text-amber-600 transition" href="#verification-pass" x-text="t('nav', 'pass')"></a>
-      </div>
+  <section class="px-4 py-20 sm:px-6 sm:py-24 lg:px-8 border-t border-line bg-temple-warm/50 scroll-mt-20">
+    <div class="reveal reveal-up text-center max-w-3xl mx-auto mb-14">
+      <span class="eyebrow" x-text="t('testimonials', 'tag')"></span>
+      <div class="rule-gold mt-3" aria-hidden="true"></div>
+      <h2 class="font-headline-lg text-4xl sm:text-5xl font-medium tracking-tight text-ink mt-5 text-balance" x-text="t('testimonials', 'title')"></h2>
+      <p class="text-base sm:text-lg text-muted mt-4" x-text="t('testimonials', 'desc')"></p>
     </div>
 
-    <div class="border-t border-amber-100 pt-5 mt-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-500 text-left">
-      <p>© 2026 BharatYatra Technologies Ltd. Regulated under Rural Pilgrimage Micro-Credit Guidelines. Jai Jagannath!</p>
-      <div class="flex items-center gap-2 text-emerald-700 font-bold">
-        <span>✓ 100% Satvik Certified</span>
-        <span>•</span>
-        <span>Offline Ledger Verified</span>
+    <div class="mx-auto grid max-w-6xl gap-6 md:grid-cols-3" data-reveal-stagger>
+      <figure class="reveal reveal-up h-full rounded-2xl bg-white border border-line shadow-card p-7 flex flex-col">
+        <div class="text-amber-500 text-sm tracking-[0.25em]" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote class="font-headline-md text-lg italic leading-relaxed text-ink mt-4" x-text="'“' + t('testimonials', 'q1') + '”'"></blockquote>
+        <figcaption class="mt-auto pt-5 border-t border-line flex items-center gap-3 mt-6">
+          <span class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-sm font-bold flex items-center justify-center shrink-0" x-text="t('testimonials', 'n1').slice(0, 1)"></span>
+          <span>
+            <span class="block text-sm font-bold text-ink" x-text="t('testimonials', 'n1')"></span>
+            <span class="block text-xs text-muted" x-text="t('testimonials', 'p1')"></span>
+          </span>
+        </figcaption>
+      </figure>
+
+      <figure class="reveal reveal-up h-full rounded-2xl bg-white border border-line shadow-card p-7 flex flex-col">
+        <div class="text-amber-500 text-sm tracking-[0.25em]" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote class="font-headline-md text-lg italic leading-relaxed text-ink mt-4" x-text="'“' + t('testimonials', 'q2') + '”'"></blockquote>
+        <figcaption class="mt-auto pt-5 border-t border-line flex items-center gap-3 mt-6">
+          <span class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-sm font-bold flex items-center justify-center shrink-0" x-text="t('testimonials', 'n2').slice(0, 1)"></span>
+          <span>
+            <span class="block text-sm font-bold text-ink" x-text="t('testimonials', 'n2')"></span>
+            <span class="block text-xs text-muted" x-text="t('testimonials', 'p2')"></span>
+          </span>
+        </figcaption>
+      </figure>
+
+      <figure class="reveal reveal-up h-full rounded-2xl bg-white border border-line shadow-card p-7 flex flex-col">
+        <div class="text-amber-500 text-sm tracking-[0.25em]" aria-label="5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <blockquote class="font-headline-md text-lg italic leading-relaxed text-ink mt-4" x-text="'“' + t('testimonials', 'q3') + '”'"></blockquote>
+        <figcaption class="mt-auto pt-5 border-t border-line flex items-center gap-3 mt-6">
+          <span class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-white text-sm font-bold flex items-center justify-center shrink-0" x-text="t('testimonials', 'n3').slice(0, 1)"></span>
+          <span>
+            <span class="block text-sm font-bold text-ink" x-text="t('testimonials', 'n3')"></span>
+            <span class="block text-xs text-muted" x-text="t('testimonials', 'p3')"></span>
+          </span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 10. FINAL CTA BAND (charcoal)                                            -->
+  <!-- ========================================================================= -->
+  <section class="relative overflow-hidden bg-charcoal px-4 py-20 text-center sm:px-6 sm:py-24">
+    <div class="absolute left-1/2 top-0 h-72 w-[36rem] -translate-x-1/2 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+    <div class="reveal reveal-up relative max-w-3xl mx-auto">
+      <span class="eyebrow text-amber-400" x-text="t('cta', 'tag')"></span>
+      <div class="rule-gold mt-4" aria-hidden="true"></div>
+      <h2 class="font-display-lg text-4xl sm:text-5xl font-medium tracking-tight text-white mt-6 text-balance" x-text="t('cta', 'title')"></h2>
+      <p class="text-base sm:text-lg text-stone-400 mt-4 max-w-2xl mx-auto" x-text="t('cta', 'desc')"></p>
+
+      <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5">
+        <a class="btn-primary inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-white font-bold text-sm sm:text-base shadow-lg shadow-amber-700/30" href="#circuits">
+          <span class="material-symbols-outlined text-[20px]">route</span>
+          <span x-text="t('cta', 'btn')"></span>
+        </a>
+        <button
+          @click="statusModalOpen = true"
+          class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/25 text-white font-bold text-sm sm:text-base hover:border-amber-400 hover:bg-white/5 transition-colors">
+          <span class="material-symbols-outlined text-[20px] text-amber-400">confirmation_number</span>
+          <span x-text="t('cta', 'btnAlt')"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 11. FOOTER (charcoal)                                                    -->
+  <!-- ========================================================================= -->
+  <footer class="bg-charcoal border-t border-white/10 text-stone-400">
+    <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <div class="reveal reveal-up flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+            BY
+          </div>
+          <div>
+            <span class="font-display-lg text-lg text-white font-semibold block leading-tight">BharatYatra — Odisha</span>
+            <span class="block text-xs text-stone-500">Pious Micro-EMI Bus Tourism &amp; Pilgrimage Platform</span>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold">
+          <a class="hover:text-amber-400 transition-colors" href="/agent/dashboard" x-text="t('nav', 'agentLogin')"></a>
+          <a class="hover:text-amber-400 transition-colors" href="/distributor/dashboard">
+            <span x-text="lang === 'odia' ? 'ଡିଷ୍ଟ୍ରିବ୍ୟୁଟର ଡ୍ୟାସବୋର୍ଡ' : 'Distributor Dashboard'"></span>
+          </a>
+          <a class="hover:text-amber-400 transition-colors" href="/_/">Admin Console</a>
+          <a class="hover:text-amber-400 transition-colors" href="#circuits" x-text="t('nav', 'circuits')"></a>
+          <a class="hover:text-amber-400 transition-colors" href="#verification-pass" x-text="t('nav', 'pass')"></a>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10 pt-5 mt-7 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+        <p class="text-stone-500">© 2026 BharatYatra Technologies Ltd. Regulated under Rural Pilgrimage Micro-Credit Guidelines. Jai Jagannath!</p>
+        <div class="flex items-center gap-2 text-amber-400/90 font-semibold">
+          <span>
+            <span x-text="lang === 'odia' ? '୧୦୦% ସାତ୍ତ୍ୱିକ ପ୍ରମାଣିତ' : '100% Satvik Certified'"></span>
+          </span>
+          <span>&bull;</span>
+          <span>
+            <span x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ଲେଜର ଯାଞ୍ଚିତ' : 'Offline Ledger Verified'"></span>
+          </span>
+        </div>
       </div>
     </div>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- 9. PILGRIM VERIFICATION PORTAL MODAL (LAND-04, LAND-05)                   -->
+  <!-- 12. PILGRIM VERIFICATION PORTAL MODAL                                     -->
   <!-- ========================================================================= -->
-  <div 
-    x-show="statusModalOpen" 
+  <div
+    x-show="statusModalOpen"
     x-cloak
-    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-sm"
+    x-transition
+    class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-charcoal/60 p-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Travel Pass Verification"
     @keydown.escape.window="statusModalOpen = false">
-    
-    <div 
-      class="relative w-full max-w-xl rounded-3xl border-2 border-amber-400 bg-white p-6 sm:p-8 shadow-2xl text-left"
+
+    <div
+      class="relative w-full max-w-xl rounded-3xl border border-line bg-white p-6 sm:p-8 shadow-2xl"
       @click.outside="statusModalOpen = false">
-      
-      <!-- Close Button -->
-      <button 
-        @click="statusModalOpen = false" 
-        class="absolute right-5 top-5 rounded-full bg-slate-100 p-1.5 text-slate-500 hover:text-slate-900 transition">
+
+      <button
+        @click="statusModalOpen = false"
+        aria-label="Close"
+        class="absolute right-5 top-5 rounded-full bg-temple-warm border border-line p-1.5 text-slate-500 hover:text-ink transition">
         <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
 
-      <!-- Modal Header -->
-      <div class="text-left">
-        <div class="text-xs font-bold uppercase tracking-widest text-amber-700">
+      <div>
+        <div class="eyebrow">
           <span x-text="lang === 'odia' ? 'ତୀର୍ଥଯାତ୍ରୀ ଯାଞ୍ଚ ପୋର୍ଟାଲ୍ • VERIFICATION' : 'PILGRIM VERIFICATION PORTAL'"></span>
         </div>
-        <h3 class="font-headline-md text-2xl text-slate-900 font-bold mt-0.5">
+        <h3 class="font-headline-md text-2xl text-ink font-medium mt-2">
           <span x-text="lang === 'odia' ? 'ନିଜ ଟ୍ରାଭେଲ୍ ପାସ୍ ଯାଞ୍ଚ କରନ୍ତୁ' : 'Check Travel Eligibility Pass'"></span>
         </h3>
-        <p class="text-xs text-slate-600 mt-1">
+        <p class="text-xs text-muted mt-1.5">
           <span x-text="lang === 'odia' ? 'ନିଜ ୧୦ ଅଙ୍କର ମୋବାଇଲ୍ ନମ୍ବର କିମ୍ବା ବୁକିଂ କୋଡ୍ (e.g. BY-2026-XXXX) ଦେଇ ଯାଞ୍ଚ କରନ୍ତୁ।' : 'Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.'"></span>
         </p>
       </div>
 
-      <!-- HTMX Lookup Form (LAND-04) -->
-      <form 
+      <form
         class="mt-5 flex flex-col sm:flex-row gap-2.5"
         hx-get="/api/public/booking-status"
         hx-target="#booking-status-result"
         hx-indicator="#status-loading">
         <div class="relative flex-1">
-          <input 
-            type="text" 
-            name="query" 
-            required 
+          <input
+            x-ref="statusInput"
+            type="text"
+            name="query"
+            required
+            autocomplete="off"
             placeholder="Mobile No. (e.g. 9876543210) or BY-2026-XXXX"
-            class="w-full rounded-xl border border-amber-300 bg-amber-50/50 px-4 py-3 text-sm font-semibold text-slate-900 placeholder-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+            class="w-full rounded-xl border border-line bg-temple-warm/50 px-4 py-3 text-sm font-semibold text-ink placeholder-slate-400 focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
         </div>
-        <button 
+        <button
           type="submit"
-          class="rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 px-6 py-3 text-xs font-bold text-white shadow-md hover:brightness-105 active:scale-95 transition">
+          class="btn-primary rounded-xl px-6 py-3 text-xs font-bold text-white shadow-md">
           <span x-text="lang === 'odia' ? 'ପାସ୍ ଦେଖନ୍ତୁ' : 'Verify Pass'"></span>
         </button>
       </form>
 
-      <!-- Loading Indicator -->
       <div id="status-loading" class="htmx-indicator my-3 text-center">
         <div class="inline-flex items-center gap-2 text-xs text-amber-700 font-semibold">
           <span class="material-symbols-outlined animate-spin text-[16px]">sync</span>
-          Searching verified passenger database...
+          <span x-text="lang === 'odia' ? 'ଯାଞ୍ଚିତ ଯାତ୍ରୀ ତଥ୍ୟ ଖୋଜୁଛୁ...' : 'Searching verified passenger database...'"></span>
         </div>
       </div>
 
-      <!-- Results Container (Golden VIP Pass swapped by HTMX) (LAND-04, LAND-05) -->
       <div id="booking-status-result" class="mt-4"></div>
     </div>
   </div>
-
-  <!-- 3D Bus Animation Script Engine (LAND-01 backward compatibility) -->
-  <script src="/js/bus-3d.js"></script>
-
 </body>
 </html>

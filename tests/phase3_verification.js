@@ -183,15 +183,17 @@ async function main() {
     const indexRes = await fetch(`${BASE_URL}/index.html`);
     const indexHtml = await indexRes.text();
     assert(indexRes.ok, "GET /index.html serves public landing page (200)", "LAND-01");
-    assert(indexHtml.includes("hero-bus-canvas-container"), "Landing page contains hero 3D bus canvas mount", "LAND-01");
-    assert(indexHtml.includes("/js/bus-3d.js"), "Landing page links bus-3d.js animation script", "LAND-01");
+    assert(indexHtml.includes("hero-slide") && indexHtml.includes("/images/hero-1.jpg"), "Landing hero renders Ken Burns image slides", "LAND-01");
+    assert(indexHtml.includes("/js/reveal.js"), "Landing page links reveal.js scroll animation script", "LAND-01");
+    assert(!indexHtml.includes("/js/bus-3d.js") && !indexHtml.includes("hero-bus-canvas-container"), "Landing page no longer loads old 3D bus canvas", "LAND-01");
 
-    const threeJsRes = await fetch(`${BASE_URL}/js/three.min.js`);
-    assert(threeJsRes.ok, "GET /js/three.min.js is served locally (200)", "LAND-01");
+    const swRes = await fetch(`${BASE_URL}/sw.js`);
+    const swJs = await swRes.text();
+    assert(swRes.ok && swJs.includes("/js/reveal.js"), "Service worker precaches reveal.js asset", "LAND-01");
 
-    const bus3dRes = await fetch(`${BASE_URL}/js/bus-3d.js`);
-    const bus3dJs = await bus3dRes.text();
-    assert(bus3dRes.ok && bus3dJs.includes("CatmullRomCurve3"), "bus-3d.js implements spline curve scroll animation", "LAND-01");
+    const manifestRes = await fetch(`${BASE_URL}/manifest.json`);
+    const manifest = await manifestRes.json();
+    assert(manifestRes.ok && manifest.start_url === "/", "Manifest start_url points at public landing", "LAND-01");
 
     // 3. Test LAND-02 & LAND-03: Dynamic EMI Calculator & Vanilla-Tilt 3D Cards
     console.log("\n--- Testing Package Catalog, Vanilla-Tilt & EMI Calculator (LAND-02, LAND-03) ---");

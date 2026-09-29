@@ -1,12 +1,12 @@
 {
-  "name": "BharatYatra Agent PWA",
+  "name": "BharatYatra Sacred Travel",
   "short_name": "BharatYatra",
   "description": "Offline-First EMI-Based Bus Tour & Micro-Collection System",
-  "start_url": "/agent/dashboard",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0F172A",
+  "background_color": "#FFFDF7",
   "theme_color": "#D97706",
   "icons": [
     {

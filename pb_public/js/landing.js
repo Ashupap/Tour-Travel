@@ -1,5 +1,5 @@
 // pb_public/js/landing.js
-// BharatYatra PWA — Bilingual (Odia & English) Landing Page State & Highway Milestone Tracker
+// BharatYatra PWA — Bilingual (Odia & English) Landing Page State, Micro-Animations & Highway Milestone Tracker
 
 const I18N = {
   odia: {
@@ -13,36 +13,41 @@ const I18N = {
       checkPassBtn: "ପାସ୍ ଯାଞ୍ଚ କରନ୍ତୁ"
     },
     hero: {
-      badge: "🙏 ଜୟ ଜଗନ୍ନାଥ • ଆମ ଓଡ଼ିଶାର ନିଜସ୍ୱ ତୀର୍ଥଯାତ୍ରା ସେବା",
-      title1: "ଆମ ଓଡ଼ିଶାରୁ ଚାରିଧାମ ଯାତ୍ରା",
-      title2: "",
+      badge: "ଜୟ ଜଗନ୍ନାଥ • ଆମ ଓଡ଼ିଶାର ନିଜସ୍ୱ ତୀର୍ଥଯାତ୍ରା ସେବା",
+      titleA: "ଆମ ଓଡ଼ିଶାରୁ",
+      titleB: "ଚାରିଧାମ ଯାତ୍ରା",
       punchline: "ପୂରା ଟଙ୍କାର ଚିନ୍ତା ନାହିଁ! ମାତ୍ର ଦୁଇଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ, ବାକି ଟଙ୍କା ଧାମ ଦର୍ଶନ ସାରି ଘରକୁ ଫେରିବା ପରେ ସହଜରେ ଶୁଝନ୍ତୁ।",
       point1: "କୌଣସି ବ୍ୟାଙ୍କ ଋଣ ବା CIBIL ଚିନ୍ତା ନାହିଁ",
       point2: "୧୦୦% ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ଆହାର (ବିନା ପିଆଜ-ରସୁଣ)",
       point3: "ଓଡ଼ିଶାର ସମସ୍ତ ୩୦ଟି ଜିଲ୍ଲାରୁ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍",
       btnExplore: "ତୀର୍ଥ ପ୍ୟାକେଜ୍ ଦେଖନ୍ତୁ",
       btnVerify: "ମୋ ବୁକିଂ ପାସ୍ ଦେଖିବି",
-      stat1Val: "୪୮,୦୦୦+",
       stat1Lbl: "ଓଡ଼ିଶାର ତୀର୍ଥଯାତ୍ରୀ ଯାଇସାରିଛନ୍ତି",
-      stat2Val: "୪.୯ ★",
       stat2Lbl: "ଭକ୍ତଙ୍କ ଆଶୀର୍ବାଦ ଓ ସନ୍ତୋଷ",
-      stat3Val: "୧,୪୫୦+",
       stat3Lbl: "ଗ୍ରାମ ପଞ୍ଚାୟତରେ ନିଜ ସହାୟକ",
-      stat4Val: "୧୦୦%",
       stat4Lbl: "ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ପ୍ରସାଦ ନିଶ୍ଚିତ"
     },
     highway: {
       tag: "ଯାତ୍ରା ରାଜପଥ • BHARATYATRA HIGHWAY",
       title: "ଘରୁ ଧାମ ପର୍ଯ୍ୟନ୍ତ ନିଶ୍ଚିନ୍ତ ଯାତ୍ରା",
-      desc: "କଳା ପିଚୁ ରାସ୍ତାରେ ଆଗେଇ ଚାଲିଛି ଆପଣଙ୍କ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍। ଦେଖନ୍ତୁ କିପରି ସହଜରେ ପୂରଣ ହେବ ତୀର୍ଥ ସ୍ୱପ୍ନ:",
-      m1Title: "୧. ଘରୁ ସଂକଳ୍ପ (ମାସ ୦୧)",
+      desc: "ଘର ଠାରୁ ପବିତ୍ର ଧାମ ଓ ଫେରି ଘର ପର୍ଯ୍ୟନ୍ତ — ଚାରିଟି ସହଜ ଧାପରେ ଆପଣଙ୍କ ତୀର୍ଥ ସ୍ୱପ୍ନ ପୂରଣ:",
+      step1: "ଧାପ ୧",
+      step2: "ଧାପ ୨",
+      step3: "ଧାପ ୩",
+      step4: "ଧାପ ୪",
+      p1Name: "ଘରେ ସଂକଳ୍ପ",
+      p1Month: "ମାସ ୦୧",
+      p2Name: "ବସ୍ ଚଢ଼ିବା",
+      p2Month: "ମାସ ୦୨",
+      p3Name: "ଧାମ ଦର୍ଶନ",
+      p3Month: "ଚାରିଧାମ",
+      p4Name: "ଘରକୁ ଫେରିବା",
+      p4Month: "ମାସ ୦୩-୧୦",
       m1Desc: "ଘରେ ବସି ନିଜ ସହାୟକ ଭାଇଙ୍କ ଠାରୁ ପାସବୁକ୍ ପାଆନ୍ତୁ। ସିଟ୍ ସଂରକ୍ଷିତ ହେଲା।",
-      m2Title: "୨. ବସ୍ ଚଢ଼ିବା ଅନୁମତି (ମାସ ୦୨)",
       m2Desc: "କେବଳ ଦ୍ୱିତୀୟ କିସ୍ତି ପରେ ଟିକେଟ୍ ଅନଲକ୍! ଚଢ଼ନ୍ତୁ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍ ରେ।",
-      m3Title: "୩. ପବିତ୍ର ଧାମ ଦର୍ଶନ",
       m3Desc: "କେଦାରନାଥ, କାଶୀ ଓ ଅଯୋଧ୍ୟାରେ ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ମହାପ୍ରସାଦ।",
-      m4Title: "୪. ସୁରକ୍ଷିତ ଘରକୁ ଫେରିବା",
-      m4Desc: "ଶାନ୍ତିରେ ଘରକୁ ଫେରି ଫସଲ ଅମଳ ଅନୁସାରେ ଛୋଟ ଛୋଟ କିସ୍ତିରେ ବାକି ଶୁଝନ୍ତୁ।"
+      m4Desc: "ଶାନ୍ତିରେ ଘରକୁ ଫେରି ଫସଲ ଅମଳ ଅନୁସାରେ ଛୋଟ ଛୋଟ କିସ୍ତିରେ ବାକି ଶୁଝନ୍ତୁ।",
+      banner: "ପାରାମେଡିକ୍ ଓ ସାତ୍ତ୍ୱିକ ରୋଷେଇ ସହ ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍"
     },
     calculator: {
       tag: "ଗ୍ରାମୀଣ ସଞ୍ଚୟ କାଲକୁଲେଟର୍",
@@ -59,7 +64,29 @@ const I18N = {
       postTravelLbl: "ଯାତ୍ରା ପରେ ବାକି ଟଙ୍କା:",
       channelLbl: "ଟଙ୍କା ସଂଗ୍ରହ ମାଧ୍ୟମ:",
       channelVal: "ନିଜ ଗାଁ ସହାୟକ ଭାଇଙ୍କ ଘରୋଇ ରସିଦ୍",
-      bookBtn: "ଘରେ ବସି ବୁକିଂ ଅନୁରୋଧ କରନ୍ତୁ"
+      bookBtn: "ଘରେ ବସି ବୁକିଂ ଅନୁରୋଧ କରନ୍ତୁ",
+      months: "ମାସ"
+    },
+    testimonials: {
+      tag: "ଭକ୍ତମାନଙ୍କ କଥା",
+      title: "ଓଡ଼ିଶାର ପରିବାରଙ୍କ ବିଶ୍ୱାସ",
+      desc: "ପ୍ରକୃତ ତୀର୍ଥଯାତ୍ରୀ, ପ୍ରକୃତ ଗାଁ — ଆମ ସହ ଯାତ୍ରା କରିଥିବା ପରିବାରଙ୍କ ଶବ୍ଦ।",
+      q1: "ବାପା-ମା କେବେ ଓଡ଼ିଶା ଛାଡ଼ିନଥିଲେ। ମାତ୍ର ଦୁଇ କିସ୍ତି ପରେ ଡିଲକ୍ସ ବସ୍ ରେ ବସି ଆମେ ମିଳି କେଦାରନାଥ ଦର୍ଶନ କଲୁ — ବିନା ଋଣ, ବିନା ଚିନ୍ତା।",
+      n1: "ସୁନୀତା ବେହେରା",
+      p1: "କେନ୍ଦ୍ରାପଡ଼ା • ଚାରିଧାମ ଯାତ୍ରା",
+      q2: "ସହାୟକ ଭାଇ ଘରକୁ ଆସି ପାସବୁକ୍ ଓ ରସିଦ୍ ଦେଲେ। ବ୍ୟାଙ୍କ କିମ୍ବା ମୋବାଇଲ୍ ଛୁଇଁବା ଦରକାର ପଡ଼ିଲା ନାହିଁ।",
+      n2: "ପ୍ରକାଶ ନାୟକ",
+      p2: "ସମ୍ବଲପୁର • ଅଯୋଧ୍ୟା-କାଶୀ ଦର୍ଶନ",
+      q3: "ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ଖାନା, ଭିଆଇପି ଦର୍ଶନ, ଆଉ ପୁରା ରାସ୍ତା ବାପା-ମା ଆରାମରେ ଥିଲେ। ଏଜେନ୍ସି ନୁହେଁ, ପରିବାର ସହ ଯାତ୍ରା ଭଳି ଲାଗିଲା।",
+      n3: "ମାମନୀ ଡିଗାଲ",
+      p3: "କଳାହାଣ୍ଡି • ରାମେଶ୍ୱରମ୍ ସର୍କିଟ"
+    },
+    cta: {
+      tag: "ଆଜି ଠାରୁ ଯାତ୍ରା",
+      title: "ଆପଣଙ୍କ ସିଟ୍ ସଂରକ୍ଷିତ। ଆଜି ଠାରୁ ସଂକଳ୍ପ ଆରମ୍ଭ କରନ୍ତୁ।",
+      desc: "ନିଜ ଗାଁ ସହାୟକଙ୍କୁ ଭେଟନ୍ତୁ, ପବିତ୍ର ତୀର୍ଥ ବାଛନ୍ତୁ, ପହିଲେ ଯାତ୍ରା କରନ୍ତୁ — ପଛରେ ଶୋଧ।",
+      btn: "ମୋ ଯାତ୍ରା ପ୍ଲାନ୍ କରନ୍ତୁ",
+      btnAlt: "ପୁରୁଣା ପାସ୍ ଦେଖନ୍ତୁ"
     }
   },
   en: {
@@ -73,36 +100,41 @@ const I18N = {
       checkPassBtn: "Check Travel Pass"
     },
     hero: {
-      badge: "🙏 JAI JAGANNATH • Dedicated Pilgrimage Network from Odisha",
-      title1: "Sacred Dhams from Odisha",
-      title2: "",
+      badge: "JAI JAGANNATH • Dedicated Pilgrimage Network from Odisha",
+      titleA: "Sacred Dhams",
+      titleB: "from Odisha",
       punchline: "No full upfront payment stress! Board your coach after paying just 2 micro-installments, and comfortably clear the remaining balance after returning home.",
       point1: "Zero Bank CIBIL or Formal Loan Stress",
       point2: "100% Pure Satvik Meals (No Onion, No Garlic)",
       point3: "Direct Premium Deluxe Bus Pickup from All 30 Odisha Districts",
       btnExplore: "Explore Tour Circuits",
       btnVerify: "Check Booking Pass",
-      stat1Val: "48,000+",
       stat1Lbl: "Odisha Pilgrims Facilitated",
-      stat2Val: "4.9 ★",
       stat2Lbl: "Devotee Satisfaction & Trust",
-      stat3Val: "1,450+",
       stat3Lbl: "Panchayat Desks in 30 Districts",
-      stat4Val: "100%",
       stat4Lbl: "Pure Satvik Prasad Guaranteed"
     },
     highway: {
       tag: "PILGRIMAGE HIGHWAY • JOURNEY ROADMAP",
       title: "From Your Home to Sacred Dhams & Safe Return",
-      desc: "Our premium deluxe bus navigates the sacred highway. See how your dream pilgrimage unfolds step by step:",
-      m1Title: "1. Sankalpa at Home (Month 01)",
+      desc: "Four simple steps from your doorstep to the sacred dhams — and back home again:",
+      step1: "STEP 1",
+      step2: "STEP 2",
+      step3: "STEP 3",
+      step4: "STEP 4",
+      p1Name: "Sankalpa at Home",
+      p1Month: "Month 01",
+      p2Name: "Coach Boarding",
+      p2Month: "Month 02",
+      p3Name: "Sacred Darshan",
+      p3Month: "Char Dham",
+      p4Name: "Peaceful Return",
+      p4Month: "Month 03-10",
       m1Desc: "Receive your physical passbook from your village Sahayak. Seat reserved.",
-      m2Title: "2. Coach Clearance (Month 02)",
       m2Desc: "Travel unlocked after just 2 payments! Board the premium deluxe bus.",
-      m3Title: "3. Sacred Dham Darshan",
       m3Desc: "Kedarnath, Kashi & Ayodhya VIP darshan with hot satvik meals prepared onboard.",
-      m4Title: "4. Peaceful Home Return",
-      m4Desc: "Return home with divine blessings. Settle remaining EMIs aligned with your harvest."
+      m4Desc: "Return home with divine blessings. Settle remaining EMIs aligned with your harvest.",
+      banner: "Premium Deluxe Bus with Emergency Paramedic & Satvik Kitchen"
     },
     calculator: {
       tag: "GRAMIN SANCHAY CALCULATOR",
@@ -119,9 +151,39 @@ const I18N = {
       postTravelLbl: "Post-Travel Balance:",
       channelLbl: "Collection Channel:",
       channelVal: "Gramin Sahayak Doorstep Slip",
-      bookBtn: "Reserve Seat With Local Sahayak"
+      bookBtn: "Reserve Seat With Local Sahayak",
+      months: "Months"
+    },
+    testimonials: {
+      tag: "DEVOTEES SPEAK",
+      title: "Trusted by Families Across Odisha",
+      desc: "Real pilgrims, real villages — in the words of the families who travelled with us.",
+      q1: "Baba and Maa had never crossed Odisha. After just two instalments we all boarded the deluxe coach and saw Kedarnath together — no loan, no stress.",
+      n1: "Sunita Behera",
+      p1: "Kendrapara • Char Dham Yatra",
+      q2: "The Sahayak brother came home with our passbook and printed receipts. We never had to touch a bank or a smartphone.",
+      n2: "Prakash Nayak",
+      p2: "Sambalpur • Ayodhya–Kashi Darshan",
+      q3: "Pure satvik khana, VIP darshan, and my parents rested the whole way. It felt like travelling with family, not an agency.",
+      n3: "Mamani Digal",
+      p3: "Kalahandi • Rameswaram Circuit"
+    },
+    cta: {
+      tag: "BEGIN YOUR YATRA",
+      title: "Your berth is reserved. Start the Sankalpa today.",
+      desc: "Meet your village Sahayak, choose a sacred circuit, and travel first — settle later.",
+      btn: "Plan My Yatra",
+      btnAlt: "Check Existing Pass"
     }
   }
+};
+
+// Numeric metadata for the animated hero statistics
+const STAT_META = {
+  stat1: { value: 48000, format: "int", suffix: "+" },
+  stat2: { value: 4.9, format: "dec1", suffix: " ★" },
+  stat3: { value: 1450, format: "int", suffix: "+" },
+  stat4: { value: 100, format: "int", suffix: "%" }
 };
 
 const TOUR_PACKAGES = [
@@ -137,7 +199,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [6, 9, 12],
     min_emis_to_travel: 2,
     badge: "Most Sacred • ବହୁତ ଲୋକପ୍ରିୟ",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD7tQda4ONtO4XduQSsRgMs_cQJr9gS4okjrDXbJvJ66IU7hUjeuEQ4VgLZdF9SxqQ-6A7oCVps105SdJADiN9a4xItaXOoLybFaSUaA_ekEocjLyvjWjitv82d5_nlbKUzDvjyTHZQt8V6fZartdU0ZzWK8qs5vnFe7L_hJM3oVs1vRGwQTMO5tFMbHgOYDevQfH52Te695mTDEv_yYvuaGJ_kajeKRJw0dJ-zPwPlAi1UuADNj2fIVuI7sCW_bSECIx2fp1PY1wVu",
+    image: "/images/pkg-chardham.jpg",
     highlights: ["Premium Deluxe Bus with Blanket", "VIP Kedarnath Helipad/Pony Support", "Pure Satvik Aahar (No Onion-Garlic)"]
   },
   {
@@ -152,7 +214,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [3, 6, 9],
     min_emis_to_travel: 2,
     badge: "Ram Lalla Special • ରାମ ଦର୍ଶନ",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDKzylWbgZ-XOAGBQ-jqf9QFNfEHdQEq1sxTdVgDJ_ypeV80p59An60jNyURW4-VFe88YaIsn0CmG2wbVfsDKZ3e7P9SMfEfqssl7eRfUsB0PQ_zypB3W4EcVMvpxuQVKM5ThhbDOBmDbUO42Dqe2rUSJn5S5QPEA2bnKanbb65Y2-DmhZLhr4zwHO3gm6wZAdVUyE1JZhyAh3--jVFLDTDoQhgpRtRoIqgqHm2TtuIei95AsCmK7xoWeYtxic8ZNfL_kG9a5Qx-Gg6",
+    image: "/images/pkg-kashi.jpg",
     highlights: ["Ram Lalla VIP Darshan", "Ganga Maha Aarti Boat Ride", "Elderly Special Care (Zero Walk)"]
   },
   {
@@ -167,7 +229,7 @@ const TOUR_PACKAGES = [
     allowed_tenures: [6, 9, 12],
     min_emis_to_travel: 2,
     badge: "Shiva Mahayatra • ମହାକାଳ ଦର୍ଶନ",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBy3nNUBbzm-RFmWiKnfDmbG1j7zqaJjvRyWpFcWs25ckUOnfK_mJOKJV7WvfnNTYZXyC4dHdWat-O9qikjJeb2vqpSON1Hrul0Ap3fSr546UEI9JHByaqAIPZP9Hu3J1Tz2xFB2IyRBNW_rexi0qX-6j4f4_BaAQqRwlsbo7mBdWHaALk41-TyN-kJ1Ia6YIimJlnuVgGml6PVyAd2gp_qnWkT7GS-uZ2JzfdGYkiqpfxayIdTyGlGgzBvUmeTbDkQEdW4D3mtqX1y",
+    image: "/images/pkg-jyotirlinga.jpg",
     highlights: ["Bhasma Aarti Access", "Premium Deluxe Bus Comfort", "Purohit Special Puja Service"]
   },
   {
@@ -182,10 +244,18 @@ const TOUR_PACKAGES = [
     allowed_tenures: [6, 9, 12],
     min_emis_to_travel: 2,
     badge: "Coastal Dham • ପବିତ୍ର ତୀର୍ଥ",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBYO8Loj8Ze3kn_iktEx6p0PV40jzHXKbvXAXm-Q5n4FbcPwgnLMhnfmlrF58c5Jjbk_XoxHqlqaIurBFDnkXBc-oEwIRB1PDpw7428m9U0oOkTT0-330Tv6U-GWupD6oZPRrVav5tLfj1dC12DjYopAyRYd_a3c2XxJD--q8UIxvuarDrnTKE1_EKqCUHv97h_XnW7u2UMPI9JODpqgMwZCWjSpGktdFzCKKaKVbsoyuTP7WgChBo4bNSi4EbG_REOwZiCLMUqRKOn",
+    image: "/images/pkg-south.jpg",
     highlights: ["22 Holy Theertham Snan", "Odisha Special Satvik Cooks", "Pamban Sea Bridge View"]
   }
 ];
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
 
 function landingApp() {
   return {
@@ -194,8 +264,11 @@ function landingApp() {
     selectedPackage: TOUR_PACKAGES[0],
     selectedTenure: 9,
     statusModalOpen: false,
+    mobileMenuOpen: false,
+    scrolled: false,
+    emiPulse: false,
     scrollProgress: 0,
-    currentMilestone: 1,
+    statDisplay: { stat1: "", stat2: "", stat3: "", stat4: "" },
 
     t(section, key) {
       const current = I18N[this.lang] || I18N.odia;
@@ -204,12 +277,93 @@ function landingApp() {
 
     setLanguage(newLang) {
       this.lang = newLang;
+      if (document.documentElement) {
+        document.documentElement.lang = newLang === "odia" ? "or" : "en";
+      }
+      this.setStatDisplayFinal();
+    },
+
+    formatStatNumber(value, format) {
+      const locale = this.lang === "odia" ? "or-IN" : "en-IN";
+      try {
+        if (format === "dec1") {
+          return new Intl.NumberFormat(locale, {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+          }).format(value);
+        }
+        return new Intl.NumberFormat(locale).format(Math.round(value));
+      } catch (e) {
+        return format === "dec1"
+          ? (Math.round(value * 10) / 10).toFixed(1)
+          : String(Math.round(value));
+      }
+    },
+
+    formatStat(key, rawValue) {
+      const meta = STAT_META[key];
+      const value = rawValue === undefined ? meta.value : rawValue;
+      return this.formatStatNumber(value, meta.format) + meta.suffix;
+    },
+
+    setStatDisplayFinal() {
+      Object.keys(STAT_META).forEach((key) => {
+        this.statDisplay[key] = this.formatStat(key);
+      });
+    },
+
+    animateStats() {
+      if (prefersReducedMotion()) {
+        this.setStatDisplayFinal();
+        return;
+      }
+      const duration = 1100;
+      const start = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        Object.keys(STAT_META).forEach((key) => {
+          this.statDisplay[key] = this.formatStat(key, STAT_META[key].value * eased);
+        });
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          this.setStatDisplayFinal();
+        }
+      };
+      Object.keys(STAT_META).forEach((key) => {
+        this.statDisplay[key] = this.formatStat(key, 0);
+      });
+      requestAnimationFrame(tick);
     },
 
     init() {
+      this.setStatDisplayFinal();
+      document.documentElement.lang = this.lang === "odia" ? "or" : "en";
+
+      this.$watch("monthlyEmi", () => {
+        if (prefersReducedMotion()) return;
+        this.emiPulse = false;
+        this.$nextTick(() => {
+          this.emiPulse = true;
+          setTimeout(() => {
+            this.emiPulse = false;
+          }, 500);
+        });
+      });
+
+      this.$watch("statusModalOpen", (open) => {
+        if (!open) return;
+        this.$nextTick(() => {
+          if (this.$refs.statusInput) this.$refs.statusInput.focus();
+        });
+      });
+
       this.$nextTick(() => {
+        this.animateStats();
         this.initTilt();
         this.initScrollMilestoneTracker();
+        if (window.initReveals) window.initReveals();
       });
     },
 
@@ -270,25 +424,29 @@ function landingApp() {
     },
 
     initScrollMilestoneTracker() {
-      window.addEventListener("scroll", () => {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? Math.min(100, Math.max(0, Math.round((scrollTop / docHeight) * 100))) : 0;
-        this.scrollProgress = progress;
+      const heroMedia = document.getElementById("hero-media");
+      const enableParallax = !prefersReducedMotion() && !!heroMedia;
+      window.addEventListener(
+        "scroll",
+        () => {
+          const scrollTop = window.scrollY || document.documentElement.scrollTop;
+          this.scrolled = scrollTop > 8;
+          const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const progress =
+            docHeight > 0 ? Math.min(100, Math.max(0, Math.round((scrollTop / docHeight) * 100))) : 0;
+          this.scrollProgress = progress;
 
-        if (progress < 25) {
-          this.currentMilestone = 1;
-        } else if (progress < 50) {
-          this.currentMilestone = 2;
-        } else if (progress < 75) {
-          this.currentMilestone = 3;
-        } else {
-          this.currentMilestone = 4;
-        }
-      }, { passive: true });
+          // Light hero parallax: media drifts slower than the page
+          if (enableParallax && scrollTop < window.innerHeight * 1.3) {
+            heroMedia.style.transform = "translate3d(0, " + scrollTop * 0.12 + "px, 0)";
+          }
+        },
+        { passive: true }
+      );
     },
 
     scrollToSection(sectionId) {
+      this.mobileMenuOpen = false;
       const el = document.getElementById(sectionId);
       if (el) {
         el.scrollIntoView({ behavior: "smooth" });

@@ -1,18 +1,29 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "bharatyatra-cache-v1";
+const CACHE_NAME = "bharatyatra-cache-v2";
 const STATIC_ASSETS = [
-  "/agent/dashboard",
+  "/",
+  "/index.html",
   "/manifest.json",
   "/css/tailwind.css",
   "/js/dexie.min.js",
   "/js/alpine.min.js",
   "/js/htmx.min.js",
+  "/js/vanilla-tilt.min.js",
+  "/js/landing.js",
+  "/js/reveal.js",
   "/offline-store.js",
   "/agent/receipt.js",
   "/icons/icon-192.svg",
-  "/icons/icon-512.svg"
+  "/icons/icon-512.svg",
+  "/images/hero-1.jpg",
+  "/images/hero-2.jpg",
+  "/images/hero-3.jpg",
+  "/images/pkg-chardham.jpg",
+  "/images/pkg-jyotirlinga.jpg",
+  "/images/pkg-kashi.jpg",
+  "/images/pkg-south.jpg"
 ];
 
 // Install: Pre-cache static app shell

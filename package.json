@@ -5,15 +5,16 @@
   "type": "module",
   "scripts": {
     "test": "node tests/phase1_verification.js",
-    "pb": "pocketbase.exe serve --http=127.0.0.1:8090"
+    "pb": "pocketbase.exe serve --http=127.0.0.1:8090",
+    "build": "npm run build:css",
+    "build:css": "node ./node_modules/tailwindcss/lib/cli.js -i ./pb_public/css/input.css -o ./pb_public/css/tailwind.css --minify",
+    "watch:css": "node ./node_modules/tailwindcss/lib/cli.js -i ./pb_public/css/input.css -o ./pb_public/css/tailwind.css --watch"
   },
-  "keywords": [
-    "pocketbase",
-    "htmx",
-    "pwa",
-    "offline-first",
-    "tour-travel"
-  ],
-  "author": "BharatYatra Team",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "@tailwindcss/forms": "^0.5.9"
+  },
   "license": "ISC"
 }

@@ -1,0 +1,419 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================================================== */
+/* Keyframes (defined here so the JIT always emits them — config-defined      */
+/* keyframes are only emitted when a matching animate-* utility is used)      */
+/* ========================================================================== */
+@keyframes ken-burns {
+  0% {
+    transform: scale(1.05) translate(0%, 0%);
+  }
+  100% {
+    transform: scale(1.18) translate(-2.5%, -2%);
+  }
+}
+
+@keyframes hero-crossfade {
+  0% {
+    opacity: 0;
+  }
+  4.8% {
+    opacity: 1;
+  }
+  33.3% {
+    opacity: 1;
+  }
+  38.1% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  60%,
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+
+@keyframes hero-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.045);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ========================================================================== */
+/* Base                                                                       */
+/* ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* English (default): Plus Jakarta Sans first, Anek Odia covers inline Odia glyphs */
+  body,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: "Plus Jakarta Sans", "Anek Odia", sans-serif;
+  }
+
+  /* Odia mode (html[lang="or"] set by landing.js): Anek Odia leads */
+  html[lang="or"] body,
+  html[lang="or"] button,
+  html[lang="or"] input,
+  html[lang="or"] select,
+  html[lang="or"] textarea {
+    font-family: "Anek Odia", "Plus Jakarta Sans", sans-serif;
+  }
+
+  /* Odia script needs more leading than Latin in display sizes */
+  html[lang="or"] .font-display-lg,
+  html[lang="or"] .font-headline-lg,
+  html[lang="or"] .font-headline-md {
+    line-height: 1.32;
+  }
+
+  ::selection {
+    background-color: #fcd34d;
+    color: #1c1917;
+  }
+
+  :focus-visible {
+    outline: 2px solid #d97706;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href] {
+    cursor: pointer;
+  }
+}
+
+/* ========================================================================== */
+/* Editorial components                                                       */
+/* ========================================================================== */
+@layer components {
+  /* Letterspaced small-caps eyebrow above section headlines */
+  .eyebrow {
+    font-family: "Plus Jakarta Sans", "Anek Odia", sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #b45309;
+    display: inline-block;
+  }
+
+  html[lang="or"] .eyebrow {
+    letter-spacing: 0.12em;
+    font-size: 0.78rem;
+  }
+
+  /* Gold hairline ornament (centered rule under eyebrows) */
+  .rule-gold {
+    width: 4rem;
+    height: 1px;
+    margin-inline: auto;
+    background: linear-gradient(to right, transparent, #d97706, transparent);
+  }
+
+  /* Slim infinite destination marquee */
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 42s linear infinite;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  /* Hairline connector that draws itself in when revealed */
+  .draw-line {
+    background-image: repeating-linear-gradient(
+      to right,
+      #d97706 0,
+      #d97706 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    background-repeat: no-repeat;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+  }
+
+  .reveal.is-visible .draw-line,
+  .draw-line.is-visible {
+    transform: scaleX(1);
+  }
+}
+
+/* ========================================================================== */
+/* Hero: layered crossfade + Ken Burns                                        */
+/* ========================================================================== */
+@layer components {
+  .hero-slide {
+    opacity: 0;
+    animation: hero-crossfade 24s ease-in-out infinite;
+    will-change: opacity;
+  }
+
+  .hero-slide:nth-child(1) {
+    animation-delay: 0s;
+  }
+  .hero-slide:nth-child(2) {
+    animation-delay: 8s;
+  }
+  .hero-slide:nth-child(3) {
+    animation-delay: 16s;
+  }
+
+  .hero-slide img {
+    animation: ken-burns 24s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  /* First slide already mid-cycle so the page never paints empty */
+  .hero-slide:first-child {
+    animation-delay: -1.2s;
+  }
+  .hero-slide:first-child img {
+    animation-delay: -1.2s;
+  }
+
+  .hero-grain {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    opacity: 0.12;
+    mix-blend-mode: multiply;
+  }
+
+  .hero-enter {
+    animation: hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* One-shot light sweep: static geometry only, animated via modifiers */
+  .shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 80%
+    );
+    transform: translateX(-120%) skewX(-18deg);
+    pointer-events: none;
+  }
+
+  /* Auto-play on load (hero badge) */
+  .shine-auto::after {
+    animation: shine 2.8s ease-in-out 0.6s 1;
+  }
+
+  /* Play when the containing reveal section scrolls into view (golden pass) */
+  .reveal.is-visible .shine::after {
+    animation: shine 1.4s ease-out 0.25s 1;
+  }
+}
+
+/* ========================================================================== */
+/* Scroll-reveal system (IntersectionObserver toggles .is-visible)            */
+/* Hidden state only applies when html.js-reveal is set by the head script,   */
+/* so content is always visible without JS.                                   */
+/* ========================================================================== */
+@layer components {
+  .reveal {
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .js-reveal .reveal {
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  .js-reveal .reveal-up {
+    transform: translateY(24px);
+  }
+  .js-reveal .reveal-scale {
+    transform: scale(0.96);
+  }
+  .js-reveal .reveal-left {
+    transform: translateX(-28px);
+  }
+  .js-reveal .reveal-right {
+    transform: translateX(28px);
+  }
+
+  .js-reveal .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+/* ========================================================================== */
+/* Micro-interaction polish                                                   */
+/* ========================================================================== */
+@layer components {
+  .nav-link {
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: linear-gradient(to right, #f59e0b, #ea580c);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .card-lift {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card-lift:hover {
+    transform: translateY(-4px);
+  }
+
+  .btn-primary {
+    background-image: linear-gradient(
+      to right,
+      #f59e0b,
+      #d97706 55%,
+      #ea580c
+    );
+    background-size: 160% 100%;
+    background-position: 0% 0%;
+    transition: background-position 0.4s ease, box-shadow 0.25s ease,
+      transform 0.15s ease, filter 0.25s ease;
+  }
+
+  .btn-primary:hover {
+    background-position: 100% 0%;
+    filter: brightness(1.05);
+    box-shadow: 0 14px 30px -8px rgba(217, 119, 6, 0.45);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.97);
+  }
+
+  /* Outline variant for secondary actions on light surfaces */
+  .btn-ghost {
+    border: 1px solid rgba(28, 25, 23, 0.14);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    transition: border-color 0.25s ease, background-color 0.25s ease,
+      transform 0.15s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: #d97706;
+    background: #fff;
+  }
+
+  .btn-ghost:active {
+    transform: scale(0.97);
+  }
+
+  .pop-change {
+    animation: pop-pulse 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* ========================================================================== */
+/* Reduced motion: kill every decorative animation                            */
+/* ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .marquee-track {
+    animation: none !important;
+  }
+
+  .draw-line {
+    transform: scaleX(1) !important;
+  }
+
+  .js-reveal .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-slide:first-child {
+    opacity: 1;
+  }
+}
