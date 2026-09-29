@@ -279,6 +279,69 @@ function adminApp() {
       }
     },
 
+    // ---------- Bus Manifest (ADMN-04) ----------
+    manifestPackageId: "",
+    manifestData: null,
+    manifestLoading: false,
+    manifestError: "",
+
+    async loadManifest() {
+      if (!this.manifestPackageId) return;
+      this.manifestLoading = true;
+      this.manifestError = "";
+      try {
+        const res = await fetch(
+          `/api/admin/manifest?tour=${encodeURIComponent(this.manifestPackageId)}`,
+          { headers: this.getHeaders() }
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to load manifest");
+        this.manifestData = data;
+      } catch (err) {
+        this.manifestError = err.message;
+        this.manifestData = null;
+      } finally {
+        this.manifestLoading = false;
+      }
+    },
+
+    async downloadManifestCsv() {
+      if (!this.manifestPackageId) return;
+      this.manifestError = "";
+      try {
+        const res = await fetch(
+          `/api/admin/manifest?tour=${encodeURIComponent(this.manifestPackageId)}&format=csv`,
+          { headers: this.getHeaders() }
+        );
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.message || "CSV export failed");
+        }
+        const blob = await res.blob();
+        const cd = res.headers.get("Content-Disposition") || "";
+        const match = cd.match(/filename="?([^";]+)"?/i);
+        const filename = match ? match[1] : "manifest.csv";
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        this.showToast(`Manifest downloaded: ${filename}`, "success");
+      } catch (err) {
+        this.manifestError = err.message;
+        this.showToast(err.message, "error");
+      }
+    },
+
+    printManifest() {
+      if (!this.manifestData) return;
+      window.print();
+    },
+
     async fetchPortfolio() {
       const res = await fetch("/api/admin/portfolio", { headers: this.getHeaders() });
       if (res.status === 401) throw { status: 401 };

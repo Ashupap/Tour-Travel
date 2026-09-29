@@ -9,6 +9,24 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
   <meta name="theme-color" content="#D97706">
+  <style>
+    @media print {
+      body * { visibility: hidden !important; }
+      #manifest-print, #manifest-print * { visibility: visible !important; }
+      #manifest-print {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 24px;
+        background: #ffffff;
+        color: #000000;
+      }
+      #manifest-print table { width: 100%; border-collapse: collapse; font-size: 11px; }
+      #manifest-print th, #manifest-print td { border: 1px solid #999; padding: 6px 8px; text-align: left; }
+    }
+  </style>
   <script defer src="/js/alpine.min.js"></script>
   <script src="/admin/admin.js"></script>
 </head>
@@ -410,10 +428,144 @@
         </div>
       </section>
 
-      <!-- BUS MANIFEST (ADMN-04) — populated by plan 04-03 -->
-      <section x-show="activeTab === 'manifest'" x-cloak id="admin-manifest-section" class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg p-5">
-        <h2 class="text-sm font-black text-white">Bus Manifest Export</h2>
-        <p class="text-[11px] text-slate-400">Export all passengers scheduled for a tour with their payment status as CSV or a printable sheet.</p>
+      <!-- BUS MANIFEST (ADMN-04) -->
+      <section x-show="activeTab === 'manifest'" x-cloak id="admin-manifest-section" class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 px-5 py-4">
+          <div>
+            <h2 class="text-sm font-black text-white">Bus Manifest Export</h2>
+            <p class="text-[11px] text-slate-400">All passengers scheduled for a tour with their payment status — CSV download or printable sheet.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <select
+              x-model="manifestPackageId"
+              class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white focus:border-amber-400 focus:outline-none">
+              <option value="">Select a tour package…</option>
+              <template x-for="p in packages" :key="p.id">
+                <option :value="p.id" x-text="p.title + ' (' + p.subscriptions_count + ' bookings)'"></option>
+              </template>
+            </select>
+
+            <button
+              @click="loadManifest()"
+              :disabled="!manifestPackageId || manifestLoading"
+              class="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-xs font-bold text-slate-200 hover:bg-slate-800 transition disabled:opacity-40 active:scale-95">
+              <span x-show="!manifestLoading">Preview</span>
+              <span x-show="manifestLoading">Loading…</span>
+            </button>
+
+            <button
+              @click="downloadManifestCsv()"
+              :disabled="!manifestPackageId || manifestLoading"
+              class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-xs font-bold text-emerald-300 hover:bg-emerald-500/20 transition disabled:opacity-40 active:scale-95">
+              Download CSV
+            </button>
+
+            <button
+              @click="printManifest()"
+              :disabled="!manifestData"
+              class="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition disabled:opacity-40 active:scale-95">
+              Print
+            </button>
+          </div>
+        </div>
+
+        <div x-show="!manifestPackageId && !manifestData" class="p-10 text-center">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 text-xl">🚌</div>
+          <p class="mt-3 text-sm font-bold text-slate-200">Choose a tour package</p>
+          <p class="text-[11px] text-slate-500">Preview the passenger list, then download the CSV or print the manifest for the conductor.</p>
+        </div>
+
+        <div x-show="manifestError" class="m-5 rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-[11px] font-medium text-red-300" x-text="manifestError"></div>
+
+        <div x-show="manifestData" x-cloak class="p-5 space-y-4">
+          <!-- Summary -->
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+              <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Passengers</div>
+              <div class="mt-1 text-2xl font-black text-white" x-text="manifestData ? manifestData.count : 0"></div>
+            </div>
+            <div class="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4">
+              <div class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Collected</div>
+              <div class="mt-1 text-2xl font-black text-emerald-300">₹<span x-text="manifestData ? manifestData.totals.amount_paid.toLocaleString('en-IN') : '0'"></span></div>
+            </div>
+            <div class="rounded-xl border border-rose-500/30 bg-rose-950/20 p-4">
+              <div class="text-[10px] uppercase font-bold tracking-wider text-rose-400">Outstanding</div>
+              <div class="mt-1 text-2xl font-black text-rose-300">₹<span x-text="manifestData ? manifestData.totals.outstanding.toLocaleString('en-IN') : '0'"></span></div>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950/60 text-[10px] uppercase tracking-wider text-slate-400">
+                <tr>
+                  <th class="px-4 py-3 font-bold">Booking</th>
+                  <th class="px-4 py-3 font-bold">Passenger</th>
+                  <th class="px-4 py-3 font-bold text-right">EMIs</th>
+                  <th class="px-4 py-3 font-bold text-right">Paid</th>
+                  <th class="px-4 py-3 font-bold text-right">Outstanding</th>
+                  <th class="px-4 py-3 font-bold">Travel Status</th>
+                  <th class="px-4 py-3 font-bold">Last Payment</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <template x-for="r in (manifestData ? manifestData.passengers : [])" :key="r.booking_code">
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="px-4 py-3 font-mono font-bold text-amber-300" x-text="r.booking_code"></td>
+                    <td class="px-4 py-3">
+                      <div class="font-bold text-white" x-text="r.customer_name"></div>
+                      <div class="text-[10px] font-mono text-slate-500" x-text="r.customer_phone"></div>
+                    </td>
+                    <td class="px-4 py-3 text-right font-bold text-slate-300" x-text="r.emis_paid + ' / ' + r.total_emis"></td>
+                    <td class="px-4 py-3 text-right text-emerald-300 font-bold">₹<span x-text="r.amount_paid.toLocaleString('en-IN')"></span></td>
+                    <td class="px-4 py-3 text-right font-bold" :class="r.outstanding > 0 ? 'text-rose-300' : 'text-slate-500'">₹<span x-text="r.outstanding.toLocaleString('en-IN')"></span></td>
+                    <td class="px-4 py-3">
+                      <span class="rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase"
+                        :class="{
+                          'border-emerald-500/40 bg-emerald-500/10 text-emerald-300': r.travel_status === 'eligible' || r.travel_status === 'completed',
+                          'border-amber-500/40 bg-amber-500/10 text-amber-300': r.travel_status === 'scheduled',
+                          'border-slate-600 bg-slate-800 text-slate-400': r.travel_status === 'locked'
+                        }"
+                        x-text="r.travel_status"></span>
+                    </td>
+                    <td class="px-4 py-3 text-[11px] text-slate-400" x-text="r.last_payment"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <div x-show="manifestData && !manifestData.passengers.length" class="p-8 text-center text-xs text-slate-500">
+              No passengers booked on this tour yet.
+            </div>
+          </div>
+        </div>
+
+        <!-- Print-only manifest sheet (ADMN-04) -->
+        <div id="manifest-print" x-show="manifestData" x-cloak style="display:none">
+          <h1 style="font-size:16px; font-weight:900; margin:0 0 4px">BHARATYATRA — BUS MANIFEST</h1>
+          <div style="font-size:12px; margin-bottom:2px" x-text="manifestData ? manifestData.package.title + ' • ' + manifestData.package.destination : ''"></div>
+          <div style="font-size:11px; margin-bottom:12px" x-text="manifestData ? 'Generated: ' + manifestData.generated_at + ' • Passengers: ' + manifestData.count : ''"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Booking</th><th>Passenger</th><th>Phone</th><th>EMIs</th><th>Paid (₹)</th><th>Outstanding (₹)</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-for="(r, idx) in (manifestData ? manifestData.passengers : [])" :key="r.booking_code">
+                <tr>
+                  <td x-text="idx + 1"></td>
+                  <td x-text="r.booking_code"></td>
+                  <td x-text="r.customer_name"></td>
+                  <td x-text="r.customer_phone"></td>
+                  <td x-text="r.emis_paid + '/' + r.total_emis"></td>
+                  <td x-text="r.amount_paid"></td>
+                  <td x-text="r.outstanding"></td>
+                  <td x-text="r.travel_status"></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
       </section>
 
     </main>

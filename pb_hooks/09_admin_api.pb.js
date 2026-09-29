@@ -662,3 +662,145 @@ routerAdd("GET", "/api/public/packages", (c) => {
 
   return c.json(200, { count: items.length, packages: items });
 });
+
+// 8. GET /api/admin/manifest?tour=<package_id>&format=json|csv (ADMN-04)
+routerAdd("GET", "/api/admin/manifest", (c) => {
+  function adminError(code, message, data) {
+    c.json(code, { code: code, message: message, data: data || {} });
+    return null;
+  }
+
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) {
+      try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {}
+    }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  function csvCell(value) {
+    let s = value === null || value === undefined ? "" : String(value);
+    if (/^[=+\-@]/.test(s)) s = "'" + s;
+    if (/[",\r\n]/.test(s)) s = '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const tour = (c.queryParam("tour") || "").trim();
+  const format = (c.queryParam("format") || "json").toLowerCase();
+  if (!tour) return adminError(400, "Missing required query parameter: tour");
+
+  let pkg = null;
+  try { pkg = $app.dao().findRecordById("packages", tour); } catch (e) {}
+  if (!pkg) return adminError(404, "Package/tour not found");
+
+  let subs = [];
+  try {
+    subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("package_id = {:pid}", { pid: tour })) || [];
+  } catch (err) {
+    console.error("Error loading manifest subscriptions:", err);
+  }
+  subs.sort((a, b) => a.getString("booking_code").localeCompare(b.getString("booking_code")));
+
+  const now = new Date().toISOString().replace("T", " ").substring(0, 19);
+  const rows = [];
+  let totalPaid = 0;
+  let totalOutstanding = 0;
+
+  for (const sub of subs) {
+    let insts = [];
+    try {
+      insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("subscription_id = {:sid}", { sid: sub.id })) || [];
+    } catch (e) {}
+
+    let emisPaid = 0;
+    let amountPaid = 0;
+    let lastPayment = "";
+    for (const i of insts) {
+      if (i.getString("status") === "paid") {
+        emisPaid += 1;
+        amountPaid += Number(i.get("amount")) || 0;
+        const paidAt = i.getString("paid_at");
+        if (paidAt && paidAt > lastPayment) lastPayment = paidAt;
+      }
+    }
+
+    const totalAmount = Number(sub.get("total_amount")) || 0;
+    const outstanding = Math.max(0, totalAmount - amountPaid);
+    totalPaid += amountPaid;
+    totalOutstanding += outstanding;
+
+    rows.push({
+      booking_code: sub.getString("booking_code"),
+      customer_name: sub.getString("customer_name"),
+      customer_phone: sub.getString("customer_phone"),
+      tenure_months: Number(sub.get("tenure_months")) || insts.length,
+      emis_paid: emisPaid,
+      total_emis: insts.length,
+      amount_paid: amountPaid,
+      outstanding: outstanding,
+      travel_status: sub.getString("travel_status"),
+      last_payment: lastPayment || "-"
+    });
+  }
+
+  const generatedAt = now;
+
+  if (format === "csv") {
+    const header = [
+      "Booking Code", "Customer", "Phone", "Package", "Tenure (Months)",
+      "EMIs Paid", "Total EMIs", "Amount Paid (INR)", "Outstanding (INR)",
+      "Travel Status", "Last Payment"
+    ];
+    const lines = [header.map(csvCell).join(",")];
+    for (const r of rows) {
+      lines.push([
+        r.booking_code, r.customer_name, r.customer_phone, pkg.getString("title"), r.tenure_months,
+        r.emis_paid, r.total_emis, r.amount_paid, r.outstanding, r.travel_status, r.last_payment
+      ].map(csvCell).join(","));
+    }
+    const csv = "\uFEFF" + lines.join("\r\n") + "\r\n";
+    const slug = (pkg.getString("title") || "tour").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const filename = "manifest-" + slug + "-" + generatedAt.substring(0, 10) + ".csv";
+    try {
+      c.response().header().set("Content-Disposition", 'attachment; filename="' + filename + '"');
+    } catch (e) {}
+    return c.blob(200, "text/csv; charset=utf-8", csv);
+  }
+
+  return c.json(200, {
+    package: {
+      id: pkg.id,
+      title: pkg.getString("title"),
+      destination: pkg.getString("destination"),
+      duration_days: pkg.getInt("duration_days"),
+      total_price: pkg.getFloat("total_price")
+    },
+    count: rows.length,
+    totals: { amount_paid: totalPaid, outstanding: totalOutstanding },
+    generated_at: generatedAt,
+    passengers: rows
+  });
+});
