@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
-  <meta name="theme-color" content="#102328"/>
-  <meta name="description" content="Jai Jagannath! Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra Premium Deluxe Bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
-  <title>BharatYatra — Har Gaon Ru Char Dham • Premium Deluxe Bus &amp; Micro-EMI Tirthayatra</title>
+  <meta name="theme-color" content="#0C4A7B"/>
+  <meta name="description" content="Jai Jagannath! Aditya Tour and Travels — Ama Odisha ru Char Dham, Kashi o Ayodhya Yatra Premium Deluxe Bus re. Khali 2 maso EMI deba pare Yatra shuru. Baaki tanka yatra ru pherila pare sahaje shodhantu!"/>
+  <title>Aditya Tour and Travels — Har Gaon Ru Char Dham • Premium Deluxe Bus &amp; Micro-EMI Tirthayatra</title>
 
   <link rel="manifest" href="/manifest.json"/>
+  <link rel="icon" href="/favicon.png" type="image/png"/>
   <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml"/>
 
   <!-- Fonts: Playfair Display (editorial serif) + DM Sans (body) + Anek Odia (Odia script) -->
@@ -17,13 +18,19 @@
 
   <style>
     :root {
-      --ink: #102328;
-      --cream: #f7f4ed;
-      --paper: #fffdf9;
-      --accent: #eeb37e;
-      --accent-deep: #a87855;
-      --muted: #687570;
-      --charcoal: #143033;
+      /* Aditya Tour and Travels Official Color Scheme */
+      --ink: #071E2E;             /* Aditya Midnight Navy */
+      --navy: #0C4A7B;            /* Aditya Royal Navy */
+      --teal: #167E88;            /* Chilika / Peacock Teal */
+      --teal-light: #E6F6F7;      /* Clean Light Teal Mist */
+      --cream: #F4F8FA;           /* Pristine Coastal Light Background */
+      --paper: #FFFFFF;           /* Pure White Card Base */
+      --accent: #F59E0B;          /* Konark Solar Gold / Radiant Amber */
+      --accent-hover: #E08E00;    /* Amber Hover */
+      --accent-deep: #D97706;     /* Temple Terracotta Ochre */
+      --muted: #567082;           /* Ocean Slate Muted Text */
+      --charcoal: #082132;        /* Deep Charcoal Navy */
+      --border-subtle: #DCE7EC;    /* Soft Clean Border */
       --serif: "Playfair Display", Georgia, serif;
       --sans: "DM Sans", Anek Odia, Arial, sans-serif;
     }
@@ -85,14 +92,15 @@
       padding: 0 22px;
       border: 0;
       border-radius: 2px;
-      background: var(--accent);
-      color: var(--ink);
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: #071E2E;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, .28);
       font-size: 12px;
       font-weight: 700;
       white-space: nowrap;
       transition: background .25s, transform .25s;
     }
-    .button:hover { background: #ffd0a4; transform: translateY(-2px); }
+    .button:hover { background: linear-gradient(135deg, #FBBF24 0%, #E08E00 100%); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245, 158, 11, .4); }
     .button--ghost {
       background: transparent;
       border: 1px solid rgba(255,255,255,.65);
@@ -127,7 +135,7 @@
       min-height: max(800px, 100svh);
       overflow: hidden;
       isolation: isolate;
-      background: #1c3234;
+      background: #071E2E;
       color: white;
     }
 
@@ -156,9 +164,10 @@
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(ellipse at 78% 35%, rgba(255, 196, 126, .14), transparent 38%),
-        linear-gradient(90deg, rgba(8,25,29,.91), rgba(8,25,29,.67) 48%, rgba(8,25,29,.24)),
-        linear-gradient(0deg, rgba(8,25,29,.91), transparent 46%, rgba(8,25,29,.25));
+        radial-gradient(ellipse at 78% 35%, rgba(245, 158, 11, .18), transparent 44%),
+        radial-gradient(ellipse at 25% 65%, rgba(22, 126, 136, .16), transparent 50%),
+        linear-gradient(90deg, rgba(7,30,46,.95), rgba(7,30,46,.72) 48%, rgba(7,30,46,.28)),
+        linear-gradient(0deg, rgba(7,30,46,.95), transparent 46%, rgba(7,30,46,.28));
     }
 
     .hero__grain {
@@ -177,26 +186,47 @@
       align-items: center;
       justify-content: space-between;
       gap: 24px;
-      height: 92px;
-      border-bottom: 1px solid rgba(255,255,255,.2);
+      height: 112px;
+      border-bottom: 1px solid rgba(255,255,255,.18);
     }
 
     .logo {
       display: inline-flex;
       align-items: center;
-      gap: 9px;
       flex-shrink: 0;
-      font-family: var(--serif);
-      font-size: 26px;
-      letter-spacing: -.06em;
+      text-decoration: none;
+      background: transparent !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      border: 0 !important;
+      transition: transform .25s ease;
     }
-    .logo__mark { color: var(--accent); font-size: 33px; line-height: 1; }
-    .logo small {
+    .logo:hover {
+      transform: translateY(-2px);
+    }
+    .logo__img {
+      height: 86px;
+      width: auto;
+      max-height: 94px;
+      object-fit: contain;
       display: block;
-      margin-top: -3px;
-      font: 700 8px var(--sans);
-      letter-spacing: .32em;
-      text-transform: uppercase;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 2px rgba(255,255,255,0.92)) contrast(1.08);
+      transition: transform .25s ease, filter .25s ease;
+    }
+    .logo:hover .logo__img {
+      transform: scale(1.03);
+      filter: drop-shadow(0 4px 14px rgba(0,0,0,0.65)) drop-shadow(0 0 3px rgba(245,158,11,0.75)) contrast(1.12);
+    }
+    .logo--footer {
+      background: transparent !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      border: 0 !important;
+    }
+    .logo--footer .logo__img {
+      height: 80px;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 2px rgba(255,255,255,0.9));
     }
 
     .nav__links {
@@ -322,7 +352,7 @@
       border-radius: 50%;
       transform: rotateX(67deg) rotate(-20deg);
     }
-    .scene__photo { position: absolute; overflow: hidden; padding: 7px; background: #f7f1e7; box-shadow: 20px 30px 55px rgba(0,0,0,.36); }
+    .scene__photo { position: absolute; overflow: hidden; padding: 7px; background: #FFFFFF; box-shadow: 20px 30px 55px rgba(0,0,0,.36); }
     .scene__photo img { height: 100%; object-fit: cover; }
     .scene__photo--back { top: 45px; right: 5px; width: 175px; height: 220px; transform: rotate(-12deg) rotateY(-12deg); }
     .scene__photo--front { top: 125px; left: 20px; width: 235px; height: 310px; transform: rotate(8deg) rotateY(-12deg); }
@@ -361,7 +391,7 @@
       box-shadow: 0 20px 55px rgba(0,0,0,.24);
     }
     .trip-finder__field { display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 7px 19px; }
-    .trip-finder__field + .trip-finder__field { border-left: 1px solid #dbd8d0; }
+    .trip-finder__field + .trip-finder__field { border-left: 1px solid #DCE7EC; }
     .trip-finder label { margin-bottom: 7px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
     .trip-finder select { width: 100%; border: 0; background: transparent; color: var(--ink); font-size: 13px; font-weight: 700; cursor: pointer; }
     .trip-finder .button { min-height: auto; }
@@ -404,7 +434,7 @@
     }
 
     /* MARQUEE */
-    .marquee { overflow: hidden; border-bottom: 1px solid #e7e2d6; background: var(--paper); }
+    .marquee { overflow: hidden; border-bottom: 1px solid #DCE7EC; background: var(--paper); }
     .marquee__track { display: flex; width: max-content; animation: marquee 40s linear infinite; padding-block: 13px; }
     .marquee__track span { display: inline-flex; align-items: center; gap: 22px; padding-right: 44px; font-size: 11px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
     .marquee__track i { font-style: normal; color: var(--accent-deep); }
@@ -429,7 +459,7 @@
 
     .steps { margin-top: 60px; }
     .steps ol { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; list-style: none; padding: 0; margin: 0; }
-    .steps li { border-top: 1px solid #dbd8d0; padding-top: 16px; }
+    .steps li { border-top: 1px solid #DCE7EC; padding-top: 16px; }
     .steps .step__num { font: 400 54px var(--serif); color: var(--accent-deep); opacity: .45; display: block; }
     .steps h3 { font-family: var(--serif); font-weight: 400; font-size: 22px; margin: 10px 0 6px; }
     .steps p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
@@ -442,7 +472,7 @@
       min-height: 520px;
       overflow: hidden;
       isolation: isolate;
-      background: #203b3d;
+      background: #0A2B42;
       color: white;
     }
     .interlude__image {
@@ -458,7 +488,7 @@
       position: absolute;
       z-index: -1;
       inset: 0;
-      background: linear-gradient(90deg, rgba(5,24,27,.85), rgba(5,24,27,.47) 60%, rgba(5,24,27,.17));
+      background: linear-gradient(90deg, rgba(7,30,46,.92), rgba(12,74,123,.55) 60%, rgba(7,30,46,.22));
     }
     .interlude__content { padding-block: 85px; }
     .interlude h2 { max-width: 800px; margin: 20px 0; font-size: clamp(48px, 6.2vw, 82px); line-height: 1.1; letter-spacing: -.065em; font-family: var(--serif); font-weight: 400; }
@@ -476,21 +506,21 @@
       min-width: 0;
       overflow: hidden;
       background: var(--paper);
-      box-shadow: 0 8px 28px rgba(16,35,40,.05);
+      box-shadow: 0 8px 28px rgba(7,30,46,.06);
       transition: transform .3s, box-shadow .3s;
       cursor: pointer;
     }
-    .package-card:hover { transform: translateY(-5px); box-shadow: 0 20px 42px rgba(16,35,40,.13); }
+    .package-card:hover { transform: translateY(-5px); box-shadow: 0 20px 42px rgba(12,74,123,.16); }
     .package-card[hidden] { display: none; }
-    .package-card__image { position: relative; height: 255px; overflow: hidden; background: #d7d9d2; }
+    .package-card__image { position: relative; height: 255px; overflow: hidden; background: #EBF3F7; }
     .package-card__image img { height: 100%; object-fit: cover; transition: transform .7s ease; }
     .package-card:hover .package-card__image img { transform: scale(1.09); }
-    .package-card__tag { position: absolute; top: 13px; left: 13px; padding: 8px 9px; background: rgba(255,253,249,.95); font-size: 9px; font-weight: 700; }
+    .package-card__tag { position: absolute; top: 13px; left: 13px; padding: 8px 9px; background: rgba(255,255,255,.95); font-size: 9px; font-weight: 700; }
     .package-card__body { padding: 21px 17px 18px; }
-    .package-card__meta { margin-bottom: 9px; color: #a37353; font-size: 9px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+    .package-card__meta { margin-bottom: 9px; color: var(--accent-deep); font-size: 9px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
     .package-card h3 { margin-bottom: 10px; font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.15; letter-spacing: -.045em; }
     .package-card__description { min-height: 57px; margin-bottom: 16px; color: var(--muted); font-size: 11px; line-height: 1.7; }
-    .package-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 15px; border-top: 1px solid #e9e7df; }
+    .package-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 15px; border-top: 1px solid #DCE7EC; }
     .package-card__price { font-size: 18px; font-weight: 700; }
     .package-card__price small { display: block; margin-bottom: 3px; color: var(--muted); font-size: 9px; font-weight: 400; }
     .package-card__button {
@@ -499,7 +529,7 @@
       place-items: center;
       width: 35px;
       height: 35px;
-      border: 1px solid #cbd1cb;
+      border: 1px solid #CFDEE5;
       border-radius: 50%;
       background: transparent;
       color: var(--ink);
@@ -511,25 +541,25 @@
     .empty-state.is-visible { display: block; }
 
     /* EMI CALCULATOR */
-    .calculator { padding: 100px 0 110px; background: var(--paper); border-block: 1px solid #e9e7df; }
+    .calculator { padding: 100px 0 110px; background: var(--paper); border-block: 1px solid #DCE7EC; }
     .calc-head { max-width: 760px; margin: 0 auto 46px; text-align: center; }
     .calc-head .section-title { font-size: clamp(42px, 5vw, 64px); }
     .calc-head > p { color: var(--muted); font-size: 14px; line-height: 1.8; }
 
-    .calculator__card { background: #fff; border: 1px solid #e9e7df; box-shadow: 0 18px 45px rgba(16,35,40,.07); padding: 46px; }
+    .calculator__card { background: #fff; border: 1px solid #DCE7EC; box-shadow: 0 18px 45px rgba(7,30,46,.08); padding: 46px; }
     .calc-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 44px; }
 
     .calc-label { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
     .circuit-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .calc-option {
       padding: 16px 17px;
-      border: 1px solid #dbd8d0;
+      border: 1px solid #CFDEE5;
       background: white;
       text-align: left;
       transition: border-color .2s, background .2s;
     }
     .calc-option:hover { border-color: var(--accent); }
-    .calc-option[aria-pressed="true"] { border-color: var(--accent-deep); background: #faf4e9; }
+    .calc-option[aria-pressed="true"] { border-color: var(--accent-deep); background: #EBF3F7; }
     .calc-option b { font-size: 14px; font-weight: 700; display: block; margin-top: 4px; font-family: var(--serif); font-weight: 500; }
     .calc-option .calc-option__days { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
     .calc-option small { color: var(--muted); font-size: 11px; display: block; margin-top: 5px; }
@@ -539,7 +569,7 @@
     .choice-pills { display: flex; flex-wrap: wrap; gap: 9px; }
     .choice-pill {
       padding: 11px 18px;
-      border: 1px solid #cbd1cb;
+      border: 1px solid #CFDEE5;
       background: #fff;
       font-size: 13px;
       font-weight: 700;
@@ -548,16 +578,16 @@
     .choice-pill:hover { border-color: var(--accent); }
     .choice-pill[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: white; }
 
-    .progress-box { margin-top: 24px; padding: 18px 20px; background: #faf4e9; border: 1px solid #e9e7df; }
+    .progress-box { margin-top: 24px; padding: 18px 20px; background: #EBF3F7; border: 1px solid #e9e7df; }
     .progress-box__head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; margin-bottom: 12px; }
-    .progress-track { height: 8px; background: #e7ddc9; border-radius: 6px; overflow: hidden; }
+    .progress-track { height: 8px; background: #CFDEE5; border-radius: 6px; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); border-radius: 6px; transition: width .4s ease; }
     .progress-box__foot { display: flex; justify-content: space-between; margin-top: 9px; font-size: 11px; color: var(--muted); }
 
     .calc-result { background: var(--ink); color: white; padding: 34px; position: relative; overflow: hidden; }
-    .calc-result::after { content: ""; position: absolute; right: -70px; top: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(238,179,126,.28), transparent 70%); pointer-events: none; }
+    .calc-result::after { content: ""; position: absolute; right: -70px; top: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(245,158,11,.32), transparent 70%); pointer-events: none; }
     .calc-result__head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-family: var(--sans); }
-    .calc-result__badge { padding: 5px 9px; border: 1px solid rgba(238,179,126,.5); color: var(--accent); font-size: 10px; }
+    .calc-result__badge { padding: 5px 9px; border: 1px solid rgba(245,158,11,.5); color: var(--accent); font-size: 10px; }
     .calc-result__emi { margin-top: 18px; font: 500 52px var(--serif); color: var(--accent); letter-spacing: -.03em; }
     .calc-result__emi small { font: 400 15px var(--sans); color: rgba(255,255,255,.7); }
     .calc-result__rows { margin-top: 22px; border-top: 1px solid rgba(255,255,255,.14); padding-top: 18px; }
@@ -586,7 +616,7 @@
     .pass__grid b { font-size: 14px; font-weight: 700; }
     .pass__grid b.gold { color: var(--accent-deep); }
     .pass__grid small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
-    .pass__stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 30px 28px; border-left: 2px dashed #d8d5cc; text-align: center; }
+    .pass__stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 30px 28px; border-left: 2px dashed #CFDEE5; text-align: center; }
     .pass__qr { display: grid; place-items: center; width: 132px; height: 132px; background: var(--ink); color: white; font-size: 60px; font-family: var(--serif); }
     .pass__stub .caption { font-size: 10px; font-weight: 700; letter-spacing: .18em; color: var(--muted); }
     .pass__stub .token { font-weight: 700; letter-spacing: .06em; color: var(--accent-deep); }
@@ -611,13 +641,13 @@
     .closing { padding: 95px 0; background: var(--ink); color: white; }
     .closing__grid { display: grid; grid-template-columns: 1.1fr 1fr; align-items: end; gap: 70px; }
     .closing .section-title em { color: var(--accent); }
-    .closing p { max-width: 440px; color: #bfcbc5; font-size: 14px; line-height: 1.85; }
+    .closing p { max-width: 440px; color: #9AB1C0; font-size: 14px; line-height: 1.85; }
     .closing__actions { display: flex; align-items: center; gap: 26px; margin-top: 30px; }
     .closing__stats { display: flex; flex-wrap: wrap; gap: 37px; margin-top: 38px; }
     .closing__stats strong { display: block; color: var(--accent); font: 35px var(--serif); font-weight: 400; }
-    .closing__stats span { color: #bfcbc5; font-size: 11px; }
+    .closing__stats span { color: #9AB1C0; font-size: 11px; }
 
-    footer { padding: 28px 0; background: #0a1b20; color: #bdc8c3; }
+    footer { padding: 28px 0; background: #051622; color: #9AB1C0; }
     .footer__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 11px; flex-wrap: wrap; }
     .footer__links { display: flex; flex-wrap: wrap; gap: 7px 22px; }
     .footer__links a { transition: color .2s; }
@@ -635,7 +665,7 @@
       align-items: center;
       justify-content: center;
       padding: 22px;
-      background: rgba(4,19,22,.78);
+      background: rgba(7,30,46,.82);
       backdrop-filter: blur(5px);
     }
     .dialog__panel { width: min(520px, 100%); max-height: 90vh; overflow: auto; background: var(--cream); color: var(--ink); box-shadow: 0 30px 90px rgba(0,0,0,.4); padding: 35px; position: relative; }
@@ -644,7 +674,7 @@
     .dialog h3 { margin: 16px 0 9px; font-size: 42px; letter-spacing: -.05em; font-family: var(--serif); font-weight: 400; }
     .dialog > p { color: var(--muted); font-size: 13px; line-height: 1.7; }
     .pass-lookup { display: grid; grid-template-columns: 1fr auto; gap: 12px; margin-top: 23px; }
-    .pass-lookup input { width: 100%; height: 50px; padding: 0 12px; border: 1px solid #d8d6ce; background: white; color: var(--ink); font-size: 13px; font-weight: 600; }
+    .pass-lookup input { width: 100%; height: 50px; padding: 0 12px; border: 1px solid #CFDEE5; background: white; color: var(--ink); font-size: 13px; font-weight: 600; }
     .pass-lookup input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
     .pass-lookup .button { min-height: 50px; }
     .lookup-note { min-height: 18px; margin: 14px 0 0; color: var(--muted); font-size: 12px; }
@@ -678,8 +708,8 @@
       .hero__slide img { object-position: 58% center; }
       .hero__shade {
         background:
-          linear-gradient(90deg, rgba(8,25,29,.84), rgba(8,25,29,.44)),
-          linear-gradient(0deg, rgba(8,25,29,.95), transparent 57%, rgba(8,25,29,.27));
+          linear-gradient(90deg, rgba(7,30,46,.88), rgba(7,30,46,.48)),
+          linear-gradient(0deg, rgba(7,30,46,.95), transparent 57%, rgba(7,30,46,.27));
       }
       .hero__main { align-items: flex-start; min-height: 630px; padding-top: 96px; padding-bottom: 150px; }
       .hero__copy { width: 100%; }
@@ -781,9 +811,8 @@
     <div class="hero__grain" aria-hidden="true"></div>
 
     <nav class="nav container" aria-label="Main navigation">
-      <a class="logo" href="#home" aria-label="BharatYatra home">
-        <span class="logo__mark" aria-hidden="true">✳</span>
-        <span>BharatYatra <small>Har Gaon Ru Char Dham</small></span>
+      <a class="logo" href="#home" aria-label="Aditya Tour and Travels home">
+        <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88"/>
       </a>
 
       <div class="nav__lang">
@@ -792,36 +821,46 @@
       </div>
 
       <div class="nav__links">
-        <a href="#circuits" x-text="t('nav', 'circuits')"></a>
-        <a href="#emi-calculator-section" x-text="t('nav', 'calculator')"></a>
-        <a href="#pass" x-text="t('nav', 'pass')"></a>
+        <a href="#circuits">Sacred Circuits</a>
+        <a href="#emi-calculator-section">EMI Calculator</a>
+        <a href="#pass">Travel Pass</a>
       </div>
 
       <button class="nav__cta" type="button" @click="statusModalOpen = true">
-        <span x-text="t('nav', 'checkPassBtn')"></span> &nbsp;↗
+        <span>Check Pass</span> &nbsp;↗
       </button>
     </nav>
 
     <div class="hero__main container">
       <div class="hero__copy">
-        <div class="eyebrow">A different way to <span x-text="lang === 'odia' ? 'ଭାରତ ଦେଖିବାର' : 'discover India'"></span></div>
+        <div class="eyebrow">A DIFFERENT WAY TO DISCOVER INDIA</div>
         <h1>
-          <span x-text="t('hero', 'titleA')"></span>
-          <span><em x-text="t('hero', 'titleB')"></em></span>
+          <template x-if="lang === 'odia'">
+            <span>
+              <span class="block">ଆମ ଓଡ଼ିଶାରୁ</span>
+              <span class="block"><em class="text-amber-400 not-italic">ଚାରିଧାମ ଯାତ୍ରା</em></span>
+            </span>
+          </template>
+          <template x-if="lang === 'en'">
+            <span>
+              <span class="block">Sacred Dhams</span>
+              <span class="block"><em>from Odisha</em></span>
+            </span>
+          </template>
         </h1>
-        <p class="hero__description" x-text="t('hero', 'punchline')"></p>
+        <p class="hero__description">No full upfront payment stress! Board your coach after paying just 2 micro-installments, and comfortably clear the remaining balance after returning home.</p>
 
         <div class="hero__points">
-          <span><i>✓</i><span x-text="t('hero', 'point1')"></span></span>
-          <span><i>✓</i><span x-text="t('hero', 'point2')"></span></span>
-          <span><i>✓</i><span x-text="t('hero', 'point3')"></span></span>
+          <span><i>✓</i>Zero Bank CIBIL or Formal Loan Stress</span>
+          <span><i>✓</i>100% Pure Satvik Meals (No Onion, No Garlic)</span>
+          <span><i>✓</i>Direct Premium Deluxe Bus Pickup from All 30 Odisha Districts</span>
         </div>
 
         <div class="hero__actions">
           <a class="button" href="#circuits">
-            <span x-text="t('hero', 'btnExplore')"></span> <span aria-hidden="true">↗</span>
+            <span>Explore Sacred Circuits</span> <span aria-hidden="true">↗</span>
           </a>
-          <button class="text-link" type="button" @click="statusModalOpen = true" x-text="t('hero', 'btnVerify')"></button>
+          <button class="text-link" type="button" @click="statusModalOpen = true">Check Booking Pass</button>
         </div>
       </div>
 
@@ -845,7 +884,7 @@
           <div class="trip-finder__field">
             <label for="destination">Destination</label>
             <select id="destination" x-model="finderDest">
-              <option value="all" x-text="t('finder', 'allDest')"></option>
+              <option value="all">All Destinations across India</option>
               <option value="char dham">Char Dham</option>
               <option value="ayodhya">Ayodhya / Kashi</option>
               <option value="jyotirlinga">Jyotirlinga</option>
@@ -856,13 +895,13 @@
           <div class="trip-finder__field">
             <label for="travel-style">Travel style</label>
             <select id="travel-style" x-model="finderStyle">
-              <option value="all" x-text="t('finder', 'allStyle')"></option>
+              <option value="all">All Travel Styles</option>
               <option value="devotion">Devotion</option>
               <option value="coastal">Coastal</option>
             </select>
           </div>
 
-          <button class="button" type="submit"><span x-text="t('finder', 'btn')"></span> <span aria-hidden="true">↗</span></button>
+          <button class="button" type="submit"><span>Find My Journey</span> <span aria-hidden="true">↗</span></button>
         </form>
 
         <div class="hero__controls" aria-label="Hero slideshow controls">
@@ -888,37 +927,37 @@
     <section class="intro" id="journey">
       <div class="intro__grid container">
         <div>
-          <div class="eyebrow eyebrow--dark" x-text="t('highway', 'tag')"></div>
-          <h2 class="section-title" x-text="t('highway', 'title')"></h2>
+          <div class="eyebrow eyebrow--dark">JOURNEY ROADMAP • ADITYA TRAVELS</div>
+          <h2 class="section-title">From Your Home to Sacred Dhams &amp; Safe Return<em>.</em></h2>
         </div>
-        <p class="intro__text" x-text="t('highway', 'desc')"></p>
+        <p class="intro__text">Four simple steps from your doorstep to the sacred dhams — and back home again:</p>
       </div>
 
       <div class="steps container">
         <ol>
           <li class="reveal">
             <span class="step__num">01</span>
-            <h3 x-text="t('highway', 'p1Name')"></h3>
-            <p x-text="lang === 'odia' ? t('highway', 'step1') + ' • ' + t('highway', 'p1Month') : t('highway', 'step1') + ' • ' + t('highway', 'p1Month')"></p>
-            <p x-text="t('highway', 'm1Desc')"></p>
+            <h3>Sankalpa at Home</h3>
+            <p>STEP 1 • Month 01</p>
+            <p>Receive your official pilgrim passbook from your village Sahayak. Your seat is confirmed.</p>
           </li>
           <li class="reveal">
             <span class="step__num">02</span>
-            <h3 x-text="t('highway', 'p2Name')"></h3>
-            <p x-text="t('highway', 'step2') + ' • ' + t('highway', 'p2Month')"></p>
-            <p x-text="t('highway', 'm2Desc')"></p>
+            <h3>Coach Boarding</h3>
+            <p>STEP 2 • Month 02</p>
+            <p>Ticket unlocked after just 2 EMIs! Board your air-conditioned Deluxe Coach.</p>
           </li>
           <li class="reveal">
             <span class="step__num">03</span>
-            <h3 x-text="t('highway', 'p3Name')"></h3>
-            <p x-text="t('highway', 'step3') + ' • ' + t('highway', 'p3Month')"></p>
-            <p x-text="t('highway', 'm3Desc')"></p>
+            <h3>Sacred Darshan</h3>
+            <p>STEP 3 • Char Dham</p>
+            <p>VIP darshan and satvik mahaprasad across Kedarnath, Kashi, and Ayodhya.</p>
           </li>
           <li class="reveal">
             <span class="step__num">04</span>
-            <h3 x-text="t('highway', 'p4Name')"></h3>
-            <p x-text="t('highway', 'step4') + ' • ' + t('highway', 'p4Month')"></p>
-            <p x-text="t('highway', 'm4Desc')"></p>
+            <h3>Peaceful Return</h3>
+            <p>STEP 4 • Months 03–10</p>
+            <p>Return home peacefully and comfortably clear remaining balance in easy installments.</p>
           </li>
         </ol>
       </div>
@@ -930,7 +969,7 @@
       <div class="interlude__content container">
         <div class="eyebrow">Pahile Yatra, Pachhare Shodha</div>
         <h2>Travel first.<br/><em>Settle later.</em></h2>
-        <p x-text="lang === 'odia' ? 'ବିନା ଆର୍ଥିକ ଚିନ୍ତାରେ ବାପା-ମା’ଙ୍କୁ ତୀର୍ଥ କରାନ୍ତୁ' : 'Fulfill your parents’ sacred pilgrimage dream — without the financial worry.'"></p>
+        <p>Fulfill your parents’ sacred pilgrimage dream — without financial burden or bank loans.</p>
       </div>
     </section>
 
@@ -939,10 +978,10 @@
       <div class="container">
         <div class="packages__heading">
           <div>
-            <div class="eyebrow eyebrow--dark" x-text="lang === 'odia' ? 'ତୀର୍ଥ ପ୍ୟାକେଜ୍ ସମୂହ' : 'CURATED PILGRIMAGE CIRCUITS'"></div>
-            <h2 class="section-title" id="circuits-title"><span x-text="lang === 'odia' ? 'ଓଡ଼ିଶାରୁ ଆରମ୍ଭ ହେଉଥିବା ପବିତ୍ର ଯାତ୍ରା' : 'Sacred journeys from Odisha'"></span><em>.</em></h2>
+            <div class="eyebrow eyebrow--dark">CURATED PILGRIMAGE CIRCUITS</div>
+            <h2 class="section-title" id="circuits-title"><span>Sacred Journeys from Odisha</span><em>.</em></h2>
           </div>
-          <p x-text="lang === 'odia' ? 'ପ୍ରିମିୟମ ଡିଲକ୍ସ ବସ୍, ଭିଆଇପି ଦର୍ଶନ ଓ ସାତ୍ତ୍ୱିକ ଭୋଜନ ଅନ୍ତର୍ଭୁକ୍ତ।' : 'Premium deluxe bus, VIP darshan, and satvik meals on every journey.'"></p>
+          <p>Premium deluxe bus, VIP darshan, and pure satvik meals on every journey.</p>
         </div>
 
         <div class="package-grid" id="package-grid">
@@ -962,7 +1001,7 @@
               <div class="package-card__body">
                 <div class="package-card__meta" x-text="pkg.duration_days + ' Days'"></div>
                 <h3 x-text="pkg.title"></h3>
-                <p class="package-card__description" x-text="pkg.odia_destination || pkg.destination"></p>
+                <p class="package-card__description" x-text="pkg.destination"></p>
                 <div class="package-card__footer">
                   <div class="package-card__price"><small>From ₹<span x-text="Math.round(pkg.total_price / pkg.allowed_tenures[0]).toLocaleString('en-IN')"></span>/mo</small>₹<span x-text="pkg.total_price.toLocaleString('en-IN')"></span></div>
                   <button
@@ -976,7 +1015,7 @@
           </template>
         </div>
 
-        <p class="empty-state" id="empty-state" :class="filteredPackages.length ? '' : 'is-visible'" x-text="lang === 'odia' ? 'କୌଣସି ପ୍ୟାକେଜ୍ ମିଳିଲା ନାହିଁ। ଅନ୍ୟ ଗନ୍ତବ୍ୟ ଚେଷ୍ଟା କରନ୍ତୁ।' : 'No trips match that combination. Try another destination or travel style.'"></p>
+        <p class="empty-state" id="empty-state" :class="filteredPackages.length ? '' : 'is-visible'">No trips match that combination. Try another destination or travel style.</p>
       </div>
     </section>
 
@@ -984,15 +1023,15 @@
     <section class="calculator" id="emi-calculator-section" aria-labelledby="calculator-title">
       <div class="container">
         <div class="calc-head">
-          <div class="eyebrow eyebrow--dark" x-text="t('calculator', 'tag')"></div>
-          <h2 class="section-title" id="calculator-title" x-text="t('calculator', 'title')"></h2>
-          <p x-text="t('calculator', 'desc')"></p>
+          <div class="eyebrow eyebrow--dark">RURAL SANCHAY CALCULATOR</div>
+          <h2 class="section-title" id="calculator-title">Calculate Your Daily Pilgrimage Savings<em>.</em></h2>
+          <p>Compare with just 2 morning cups of tea. Choose your desired package and monthly tenure to plan your journey.</p>
         </div>
 
         <div class="calculator__card">
           <div class="calc-grid">
             <div>
-              <p class="calc-label" x-text="t('calculator', 'choosePkg')"></p>
+              <p class="calc-label">1. Choose Pilgrimage Circuit</p>
               <div class="circuit-selector" id="circuit-selector">
                 <template x-for="p in packages" :key="p.id">
                   <button
@@ -1008,7 +1047,7 @@
               </div>
 
               <div class="tenure-choice">
-                <p class="calc-label" x-text="t('calculator', 'chooseTenure')"></p>
+                <p class="calc-label">2. Repayment Duration</p>
                 <div class="choice-pills" id="tenure-selector">
                   <template x-for="ten in selectedPackage.allowed_tenures" :key="ten">
                     <button
@@ -1016,7 +1055,7 @@
                       type="button"
                       @click="selectedTenure = ten"
                       :aria-pressed="selectedTenure === ten ? 'true' : 'false'">
-                      <span x-text="ten + ' ' + (lang === 'odia' ? 'ମାସ' : 'Months')"></span>
+                      <span x-text="ten + ' Months'"></span>
                     </button>
                   </template>
                 </div>
@@ -1024,16 +1063,16 @@
 
               <div class="progress-box">
                 <div class="progress-box__head">
-                  <span x-text="t('calculator', 'statusLbl')"></span>
+                  <span>Boarding Clearance Status</span>
                   <span class="gold" x-text="'₹' + travelUnlockCost.toLocaleString('en-IN')"></span>
                 </div>
-                <div class="progress-track" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :aria-label="t('calculator', 'statusLbl')">
+                <div class="progress-track" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" :aria-label="'Boarding Clearance Status'">
                   <div class="progress-fill" :style="'width:' + progressPercent + '%'"></div>
                 </div>
                 <div class="progress-box__foot">
-                  <span x-text="lang === 'odia' ? 'ଟୋକେନ ୧ (ଆରମ୍ଭ)' : 'Token 1 (Start)'"></span>
-                  <span x-text="t('calculator', 'unlockMsg')"></span>
-                  <span x-text="lang === 'odia' ? 'ଚୂଡ଼ାନ୍ତ ସେଟଲମେଣ୍ଟ' : 'Final Settlement'"></span>
+                  <span>Token 1 (Start)</span>
+                  <span>Unlock after just 2 installments!</span>
+                  <span>Final Settlement</span>
                 </div>
               </div>
             </div>
@@ -1041,29 +1080,29 @@
             <div>
               <div class="calc-result">
                 <div class="calc-result__head">
-                  <span x-text="t('calculator', 'estEmiLbl')"></span>
-                  <span class="calc-result__badge" x-text="lang === 'odia' ? 'ସ୍ୱୟଂଚାଳିତ ଅନୁମୋଦିତ' : 'Auto Approved'"></span>
+                  <span>ESTIMATED MONTHLY EMI</span>
+                  <span class="calc-result__badge">Auto Approved</span>
                 </div>
-                <div class="calc-result__emi">₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span> <small x-text="t('calculator', 'perMonth')"></small></div>
+                <div class="calc-result__emi">₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span> <small>/ month</small></div>
 
                 <div class="calc-result__rows">
                   <div class="calc-result__row">
-                    <span x-text="t('calculator', 'toBoardLbl')"></span>
+                    <span>Required to Board Coach:</span>
                     <b>₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span></b>
                   </div>
                   <div class="calc-result__row">
-                    <span x-text="t('calculator', 'postTravelLbl')"></span>
+                    <span>Post-Travel Balance:</span>
                     <b>₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> <span x-text="'(' + remainingTenure + ')'"></span></b>
                   </div>
                   <div class="calc-result__row">
-                    <span x-text="t('calculator', 'channelLbl')"></span>
-                    <b class="gold" x-text="t('calculator', 'channelVal')"></b>
+                    <span>Collection Channel:</span>
+                    <b class="gold">Doorstep receipt from village Sahayak</b>
                   </div>
                 </div>
 
-                <p class="calc-result__footnote">➤ <span x-text="t('calculator', 'teaCompare')"></span></p>
+                <p class="calc-result__footnote">➤ Costs less than 2 cups of tea a day</p>
 
-                <button class="button" type="button" @click="statusModalOpen = true" x-text="t('calculator', 'bookBtn')"></button>
+                <button class="button" type="button" @click="statusModalOpen = true">Book Doorstep Consultation ↗</button>
               </div>
             </div>
           </div>
@@ -1075,9 +1114,9 @@
     <section class="pass" id="pass" aria-labelledby="pass-title">
       <div class="container">
         <div class="pass-head">
-          <div class="eyebrow eyebrow--dark" x-text="lang === 'odia' ? 'ଅଫଲାଇନ୍ ପ୍ରମାଣପତ୍ର' : 'OFFLINE TRAVEL CERTIFICATE'"></div>
-          <h2 class="section-title" id="pass-title" x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ଅଧିକୃତ ତୀର୍ଥଯାତ୍ରୀ ବୋର୍ଡିଂ ପାସ୍' : 'Your Official Pilgrim Boarding Pass'"></h2>
-          <p x-text="lang === 'odia' ? 'ସ୍ମାର୍ଟଫୋନ୍ ଦରକାର ନାହିଁ। ଗାଁ ସହାୟକ ଭାଇ ଷ୍ଟାମ୍ପ୍ ଓ ବାରକୋଡ୍ ସହିତ ଫିଜିକାଲ୍ ପାସ୍ ଘରେ ପ୍ରଦାନ କରିବେ।' : 'Smartphone not required. Devotees receive a physical gold-embossed travel pass stamped by their village Sahayak.'"></p>
+          <div class="eyebrow eyebrow--dark">OFFLINE TRAVEL CERTIFICATE</div>
+          <h2 class="section-title" id="pass-title">Your Official Pilgrim Boarding Pass<em>.</em></h2>
+          <p>Smartphone not required. Devotees receive a physical gold-embossed travel pass stamped by their village Sahayak.</p>
         </div>
 
         <div class="pass__card">
@@ -1087,8 +1126,8 @@
               <div class="pass__head">
                 <div class="pass__medal" aria-hidden="true">✳</div>
                 <div>
-                  <b>BharatYatra Royal Pass</b>
-                  <small>National Pilgrimage Micro-Credit Board • Odisha Division</small>
+                  <b>Aditya Royal Travel Pass</b>
+                  <small>Aditya Tour and Travels • Odisha Sacred Pilgrimage Division</small>
                 </div>
               </div>
 
@@ -1122,7 +1161,7 @@
               <span class="token">TOKEN: 7490-AX-OD</span>
               <p>Scan via Sahayak POS Device without internet connection.</p>
               <button class="button" type="button" @click="statusModalOpen = true">
-                <span x-text="lang === 'odia' ? 'ଆପଣଙ୍କ ପାସ୍ ଦେଖନ୍ତୁ' : 'Lookup Your Pass'"></span> ↗
+                <span>Lookup Your Pass</span> ↗
               </button>
             </div>
           </div>
@@ -1134,44 +1173,44 @@
     <section class="voices" id="voices" aria-labelledby="voices-title">
       <div class="container">
         <div class="voices-head">
-          <div class="eyebrow eyebrow--dark" x-text="t('testimonials', 'tag')"></div>
-          <h2 class="section-title" id="voices-title" x-text="t('testimonials', 'title')"></h2>
-          <p x-text="t('testimonials', 'desc')"></p>
+          <div class="eyebrow eyebrow--dark">DEVOTEES SPEAK</div>
+          <h2 class="section-title" id="voices-title">Trusted by Families Across Odisha<em>.</em></h2>
+          <p>Real pilgrims, real villages — in the words of families who travelled with us.</p>
         </div>
 
         <div class="voices__grid">
           <figure class="voice reveal">
             <div class="voice__stars" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote x-text="'“' + t('testimonials', 'q1') + '”'"></blockquote>
+            <blockquote>“Baba and Maa had never left Odisha. After just two installments, we boarded the deluxe coach and saw Kedarnath together — zero debt, complete peace.”</blockquote>
             <figcaption>
-              <span class="voice__avatar" x-text="t('testimonials', 'n1').slice(0, 1)"></span>
+              <span class="voice__avatar">S</span>
               <span>
-                <b x-text="t('testimonials', 'n1')"></b>
-                <small x-text="t('testimonials', 'p1')"></small>
+                <b>Sunita Behera</b>
+                <small>Kendrapara • Char Dham Yatra</small>
               </span>
             </figcaption>
           </figure>
 
           <figure class="voice reveal">
             <div class="voice__stars" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote x-text="'“' + t('testimonials', 'q2') + '”'"></blockquote>
+            <blockquote>“The village Sahayak brother came to our home with our official passbook and printed slips. We never had to visit a bank or deal with paperwork.”</blockquote>
             <figcaption>
-              <span class="voice__avatar" x-text="t('testimonials', 'n2').slice(0, 1)"></span>
+              <span class="voice__avatar">P</span>
               <span>
-                <b x-text="t('testimonials', 'n2')"></b>
-                <small x-text="t('testimonials', 'p2')"></small>
+                <b>Prakash Nayak</b>
+                <small>Sambalpur • Ayodhya–Kashi Darshan</small>
               </span>
             </figcaption>
           </figure>
 
           <figure class="voice reveal">
             <div class="voice__stars" aria-label="5 out of 5 stars">★★★★★</div>
-            <blockquote x-text="'“' + t('testimonials', 'q3') + '”'"></blockquote>
+            <blockquote>“100% pure satvik meals, VIP darshan at every temple, and my elderly parents traveled with supreme comfort. It felt like traveling with our own family.”</blockquote>
             <figcaption>
-              <span class="voice__avatar" x-text="t('testimonials', 'n3').slice(0, 1)"></span>
+              <span class="voice__avatar">M</span>
               <span>
-                <b x-text="t('testimonials', 'n3')"></b>
-                <small x-text="t('testimonials', 'p3')"></small>
+                <b>Mamani Digal</b>
+                <small>Kalahandi • Rameswaram Circuit</small>
               </span>
             </figcaption>
           </figure>
@@ -1183,20 +1222,20 @@
     <section class="closing">
       <div class="closing__grid container">
         <div>
-          <div class="eyebrow" x-text="t('cta', 'tag')"></div>
-          <h2 class="section-title" x-text="t('cta', 'title')"></h2>
+          <div class="eyebrow">START YOUR PILGRIMAGE TODAY</div>
+          <h2 class="section-title">Your Berth is Waiting. Begin Your Sacred Sankalpa<em>.</em></h2>
         </div>
         <div>
-          <p x-text="t('cta', 'desc')"></p>
+          <p>Meet your local village Sahayak, choose your sacred pilgrimage circuit, and travel first — settle comfortably later.</p>
           <div class="closing__actions">
-            <a class="button" href="#circuits" x-text="t('cta', 'btn')"></a>
-            <button class="text-link" type="button" @click="statusModalOpen = true" x-text="t('cta', 'btnAlt')"></button>
+            <a class="button" href="#circuits">Plan My Pilgrimage ↗</a>
+            <button class="text-link" type="button" @click="statusModalOpen = true">Check Pass Status</button>
           </div>
           <div class="closing__stats">
-            <div><strong x-text="statDisplay.stat1"></strong><span x-text="t('hero', 'stat1Lbl')"></span></div>
-            <div><strong x-text="statDisplay.stat2"></strong><span x-text="t('hero', 'stat2Lbl')"></span></div>
-            <div><strong x-text="statDisplay.stat3"></strong><span x-text="t('hero', 'stat3Lbl')"></span></div>
-            <div><strong x-text="statDisplay.stat4"></strong><span x-text="t('hero', 'stat4Lbl')"></span></div>
+            <div><strong x-text="statDisplay.stat1"></strong><span>Odisha Pilgrims Facilitated</span></div>
+            <div><strong x-text="statDisplay.stat2"></strong><span>Devotee Satisfaction &amp; Trust</span></div>
+            <div><strong x-text="statDisplay.stat3"></strong><span>Village Desks in 30 Districts</span></div>
+            <div><strong x-text="statDisplay.stat4"></strong><span>Pure Satvik Meals Guaranteed</span></div>
           </div>
         </div>
       </div>
@@ -1206,20 +1245,19 @@
   <!-- ============================ FOOTER ============================ -->
   <footer>
     <div class="footer__inner container">
-      <a class="logo" href="#home">
-        <span class="logo__mark" aria-hidden="true">✳</span>
-        <span>BharatYatra <small>Har Gaon Ru Char Dham</small></span>
+      <a class="logo logo--footer" href="#home" aria-label="Aditya Tour and Travels home">
+        <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88"/>
       </a>
 
       <nav class="footer__links" aria-label="Footer">
-        <a href="/agent/dashboard" x-text="t('nav', 'agentLogin')"></a>
-        <a href="/distributor/dashboard" x-text="lang === 'odia' ? 'ଡିଷ୍ଟ୍ରିବ୍ୟୁଟର' : 'Distributor'"></a>
+        <a href="/agent/dashboard">Sahayak Portal</a>
+        <a href="/distributor/dashboard">Distributor Portal</a>
         <a href="/_/">Admin Console</a>
-        <a href="#circuits" x-text="t('nav', 'circuits')"></a>
-        <a href="#pass" x-text="t('nav', 'pass')"></a>
+        <a href="#circuits">Sacred Circuits</a>
+        <a href="#pass">Travel Pass</a>
       </nav>
 
-      <span>© <span id="year"></span> BharatYatra Technologies · Jai Jagannath!</span>
+      <span>© <span id="year"></span> Aditya Tour and Travels · Har Gaon Ru Char Dham · Jai Jagannath!</span>
     </div>
   </footer>
 
@@ -1238,9 +1276,9 @@
       <button class="dialog__close" type="button" aria-label="Close" @click="statusModalOpen = false">×</button>
 
       <div>
-        <div class="eyebrow eyebrow--dark" x-text="lang === 'odia' ? 'ତୀର୍ଥଯାତ୍ରୀ ଯାଞ୍ଚ ପୋର୍ଟାଲ୍' : 'PILGRIM VERIFICATION PORTAL'"></div>
-        <h3 x-text="lang === 'odia' ? 'ନିଜ ଟ୍ରାଭେଲ୍ ପାସ୍ ଯାଞ୍ଚ କରନ୍ତୁ' : 'Check Travel Eligibility Pass'"></h3>
-        <p x-text="lang === 'odia' ? 'ନିଜ ୧୦ ଅଙ୍କର ମୋବାଇଲ୍ ନମ୍ବର କିମ୍ବା ବୁକିଂ କୋଡ୍ (e.g. BY-2026-XXXX) ଦେଇ ଯାଞ୍ଚ କରନ୍ତୁ।' : 'Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.'"></p>
+        <div class="eyebrow eyebrow--dark">PILGRIM VERIFICATION PORTAL</div>
+        <h3>Check Travel Eligibility Pass</h3>
+        <p>Enter your 10-digit mobile number or booking reference code (e.g. BY-2026-XXXX) to access your verified Travel Pass.</p>
       </div>
 
       <form
@@ -1255,7 +1293,7 @@
           required
           autocomplete="off"
           placeholder="Mobile No. (e.g. 9876543210) or BY-2026-XXXX"/>
-        <button class="button" type="submit" x-text="lang === 'odia' ? 'ପାସ୍ ଦେଖନ୍ତୁ' : 'Verify Pass'"></button>
+        <button class="button" type="submit">Verify Pass</button>
       </form>
 
       <p id="status-loading" class="htmx-indicator lookup-note looking">✳ <span>Searching verified passenger database…</span></p>

@@ -157,13 +157,16 @@ routerAdd("GET", "/api/public/booking-status", (c) => {
       }
 
       const html = `
-        <div class="rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-amber-950 via-slate-900 to-amber-950 p-6 text-white shadow-2xl shadow-amber-500/20 backdrop-blur-xl">
+        <div class="rounded-2xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 p-6 text-white shadow-2xl shadow-amber-500/20 backdrop-blur-xl">
           <!-- VIP Card Header -->
           <div class="flex items-start justify-between border-b border-amber-500/30 pb-4">
-            <div>
-              <div class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">BHARATYATRA OFFICIAL TRAVEL PASS</div>
-              <h3 class="text-xl font-black text-amber-100 mt-0.5">${sub.getString("customer_name")}</h3>
-              <div class="text-xs text-amber-200/70 font-mono mt-0.5">Booking ID: <span class="font-bold text-amber-300">${sub.getString("booking_code")}</span></div>
+            <div class="flex items-center gap-3.5">
+              <img src="/images/logo.png" alt="Aditya Logo" class="h-11 w-auto object-contain filter drop-shadow" />
+              <div>
+                <div class="text-[10px] font-bold tracking-widest text-amber-400 uppercase">ADITYA TOUR AND TRAVELS • BHARATYATRA OFFICIAL TRAVEL PASS</div>
+                <h3 class="text-xl font-black text-amber-100 mt-0.5">${sub.getString("customer_name")}</h3>
+                <div class="text-xs text-amber-200/70 font-mono mt-0.5">Booking ID: <span class="font-bold text-amber-300">${sub.getString("booking_code")}</span></div>
+              </div>
             </div>
             <div class="text-right">
               ${statusBadge}

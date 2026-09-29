@@ -13,7 +13,7 @@ const I18N = {
       checkPassBtn: "ପାସ୍ ଯାଞ୍ଚ କରନ୍ତୁ"
     },
     hero: {
-      badge: "ଜୟ ଜଗନ୍ନାଥ • ଆମ ଓଡ଼ିଶାର ନିଜସ୍ୱ ତୀର୍ଥଯାତ୍ରା ସେବା",
+      badge: "ଜୟ ଜଗନ୍ନାଥ • ଆଦିତ୍ୟ ଟୁର୍ ଆଣ୍ଡ ଟ୍ରାଭେଲ୍ସ — ଆମ ଓଡ଼ିଶାର ନିଜସ୍ୱ ତୀର୍ଥଯାତ୍ରା ସେବା",
       titleA: "ଆମ ଓଡ଼ିଶାରୁ",
       titleB: "ଚାରିଧାମ ଯାତ୍ରା",
       punchline: "ପୂରା ଟଙ୍କାର ଚିନ୍ତା ନାହିଁ! ମାତ୍ର ଦୁଇଟି କିସ୍ତି ପରେ ବସ୍ ରେ ବସନ୍ତୁ, ବାକି ଟଙ୍କା ଧାମ ଦର୍ଶନ ସାରି ଘରକୁ ଫେରିବା ପରେ ସହଜରେ ଶୁଝନ୍ତୁ।",
@@ -28,7 +28,7 @@ const I18N = {
       stat4Lbl: "ଖାଣ୍ଟି ସାତ୍ତ୍ୱିକ ପ୍ରସାଦ ନିଶ୍ଚିତ"
     },
     highway: {
-      tag: "ଯାତ୍ରା ରାଜପଥ • BHARATYATRA HIGHWAY",
+      tag: "ଯାତ୍ରା ରାଜପଥ • ADITYA HIGHWAY",
       title: "ଘରୁ ଧାମ ପର୍ଯ୍ୟନ୍ତ ନିଶ୍ଚିନ୍ତ ଯାତ୍ରା",
       desc: "ଘର ଠାରୁ ପବିତ୍ର ଧାମ ଓ ଫେରି ଘର ପର୍ଯ୍ୟନ୍ତ — ଚାରିଟି ସହଜ ଧାପରେ ଆପଣଙ୍କ ତୀର୍ଥ ସ୍ୱପ୍ନ ପୂରଣ:",
       step1: "ଧାପ ୧",
@@ -108,7 +108,7 @@ const I18N = {
       checkPassBtn: "Check Travel Pass"
     },
     hero: {
-      badge: "JAI JAGANNATH • Dedicated Pilgrimage Network from Odisha",
+      badge: "JAI JAGANNATH • ADITYA TOUR & TRAVELS — SACRED PILGRIMAGE NETWORK FROM ODISHA",
       titleA: "Sacred Dhams",
       titleB: "from Odisha",
       punchline: "No full upfront payment stress! Board your coach after paying just 2 micro-installments, and comfortably clear the remaining balance after returning home.",
@@ -123,7 +123,7 @@ const I18N = {
       stat4Lbl: "Pure Satvik Prasad Guaranteed"
     },
     highway: {
-      tag: "PILGRIMAGE HIGHWAY • JOURNEY ROADMAP",
+      tag: "PILGRIMAGE HIGHWAY • ADITYA TOUR & TRAVELS",
       title: "From Your Home to Sacred Dhams & Safe Return",
       desc: "Four simple steps from your doorstep to the sacred dhams — and back home again:",
       step1: "STEP 1",

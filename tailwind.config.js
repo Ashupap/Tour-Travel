@@ -16,33 +16,38 @@ export default {
   theme: {
     extend: {
       colors: {
-        "temple-base": "#FFFDF7",
+        "aditya-navy": "#0C4A7B",
+        "aditya-dark": "#071E2E",
+        "aditya-teal": "#167E88",
+        "aditya-gold": "#F59E0B",
+        "aditya-amber": "#D97706",
+        "temple-base": "#F4F8FA",
         "temple-card": "#FFFFFF",
-        "temple-warm": "#FFF8EC",
-        "temple-gold": "#D97706",
-        "temple-amber": "#F59E0B",
-        "temple-saffron": "#EA580C",
-        "temple-green": "#059669",
-        charcoal: "#181A20",
-        ink: "#1C1917",
-        muted: "#78716C",
-        line: "#EFE6D5"
+        "temple-warm": "#EBF3F7",
+        "temple-gold": "#F59E0B",
+        "temple-amber": "#D97706",
+        "temple-saffron": "#0C4A7B",
+        "temple-green": "#167E88",
+        charcoal: "#071E2E",
+        ink: "#071E2E",
+        muted: "#567082",
+        line: "#DCE7EC"
       },
       fontFamily: {
         odia: ["Anek Odia", "Plus Jakarta Sans", "sans-serif"],
-        "display-lg": ["EB Garamond", "Anek Odia", "Georgia", "serif"],
-        "headline-lg": ["EB Garamond", "Anek Odia", "Georgia", "serif"],
-        "headline-md": ["EB Garamond", "Anek Odia", "Georgia", "serif"],
-        "title-lg": ["Plus Jakarta Sans", "Anek Odia", "sans-serif"],
-        "body-lg": ["Plus Jakarta Sans", "Anek Odia", "sans-serif"],
-        "body-md": ["Plus Jakarta Sans", "Anek Odia", "sans-serif"],
+        "display-lg": ["Playfair Display", "EB Garamond", "Anek Odia", "Georgia", "serif"],
+        "headline-lg": ["Playfair Display", "EB Garamond", "Anek Odia", "Georgia", "serif"],
+        "headline-md": ["Playfair Display", "EB Garamond", "Anek Odia", "Georgia", "serif"],
+        "title-lg": ["DM Sans", "Plus Jakarta Sans", "Anek Odia", "sans-serif"],
+        "body-lg": ["DM Sans", "Plus Jakarta Sans", "Anek Odia", "sans-serif"],
+        "body-md": ["DM Sans", "Plus Jakarta Sans", "Anek Odia", "sans-serif"],
         "finance-display": ["JetBrains Mono", "monospace"],
         "finance-body": ["JetBrains Mono", "monospace"]
       },
       boxShadow: {
-        card: "0 10px 30px -8px rgba(28, 25, 23, 0.08), 0 4px 10px -4px rgba(28, 25, 23, 0.04)",
-        "card-hover": "0 22px 44px -12px rgba(217, 119, 6, 0.18), 0 8px 16px -8px rgba(28, 25, 23, 0.08)",
-        gold: "0 10px 30px -5px rgba(217, 119, 6, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04)"
+        card: "0 10px 30px -8px rgba(7, 30, 46, 0.08), 0 4px 10px -4px rgba(7, 30, 46, 0.04)",
+        "card-hover": "0 22px 44px -12px rgba(12, 74, 123, 0.2), 0 8px 16px -8px rgba(7, 30, 46, 0.08)",
+        gold: "0 10px 30px -5px rgba(245, 158, 11, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.04)"
       }
     }
   },

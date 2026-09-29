@@ -1,11 +1,12 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "bharatyatra-cache-v3";
+const CACHE_NAME = "aditya-travels-v5-bharatyatra-cache-v3";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
   "/manifest.json",
+  "/favicon.png",
   "/css/tailwind.css",
   "/js/dexie.min.js",
   "/js/alpine.min.js",
@@ -17,8 +18,11 @@ const STATIC_ASSETS = [
   "/agent/receipt.js",
   "/admin/index.html",
   "/admin/admin.js",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",
+  "/images/logo.png",
   "/images/hero-1.jpg",
   "/images/hero-2.jpg",
   "/images/hero-3.jpg",
@@ -58,7 +62,7 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: Cache-First for static files, Network-First for APIs
+// Fetch: Network-First for navigation and APIs, Cache-First for static assets
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
@@ -75,7 +79,23 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // For HTML, JS, CSS, images: Cache-First with network fallback
+  // For HTML page navigation: Network-first with cache fallback
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request) || caches.match("/"))
+    );
+    return;
+  }
+
+  // For JS, CSS, images: Cache-First with background revalidation
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {

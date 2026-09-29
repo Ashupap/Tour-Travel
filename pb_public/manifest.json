@@ -1,14 +1,26 @@
 {
-  "name": "BharatYatra Sacred Travel",
-  "short_name": "BharatYatra",
-  "description": "Offline-First EMI-Based Bus Tour & Micro-Collection System",
+  "name": "Aditya Tour and Travels — Har Gaon Ru Char Dham",
+  "short_name": "Aditya Travels",
+  "description": "Aditya Tour and Travels — Offline-First EMI-Based Deluxe Bus Pilgrimage & Tour System",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#FFFDF7",
-  "theme_color": "#D97706",
+  "background_color": "#F4F8FA",
+  "theme_color": "#0C4A7B",
   "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icons/icon-192.svg",
       "sizes": "192x192",
