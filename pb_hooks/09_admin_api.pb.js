@@ -1294,3 +1294,1122 @@ routerAdd("GET", "/api/admin/field-network", (c) => {
   });
 });
 
+// 13. GET /api/admin/distributors (Distributor Roster with Live Analytics)
+routerAdd("GET", "/api/admin/distributors", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const searchQuery = (c.queryParam("search") || "").trim().toLowerCase();
+  const statusFilter = (c.queryParam("status") || "all").trim().toLowerCase();
+
+  let distRecords = [];
+  try {
+    distRecords = $app.dao().findRecordsByExpr("users", $dbx.exp("role = 'distributor' ORDER BY created DESC")) || [];
+  } catch (e) {
+    distRecords = [];
+  }
+
+  const results = [];
+  for (let i = 0; i < distRecords.length; i++) {
+    const d = distRecords[i];
+    const name = d.getString("name") || "";
+    const email = d.getString("email") || "";
+    const phone = d.getString("phone") || "";
+    const isActive = d.getBool("is_active");
+
+    if (statusFilter === "active" && !isActive) continue;
+    if (statusFilter === "disabled" && isActive) continue;
+
+    if (searchQuery) {
+      const match = name.toLowerCase().includes(searchQuery) ||
+                    phone.toLowerCase().includes(searchQuery) ||
+                    email.toLowerCase().includes(searchQuery);
+      if (!match) continue;
+    }
+
+    let sahayaks = [];
+    try {
+      sahayaks = $app.dao().findRecordsByExpr("users", $dbx.exp("role = 'agent' AND distributor_id = {:did}", { did: d.id })) || [];
+    } catch (e) {}
+
+    let totalSubscribers = 0;
+    let totalCollected = 0;
+    let unsettledFloat = 0;
+    let totalSettled = 0;
+
+    for (let k = 0; k < sahayaks.length; k++) {
+      const agId = sahayaks[k].id;
+      try {
+        const subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("agent_id = {:agId}", { agId: agId })) || [];
+        totalSubscribers += subs.length;
+      } catch (e) {}
+
+      try {
+        const insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("collected_by = {:agId} AND status = 'paid'", { agId: agId })) || [];
+        for (let j = 0; j < insts.length; j++) {
+          const amt = insts[j].getFloat("amount") || 0;
+          totalCollected += amt;
+          const hStatus = insts[j].getString("handover_status");
+          if (hStatus === "agent_custody") {
+            unsettledFloat += amt;
+          } else if (hStatus === "distributor_confirmed") {
+            totalSettled += amt;
+          }
+        }
+      } catch (e) {}
+    }
+
+    results.push({
+      id: d.id,
+      name: name,
+      email: email,
+      phone: phone,
+      commission_percentage: d.getFloat("commission_percentage") || 5,
+      is_active: isActive,
+      sahayaks_count: sahayaks.length,
+      total_subscribers: totalSubscribers,
+      total_collected: totalCollected,
+      unsettled_float: unsettledFloat,
+      total_settled: totalSettled,
+      created: d.getString("created")
+    });
+  }
+
+  return c.json(200, {
+    count: results.length,
+    distributors: results
+  });
+});
+
+// 14. POST /api/admin/distributors (Register New Distributor)
+routerAdd("POST", "/api/admin/distributors", (c) => {
+  function adminError(code, message, data) {
+    c.json(code, { code: code, message: message, data: data || {} });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  let body = {};
+  try { body = $apis.requestInfo(c).data || {}; } catch (e) {}
+
+  const name = String(body.name || "").trim();
+  const email = String(body.email || "").trim().toLowerCase();
+  const phone = String(body.phone || "").trim();
+  const password = String(body.password || "").trim();
+  const commission = Number(body.commission_percentage) || 5;
+
+  if (name.length < 2) return adminError(400, "Name must be at least 2 characters.");
+  if (!email || !email.includes("@")) return adminError(400, "Valid email address is required.");
+  if (phone.length < 10 || phone.length > 15) return adminError(400, "Phone number must be 10-15 digits.");
+  if (password.length < 8) return adminError(400, "Password must be at least 8 characters.");
+
+  try {
+    const existing = $app.dao().findRecordsByExpr("users", $dbx.exp("email = {:e} OR phone = {:p}", { e: email, p: phone })) || [];
+    if (existing.length > 0) {
+      return adminError(400, "A user with this email or phone already exists.");
+    }
+
+    const col = $app.dao().findCollectionByNameOrId("users");
+    const rec = new Record(col);
+    const baseUser = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "");
+    const username = (baseUser || "dist") + "_" + Math.floor(10000 + Math.random() * 90000);
+    rec.set("username", username);
+    rec.set("name", name);
+    rec.set("email", email);
+    rec.set("phone", phone);
+    rec.set("role", "distributor");
+    rec.set("commission_percentage", commission);
+    rec.set("is_active", true);
+    rec.setPassword(password);
+    $app.dao().saveRecord(rec);
+
+    return c.json(201, {
+      id: rec.id,
+      name: name,
+      email: email,
+      phone: phone,
+      role: "distributor",
+      is_active: true
+    });
+  } catch (err) {
+    return adminError(500, "Failed to register distributor: " + err.message);
+  }
+});
+
+// 15. PATCH /api/admin/distributors/:id (Update Distributor)
+routerAdd("PATCH", "/api/admin/distributors/:id", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let rec = null;
+  try {
+    rec = $app.dao().findRecordById("users", id);
+  } catch (e) {
+    return adminError(404, "Distributor not found.");
+  }
+
+  if (rec.getString("role") !== "distributor") {
+    return adminError(400, "Target user is not a distributor.");
+  }
+
+  let body = {};
+  try { body = $apis.requestInfo(c).data || {}; } catch (e) {}
+
+  if (body.name !== undefined) rec.set("name", String(body.name).trim());
+  if (body.phone !== undefined) rec.set("phone", String(body.phone).trim());
+  if (body.commission_percentage !== undefined) rec.set("commission_percentage", Number(body.commission_percentage));
+  if (body.is_active !== undefined) rec.set("is_active", !!body.is_active);
+
+  try {
+    $app.dao().saveRecord(rec);
+    return c.json(200, {
+      id: rec.id,
+      name: rec.getString("name"),
+      phone: rec.getString("phone"),
+      is_active: rec.getBool("is_active")
+    });
+  } catch (err) {
+    return adminError(500, "Failed to update distributor: " + err.message);
+  }
+});
+
+// 16. POST /api/admin/distributors/:id/reset-password
+routerAdd("POST", "/api/admin/distributors/:id/reset-password", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let rec = null;
+  try {
+    rec = $app.dao().findRecordById("users", id);
+  } catch (e) {
+    return adminError(404, "Distributor not found.");
+  }
+
+  let body = {};
+  try { body = $apis.requestInfo(c).data || {}; } catch (e) {}
+  const password = String(body.password || "").trim();
+  if (password.length < 8) return adminError(400, "Password must be at least 8 characters.");
+
+  try {
+    rec.setPassword(password);
+    $app.dao().saveRecord(rec);
+    return c.json(200, { success: true, message: "Password updated successfully for " + rec.getString("name") });
+  } catch (err) {
+    return adminError(500, "Failed to reset password: " + err.message);
+  }
+});
+
+// 17. DELETE /api/admin/distributors/:id
+routerAdd("DELETE", "/api/admin/distributors/:id", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let rec = null;
+  try {
+    rec = $app.dao().findRecordById("users", id);
+  } catch (e) {
+    return adminError(404, "Distributor not found.");
+  }
+
+  let attachedAgents = [];
+  try {
+    attachedAgents = $app.dao().findRecordsByExpr("users", $dbx.exp("role = 'agent' AND distributor_id = {:id}", { id: id })) || [];
+  } catch (e) {}
+
+  if (attachedAgents.length > 0) {
+    rec.set("is_active", false);
+    $app.dao().saveRecord(rec);
+    return c.json(200, {
+      soft_deleted: true,
+      message: "Distributor deactivated because they have " + attachedAgents.length + " attached Sahayaks."
+    });
+  }
+
+  try {
+    $app.dao().deleteRecord(rec);
+    return c.json(200, { deleted: true, message: "Distributor deleted successfully." });
+  } catch (err) {
+    rec.set("is_active", false);
+    $app.dao().saveRecord(rec);
+    return c.json(200, { soft_deleted: true, message: "Distributor deactivated." });
+  }
+});
+
+// 18. GET /api/admin/distributors/:id/analytics
+routerAdd("GET", "/api/admin/distributors/:id/analytics", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let dist = null;
+  try { dist = $app.dao().findRecordById("users", id); } catch (e) {}
+  if (!dist || dist.getString("role") !== "distributor") return adminError(404, "Distributor not found.");
+
+  let sahayaks = [];
+  try {
+    sahayaks = $app.dao().findRecordsByExpr("users", $dbx.exp("role = 'agent' AND distributor_id = {:id}", { id: id })) || [];
+  } catch (e) {}
+
+  const sahayakList = [];
+  let totalDevotees = 0;
+  let totalCollected = 0;
+  let unsettledFloat = 0;
+  let totalSettled = 0;
+
+  for (let i = 0; i < sahayaks.length; i++) {
+    const ag = sahayaks[i];
+    let agDevotees = 0;
+    let agFloat = 0;
+    let agCollected = 0;
+
+    try {
+      const subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("agent_id = {:agId}", { agId: ag.id })) || [];
+      agDevotees = subs.length;
+      totalDevotees += agDevotees;
+    } catch (e) {}
+
+    try {
+      const insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("collected_by = {:agId} AND status = 'paid'", { agId: ag.id })) || [];
+      for (let j = 0; j < insts.length; j++) {
+        const amt = insts[j].getFloat("amount") || 0;
+        agCollected += amt;
+        totalCollected += amt;
+        const hStatus = insts[j].getString("handover_status");
+        if (hStatus === "agent_custody") {
+          agFloat += amt;
+          unsettledFloat += amt;
+        } else if (hStatus === "distributor_confirmed") {
+          totalSettled += amt;
+        }
+      }
+    } catch (e) {}
+
+    sahayakList.push({
+      id: ag.id,
+      name: ag.getString("name"),
+      phone: ag.getString("phone"),
+      email: ag.getString("email"),
+      is_active: ag.getBool("is_active"),
+      devotees_count: agDevotees,
+      cash_in_custody: agFloat,
+      total_collected: agCollected
+    });
+  }
+
+  let handovers = [];
+  try {
+    const hRecs = $app.dao().findRecordsByExpr("cash_handovers", $dbx.exp("distributor_id = {:did} ORDER BY created DESC LIMIT 20", { did: id })) || [];
+    handovers = hRecs.map(h => {
+      let agName = "Sahayak";
+      try {
+        const a = $app.dao().findRecordById("users", h.getString("agent_id"));
+        if (a) agName = a.getString("name");
+      } catch (e) {}
+      return {
+        id: h.id,
+        agent_name: agName,
+        total_amount: h.getFloat("total_amount"),
+        status: h.getString("status"),
+        verified_at: h.getString("verified_at"),
+        created: h.getString("created")
+      };
+    });
+  } catch (e) {}
+
+  return c.json(200, {
+    distributor: {
+      id: dist.id,
+      name: dist.getString("name"),
+      email: dist.getString("email"),
+      phone: dist.getString("phone"),
+      commission_percentage: dist.getFloat("commission_percentage") || 5,
+      is_active: dist.getBool("is_active"),
+      created: dist.getString("created")
+    },
+    summary: {
+      total_sahayaks: sahayaks.length,
+      total_devotees: totalDevotees,
+      total_collected: totalCollected,
+      unsettled_float: unsettledFloat,
+      total_settled: totalSettled
+    },
+    sahayaks: sahayakList,
+    recent_handovers: handovers
+  });
+});
+
+// 19. GET /api/admin/sahayaks (Sahayaks Roster with Float & Devotee Analytics)
+routerAdd("GET", "/api/admin/sahayaks", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const searchQuery = (c.queryParam("search") || "").trim().toLowerCase();
+  const statusFilter = (c.queryParam("status") || "all").trim().toLowerCase();
+  const distFilter = (c.queryParam("distributor_id") || "").trim();
+
+  let agentRecords = [];
+  try {
+    let expr = "role = 'agent'";
+    const params = {};
+    if (distFilter) {
+      expr += " AND distributor_id = {:did}";
+      params.did = distFilter;
+    }
+    agentRecords = $app.dao().findRecordsByExpr("users", $dbx.exp(expr + " ORDER BY created DESC", params)) || [];
+  } catch (e) {
+    agentRecords = [];
+  }
+
+  const results = [];
+  const nowIso = new Date().toISOString().substring(0, 10);
+
+  for (let i = 0; i < agentRecords.length; i++) {
+    const ag = agentRecords[i];
+    const name = ag.getString("name") || "";
+    const email = ag.getString("email") || "";
+    const phone = ag.getString("phone") || "";
+    const isActive = ag.getBool("is_active");
+    const distId = ag.getString("distributor_id") || "";
+
+    if (statusFilter === "active" && !isActive) continue;
+    if (statusFilter === "disabled" && isActive) continue;
+
+    if (searchQuery) {
+      const match = name.toLowerCase().includes(searchQuery) ||
+                    phone.toLowerCase().includes(searchQuery) ||
+                    email.toLowerCase().includes(searchQuery);
+      if (!match) continue;
+    }
+
+    let distName = "";
+    if (distId) {
+      try {
+        const d = $app.dao().findRecordById("users", distId);
+        if (d) distName = d.getString("name");
+      } catch (e) {}
+    }
+
+    let totalSubscribers = 0;
+    let overdueSubscribers = 0;
+    try {
+      const subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("agent_id = {:agId}", { agId: ag.id })) || [];
+      totalSubscribers = subs.length;
+      for (let sIdx = 0; sIdx < subs.length; sIdx++) {
+        const subId = subs[sIdx].id;
+        const ovInsts = $app.dao().findRecordsByExpr("installments", $dbx.exp("subscription_id = {:sid} AND status != 'paid' AND due_date < {:now}", { sid: subId, now: nowIso })) || [];
+        if (ovInsts.length > 0) overdueSubscribers++;
+      }
+    } catch (e) {}
+
+    let totalCollected = 0;
+    let cashInCustody = 0;
+    let totalSettled = 0;
+
+    try {
+      const insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("collected_by = {:agId} AND status = 'paid'", { agId: ag.id })) || [];
+      for (let j = 0; j < insts.length; j++) {
+        const amt = insts[j].getFloat("amount") || 0;
+        totalCollected += amt;
+        const hStatus = insts[j].getString("handover_status");
+        if (hStatus === "agent_custody") {
+          cashInCustody += amt;
+        } else if (hStatus === "distributor_confirmed") {
+          totalSettled += amt;
+        }
+      }
+    } catch (e) {}
+
+    results.push({
+      id: ag.id,
+      name: name,
+      email: email,
+      phone: phone,
+      distributor_id: distId,
+      distributor_name: distName || "Independent",
+      commission_percentage: ag.getFloat("commission_percentage") || 10,
+      is_active: isActive,
+      subscribers_count: totalSubscribers,
+      overdue_subscribers_count: overdueSubscribers,
+      cash_in_custody: cashInCustody,
+      total_collected: totalCollected,
+      total_settled: totalSettled,
+      created: ag.getString("created")
+    });
+  }
+
+  return c.json(200, {
+    count: results.length,
+    sahayaks: results
+  });
+});
+
+// 20. POST /api/admin/sahayaks (Register New Sahayak)
+routerAdd("POST", "/api/admin/sahayaks", (c) => {
+  function adminError(code, message, data) {
+    c.json(code, { code: code, message: message, data: data || {} });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  let body = {};
+  try { body = $apis.requestInfo(c).data || {}; } catch (e) {}
+
+  const name = String(body.name || "").trim();
+  const email = String(body.email || "").trim().toLowerCase();
+  const phone = String(body.phone || "").trim();
+  const password = String(body.password || "").trim();
+  const distributorId = String(body.distributor_id || "").trim();
+  const commission = Number(body.commission_percentage) || 10;
+
+  if (name.length < 2) return adminError(400, "Name must be at least 2 characters.");
+  if (!email || !email.includes("@")) return adminError(400, "Valid email address is required.");
+  if (phone.length < 10 || phone.length > 15) return adminError(400, "Phone number must be 10-15 digits.");
+  if (password.length < 8) return adminError(400, "Password must be at least 8 characters.");
+  if (!distributorId) return adminError(400, "Distributor selection is required.");
+
+  try {
+    const dist = $app.dao().findRecordById("users", distributorId);
+    if (!dist || dist.getString("role") !== "distributor") {
+      return adminError(400, "Selected distributor does not exist.");
+    }
+  } catch (e) {
+    return adminError(400, "Invalid distributor ID.");
+  }
+
+  try {
+    const existing = $app.dao().findRecordsByExpr("users", $dbx.exp("email = {:e} OR phone = {:p}", { e: email, p: phone })) || [];
+    if (existing.length > 0) {
+      return adminError(400, "A user with this email or phone already exists.");
+    }
+
+    const col = $app.dao().findCollectionByNameOrId("users");
+    const rec = new Record(col);
+    const baseUser = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "");
+    const username = (baseUser || "agent") + "_" + Math.floor(10000 + Math.random() * 90000);
+    rec.set("username", username);
+    rec.set("name", name);
+    rec.set("email", email);
+    rec.set("phone", phone);
+    rec.set("role", "agent");
+    rec.set("distributor_id", distributorId);
+    rec.set("commission_percentage", commission);
+    rec.set("is_active", true);
+    rec.setPassword(password);
+    $app.dao().saveRecord(rec);
+
+    return c.json(201, {
+      id: rec.id,
+      name: name,
+      email: email,
+      phone: phone,
+      distributor_id: distributorId,
+      role: "agent",
+      is_active: true
+    });
+  } catch (err) {
+    return adminError(500, "Failed to register Sahayak: " + err.message);
+  }
+});
+
+// 21. PATCH /api/admin/sahayaks/:id (Update Sahayak)
+routerAdd("PATCH", "/api/admin/sahayaks/:id", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let rec = null;
+  try {
+    rec = $app.dao().findRecordById("users", id);
+  } catch (e) {
+    return adminError(404, "Sahayak not found.");
+  }
+
+  if (rec.getString("role") !== "agent") {
+    return adminError(400, "Target user is not a Sahayak.");
+  }
+
+  let body = {};
+  try { body = $apis.requestInfo(c).data || {}; } catch (e) {}
+
+  if (body.name !== undefined) rec.set("name", String(body.name).trim());
+  if (body.phone !== undefined) rec.set("phone", String(body.phone).trim());
+  if (body.distributor_id !== undefined) rec.set("distributor_id", String(body.distributor_id).trim());
+  if (body.commission_percentage !== undefined) rec.set("commission_percentage", Number(body.commission_percentage));
+  if (body.is_active !== undefined) rec.set("is_active", !!body.is_active);
+
+  try {
+    $app.dao().saveRecord(rec);
+    return c.json(200, {
+      id: rec.id,
+      name: rec.getString("name"),
+      phone: rec.getString("phone"),
+      distributor_id: rec.getString("distributor_id"),
+      is_active: rec.getBool("is_active")
+    });
+  } catch (err) {
+    return adminError(500, "Failed to update Sahayak: " + err.message);
+  }
+});
+
+// 22. POST /api/admin/sahayaks/:id/reset-password
+routerAdd("POST", "/api/admin/sahayaks/:id/reset-password", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let rec = null;
+  try {
+    rec = $app.dao().findRecordById("users", id);
+  } catch (e) {
+    return adminError(404, "Sahayak not found.");
+  }
+
+  let body = {};
+  try { body = $apis.requestInfo(c).data || {}; } catch (e) {}
+  const password = String(body.password || "").trim();
+  if (password.length < 8) return adminError(400, "Password must be at least 8 characters.");
+
+  try {
+    rec.setPassword(password);
+    $app.dao().saveRecord(rec);
+    return c.json(200, { success: true, message: "Password updated successfully for " + rec.getString("name") });
+  } catch (err) {
+    return adminError(500, "Failed to reset password: " + err.message);
+  }
+});
+
+// 23. DELETE /api/admin/sahayaks/:id
+routerAdd("DELETE", "/api/admin/sahayaks/:id", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let rec = null;
+  try {
+    rec = $app.dao().findRecordById("users", id);
+  } catch (e) {
+    return adminError(404, "Sahayak not found.");
+  }
+
+  let subs = [];
+  try {
+    subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("agent_id = {:id}", { id: id })) || [];
+  } catch (e) {}
+
+  if (subs.length > 0) {
+    rec.set("is_active", false);
+    $app.dao().saveRecord(rec);
+    return c.json(200, {
+      soft_deleted: true,
+      message: "Sahayak deactivated because they have " + subs.length + " enrolled devotees."
+    });
+  }
+
+  try {
+    $app.dao().deleteRecord(rec);
+    return c.json(200, { deleted: true, message: "Sahayak deleted successfully." });
+  } catch (err) {
+    rec.set("is_active", false);
+    $app.dao().saveRecord(rec);
+    return c.json(200, { soft_deleted: true, message: "Sahayak deactivated." });
+  }
+});
+
+// 24. GET /api/admin/sahayaks/:id/analytics
+routerAdd("GET", "/api/admin/sahayaks/:id/analytics", (c) => {
+  function adminError(code, message) {
+    c.json(code, { code: code, message: message });
+    return null;
+  }
+  function requireAdmin() {
+    let auth = null;
+    try { auth = $apis.requestInfo(c).authRecord; } catch (e) {}
+    if (!auth) { try { const inf = $apis.requestInfo(c); if (inf && inf.admin) auth = inf.admin; } catch (e) {} }
+    if (!auth) {
+      try {
+        const info = $apis.requestInfo(c);
+        let h = (info && info.headers && (info.headers["authorization"] || info.headers["Authorization"])) || "";
+        if (!h) {
+          const req = c.request();
+          if (req && req.header && typeof req.header.get === "function") h = req.header.get("Authorization") || req.header.get("authorization") || "";
+        }
+        const t = h.replace(/^Bearer\s+/i, "").trim();
+        if (t) {
+          try { auth = $app.dao().findAuthRecordByToken(t, $app.settings().recordAuthToken.secret); } catch (e2) { auth = null; }
+          if (!auth) { try { auth = $app.dao().findAdminByToken(t, $app.settings().adminAuthToken.secret); } catch (e3) {} }
+        }
+      } catch (e4) {}
+    }
+    if (!auth) return adminError(401, "Authentication required.");
+    let role = "";
+    try { role = auth.getString("role") || ""; } catch (e5) { role = ""; }
+    if (role && role !== "admin") return adminError(403, "Forbidden: Access restricted to administrators.");
+    return auth;
+  }
+
+  const auth = requireAdmin();
+  if (!auth) return;
+
+  const id = c.pathParam("id");
+  let ag = null;
+  try { ag = $app.dao().findRecordById("users", id); } catch (e) {}
+  if (!ag || ag.getString("role") !== "agent") return adminError(404, "Sahayak not found.");
+
+  let distName = "";
+  try {
+    const d = $app.dao().findRecordById("users", ag.getString("distributor_id"));
+    if (d) distName = d.getString("name");
+  } catch (e) {}
+
+  let subs = [];
+  try {
+    subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("agent_id = {:id} ORDER BY created DESC", { id: id })) || [];
+  } catch (e) {}
+
+  const nowIso = new Date().toISOString().substring(0, 10);
+  const devoteeList = [];
+  let totalCollected = 0;
+  let cashInCustody = 0;
+  let totalSettled = 0;
+  let overdueCount = 0;
+
+  for (let i = 0; i < subs.length; i++) {
+    const s = subs[i];
+    let pkgTitle = "Tour Package";
+    let minEmis = 2;
+    try {
+      const p = $app.dao().findRecordById("packages", s.getString("package_id"));
+      if (p) {
+        pkgTitle = p.getString("title");
+        minEmis = p.getInt("min_emis_to_travel") || 2;
+      }
+    } catch (e) {}
+
+    let sPaid = 0;
+    let sOverdue = 0;
+    try {
+      const insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("subscription_id = {:sid}", { sid: s.id })) || [];
+      for (let k = 0; k < insts.length; k++) {
+        const amt = insts[k].getFloat("amount") || 0;
+        const st = insts[k].getString("status");
+        const dt = insts[k].getString("due_date");
+        if (st === "paid") {
+          sPaid += amt;
+        } else if (dt && dt <= nowIso) {
+          sOverdue += amt;
+        }
+      }
+    } catch (e) {}
+
+    const paidCount = s.getInt("paid_emis_count");
+    let badge = "saving";
+    if (sOverdue > 0) {
+      badge = "overdue";
+      overdueCount++;
+    } else if (paidCount >= minEmis) {
+      badge = "eligible";
+    }
+
+    devoteeList.push({
+      id: s.id,
+      booking_code: s.getString("booking_code"),
+      customer_name: s.getString("customer_name"),
+      customer_phone: s.getString("customer_phone"),
+      package_title: pkgTitle,
+      total_amount: s.getFloat("total_amount"),
+      paid_emis_count: paidCount,
+      total_emis: s.getInt("tenure_months"),
+      amount_paid: sPaid,
+      overdue_amount: sOverdue,
+      badge: badge,
+      travel_status: s.getString("travel_status") || "locked"
+    });
+  }
+
+  // Handover & custody stats
+  try {
+    const insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("collected_by = {:agId} AND status = 'paid'", { agId: id })) || [];
+    for (let j = 0; j < insts.length; j++) {
+      const amt = insts[j].getFloat("amount") || 0;
+      totalCollected += amt;
+      const hStatus = insts[j].getString("handover_status");
+      if (hStatus === "agent_custody") {
+        cashInCustody += amt;
+      } else if (hStatus === "distributor_confirmed") {
+        totalSettled += amt;
+      }
+    }
+  } catch (e) {}
+
+  let handovers = [];
+  try {
+    const hRecs = $app.dao().findRecordsByExpr("cash_handovers", $dbx.exp("agent_id = {:aid} ORDER BY created DESC LIMIT 15", { aid: id })) || [];
+    handovers = hRecs.map(h => {
+      let dName = "Distributor";
+      try {
+        const di = $app.dao().findRecordById("users", h.getString("distributor_id"));
+        if (di) dName = di.getString("name");
+      } catch (e) {}
+      return {
+        id: h.id,
+        distributor_name: dName,
+        total_amount: h.getFloat("total_amount"),
+        status: h.getString("status"),
+        verified_at: h.getString("verified_at"),
+        created: h.getString("created")
+      };
+    });
+  } catch (e) {}
+
+  return c.json(200, {
+    sahayak: {
+      id: ag.id,
+      name: ag.getString("name"),
+      email: ag.getString("email"),
+      phone: ag.getString("phone"),
+      distributor_id: ag.getString("distributor_id"),
+      distributor_name: distName || "Independent",
+      commission_percentage: ag.getFloat("commission_percentage") || 10,
+      is_active: ag.getBool("is_active"),
+      created: ag.getString("created")
+    },
+    summary: {
+      total_devotees: subs.length,
+      overdue_devotees: overdueCount,
+      total_collected: totalCollected,
+      cash_in_custody: cashInCustody,
+      total_settled: totalSettled
+    },
+    devotees: devoteeList,
+    recent_handovers: handovers
+  });
+});
+
+

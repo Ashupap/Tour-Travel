@@ -110,6 +110,8 @@ function adminApp() {
           this.fetchWatchlist(),
           this.fetchPackages(),
           this.fetchSubscriptions(),
+          this.fetchDistributors(),
+          this.fetchSahayaks(),
           this.fetchFieldNetwork()
         ]);
       } catch (err) {
@@ -219,6 +221,474 @@ function adminApp() {
         console.error("Error loading field network:", err);
       } finally {
         this.fieldNetworkLoading = false;
+      }
+    },
+
+    // ---------- Distributor Management & Analytics ----------
+    distributors: [],
+    distributorsLoading: false,
+    distributorSearchQuery: "",
+    distributorFilterStatus: "all",
+    showDistributorModal: false,
+    distributorModalTitle: "Register New Distributor",
+    distributorFormError: "",
+    savingDistributor: false,
+    distributorForm: {
+      id: null,
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      commission_percentage: 5,
+      is_active: true
+    },
+    showDistPasswordModal: false,
+    distPasswordForm: {
+      id: "",
+      name: "",
+      password: "",
+      passwordConfirm: ""
+    },
+    distPasswordError: "",
+    savingDistPassword: false,
+    showDistAnalyticsModal: false,
+    distAnalyticsLoading: false,
+    distAnalyticsData: null,
+
+    async fetchDistributors() {
+      this.distributorsLoading = true;
+      try {
+        const params = new URLSearchParams();
+        if (this.distributorFilterStatus && this.distributorFilterStatus !== "all") {
+          params.append("status", this.distributorFilterStatus);
+        }
+        if (this.distributorSearchQuery) {
+          params.append("search", this.distributorSearchQuery);
+        }
+        const res = await fetch(`/api/admin/distributors?${params.toString()}`, {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          const data = await res.json();
+          this.distributors = data.distributors || [];
+        }
+      } catch (err) {
+        console.error("Error fetching distributors:", err);
+      } finally {
+        this.distributorsLoading = false;
+      }
+    },
+
+    openRegisterDistributorModal() {
+      this.distributorModalTitle = "Register New Regional Distributor";
+      this.distributorFormError = "";
+      this.distributorForm = {
+        id: null,
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        commission_percentage: 5,
+        is_active: true
+      };
+      this.showDistributorModal = true;
+    },
+
+    editDistributor(dist) {
+      this.distributorModalTitle = "Edit Distributor Profile";
+      this.distributorFormError = "";
+      this.distributorForm = {
+        id: dist.id,
+        name: dist.name,
+        email: dist.email,
+        phone: dist.phone,
+        password: "",
+        commission_percentage: dist.commission_percentage || 5,
+        is_active: dist.is_active
+      };
+      this.showDistributorModal = true;
+    },
+
+    async saveDistributor() {
+      this.distributorFormError = "";
+      this.savingDistributor = true;
+      try {
+        const isEdit = !!this.distributorForm.id;
+        const url = isEdit ? `/api/admin/distributors/${this.distributorForm.id}` : "/api/admin/distributors";
+        const method = isEdit ? "PATCH" : "POST";
+
+        const payload = {
+          name: this.distributorForm.name,
+          phone: this.distributorForm.phone,
+          commission_percentage: Number(this.distributorForm.commission_percentage) || 5,
+          is_active: this.distributorForm.is_active
+        };
+
+        if (!isEdit) {
+          payload.email = this.distributorForm.email;
+          payload.password = this.distributorForm.password;
+        }
+
+        const res = await fetch(url, {
+          method: method,
+          headers: this.getHeaders(),
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          this.showToast(isEdit ? "Distributor updated successfully" : "Distributor registered successfully", "success");
+          this.showDistributorModal = false;
+          await this.fetchDistributors();
+          await this.fetchFieldNetwork();
+        } else {
+          const err = await res.json();
+          this.distributorFormError = err.message || "Failed to save distributor";
+        }
+      } catch (err) {
+        this.distributorFormError = "Network error saving distributor";
+      } finally {
+        this.savingDistributor = false;
+      }
+    },
+
+    async toggleDistributorStatus(dist) {
+      const nextStatus = !dist.is_active;
+      try {
+        const res = await fetch(`/api/admin/distributors/${dist.id}`, {
+          method: "PATCH",
+          headers: this.getHeaders(),
+          body: JSON.stringify({ is_active: nextStatus })
+        });
+        if (res.ok) {
+          dist.is_active = nextStatus;
+          this.showToast(`Distributor ${dist.name} is now ${nextStatus ? "Active" : "Disabled"}`, "info");
+        } else {
+          this.showToast("Failed to update distributor status", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error updating status", "error");
+      }
+    },
+
+    async deleteDistributor(dist) {
+      if (!confirm(`Are you sure you want to delete or deactivate distributor "${dist.name}"?`)) return;
+      try {
+        const res = await fetch(`/api/admin/distributors/${dist.id}`, {
+          method: "DELETE",
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          const data = await res.json();
+          this.showToast(data.message || "Distributor removed", "info");
+          await this.fetchDistributors();
+          await this.fetchFieldNetwork();
+        } else {
+          const err = await res.json();
+          this.showToast(err.message || "Failed to delete distributor", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error deleting distributor", "error");
+      }
+    },
+
+    openDistPasswordModal(dist) {
+      this.distPasswordError = "";
+      this.distPasswordForm = {
+        id: dist.id,
+        name: dist.name,
+        password: "",
+        passwordConfirm: ""
+      };
+      this.showDistPasswordModal = true;
+    },
+
+    async saveDistPassword() {
+      this.distPasswordError = "";
+      if (!this.distPasswordForm.password || this.distPasswordForm.password.length < 8) {
+        this.distPasswordError = "Password must be at least 8 characters.";
+        return;
+      }
+      if (this.distPasswordForm.password !== this.distPasswordForm.passwordConfirm) {
+        this.distPasswordError = "Passwords do not match.";
+        return;
+      }
+
+      this.savingDistPassword = true;
+      try {
+        const res = await fetch(`/api/admin/distributors/${this.distPasswordForm.id}/reset-password`, {
+          method: "POST",
+          headers: this.getHeaders(),
+          body: JSON.stringify({ password: this.distPasswordForm.password })
+        });
+        if (res.ok) {
+          this.showToast(`Password updated for ${this.distPasswordForm.name}`, "success");
+          this.showDistPasswordModal = false;
+        } else {
+          const err = await res.json();
+          this.distPasswordError = err.message || "Failed to update password";
+        }
+      } catch (err) {
+        this.distPasswordError = "Network error updating password";
+      } finally {
+        this.savingDistPassword = false;
+      }
+    },
+
+    async openDistributorAnalytics(dist) {
+      this.showDistAnalyticsModal = true;
+      this.distAnalyticsLoading = true;
+      this.distAnalyticsData = null;
+      try {
+        const res = await fetch(`/api/admin/distributors/${dist.id}/analytics`, {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          this.distAnalyticsData = await res.json();
+        } else {
+          this.showToast("Failed to load distributor analytics", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error loading analytics", "error");
+      } finally {
+        this.distAnalyticsLoading = false;
+      }
+    },
+
+    // ---------- Sahayak (Agent) Management & Analytics ----------
+    sahayaks: [],
+    sahayaksLoading: false,
+    sahayakSearchQuery: "",
+    sahayakFilterStatus: "all",
+    sahayakFilterDistributor: "",
+    showSahayakModal: false,
+    sahayakModalTitle: "Register New Sahayak",
+    sahayakFormError: "",
+    savingSahayak: false,
+    sahayakForm: {
+      id: null,
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      distributor_id: "",
+      commission_percentage: 10,
+      is_active: true
+    },
+    showSahayakPasswordModal: false,
+    sahayakPasswordForm: {
+      id: "",
+      name: "",
+      password: "",
+      passwordConfirm: ""
+    },
+    sahayakPasswordError: "",
+    savingSahayakPassword: false,
+    showSahayakAnalyticsModal: false,
+    sahayakAnalyticsLoading: false,
+    sahayakAnalyticsData: null,
+
+    async fetchSahayaks() {
+      this.sahayaksLoading = true;
+      try {
+        const params = new URLSearchParams();
+        if (this.sahayakFilterStatus && this.sahayakFilterStatus !== "all") {
+          params.append("status", this.sahayakFilterStatus);
+        }
+        if (this.sahayakFilterDistributor) {
+          params.append("distributor_id", this.sahayakFilterDistributor);
+        }
+        if (this.sahayakSearchQuery) {
+          params.append("search", this.sahayakSearchQuery);
+        }
+        const res = await fetch(`/api/admin/sahayaks?${params.toString()}`, {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          const data = await res.json();
+          this.sahayaks = data.sahayaks || [];
+        }
+      } catch (err) {
+        console.error("Error fetching sahayaks:", err);
+      } finally {
+        this.sahayaksLoading = false;
+      }
+    },
+
+    openRegisterSahayakModal() {
+      this.sahayakModalTitle = "Register New Field Sahayak";
+      this.sahayakFormError = "";
+      this.sahayakForm = {
+        id: null,
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        distributor_id: this.distributors.length > 0 ? this.distributors[0].id : "",
+        commission_percentage: 10,
+        is_active: true
+      };
+      this.showSahayakModal = true;
+    },
+
+    editSahayak(ag) {
+      this.sahayakModalTitle = "Edit Sahayak Profile";
+      this.sahayakFormError = "";
+      this.sahayakForm = {
+        id: ag.id,
+        name: ag.name,
+        email: ag.email,
+        phone: ag.phone,
+        password: "",
+        distributor_id: ag.distributor_id || "",
+        commission_percentage: ag.commission_percentage || 10,
+        is_active: ag.is_active
+      };
+      this.showSahayakModal = true;
+    },
+
+    async saveSahayak() {
+      this.sahayakFormError = "";
+      this.savingSahayak = true;
+      try {
+        const isEdit = !!this.sahayakForm.id;
+        const url = isEdit ? `/api/admin/sahayaks/${this.sahayakForm.id}` : "/api/admin/sahayaks";
+        const method = isEdit ? "PATCH" : "POST";
+
+        const payload = {
+          name: this.sahayakForm.name,
+          phone: this.sahayakForm.phone,
+          distributor_id: this.sahayakForm.distributor_id,
+          commission_percentage: Number(this.sahayakForm.commission_percentage) || 10,
+          is_active: this.sahayakForm.is_active
+        };
+
+        if (!isEdit) {
+          payload.email = this.sahayakForm.email;
+          payload.password = this.sahayakForm.password;
+        }
+
+        const res = await fetch(url, {
+          method: method,
+          headers: this.getHeaders(),
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          this.showToast(isEdit ? "Sahayak updated successfully" : "Sahayak registered successfully", "success");
+          this.showSahayakModal = false;
+          await this.fetchSahayaks();
+          await this.fetchFieldNetwork();
+        } else {
+          const err = await res.json();
+          this.sahayakFormError = err.message || "Failed to save Sahayak";
+        }
+      } catch (err) {
+        this.sahayakFormError = "Network error saving Sahayak";
+      } finally {
+        this.savingSahayak = false;
+      }
+    },
+
+    async toggleSahayakStatus(ag) {
+      const nextStatus = !ag.is_active;
+      try {
+        const res = await fetch(`/api/admin/sahayaks/${ag.id}`, {
+          method: "PATCH",
+          headers: this.getHeaders(),
+          body: JSON.stringify({ is_active: nextStatus })
+        });
+        if (res.ok) {
+          ag.is_active = nextStatus;
+          this.showToast(`Sahayak ${ag.name} is now ${nextStatus ? "Active" : "Disabled"}`, "info");
+        } else {
+          this.showToast("Failed to update Sahayak status", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error updating status", "error");
+      }
+    },
+
+    async deleteSahayak(ag) {
+      if (!confirm(`Are you sure you want to delete or deactivate Sahayak "${ag.name}"?`)) return;
+      try {
+        const res = await fetch(`/api/admin/sahayaks/${ag.id}`, {
+          method: "DELETE",
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          const data = await res.json();
+          this.showToast(data.message || "Sahayak removed", "info");
+          await this.fetchSahayaks();
+          await this.fetchFieldNetwork();
+        } else {
+          const err = await res.json();
+          this.showToast(err.message || "Failed to delete Sahayak", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error deleting Sahayak", "error");
+      }
+    },
+
+    openSahayakPasswordModal(ag) {
+      this.sahayakPasswordError = "";
+      this.sahayakPasswordForm = {
+        id: ag.id,
+        name: ag.name,
+        password: "",
+        passwordConfirm: ""
+      };
+      this.showSahayakPasswordModal = true;
+    },
+
+    async saveSahayakPassword() {
+      this.sahayakPasswordError = "";
+      if (!this.sahayakPasswordForm.password || this.sahayakPasswordForm.password.length < 8) {
+        this.sahayakPasswordError = "Password must be at least 8 characters.";
+        return;
+      }
+      if (this.sahayakPasswordForm.password !== this.sahayakPasswordForm.passwordConfirm) {
+        this.sahayakPasswordError = "Passwords do not match.";
+        return;
+      }
+
+      this.savingSahayakPassword = true;
+      try {
+        const res = await fetch(`/api/admin/sahayaks/${this.sahayakPasswordForm.id}/reset-password`, {
+          method: "POST",
+          headers: this.getHeaders(),
+          body: JSON.stringify({ password: this.sahayakPasswordForm.password })
+        });
+        if (res.ok) {
+          this.showToast(`Password updated for ${this.sahayakPasswordForm.name}`, "success");
+          this.showSahayakPasswordModal = false;
+        } else {
+          const err = await res.json();
+          this.sahayakPasswordError = err.message || "Failed to update password";
+        }
+      } catch (err) {
+        this.sahayakPasswordError = "Network error updating password";
+      } finally {
+        this.savingSahayakPassword = false;
+      }
+    },
+
+    async openSahayakAnalytics(ag) {
+      this.showSahayakAnalyticsModal = true;
+      this.sahayakAnalyticsLoading = true;
+      this.sahayakAnalyticsData = null;
+      try {
+        const res = await fetch(`/api/admin/sahayaks/${ag.id}/analytics`, {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          this.sahayakAnalyticsData = await res.json();
+        } else {
+          this.showToast("Failed to load Sahayak analytics", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error loading analytics", "error");
+      } finally {
+        this.sahayakAnalyticsLoading = false;
       }
     },
 
