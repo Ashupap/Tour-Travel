@@ -13,6 +13,14 @@ const SUPERUSER_PASSWORD = "password123456";
 let pbProcess = null;
 
 async function startPocketBase() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/health`);
+    if (res.ok) {
+      console.log("✓ Existing PocketBase server is already healthy on port", PB_PORT);
+      return;
+    }
+  } catch (e) {}
+
   console.log("Starting PocketBase server for Phase 4 test suite...");
   pbProcess = spawn(".\\pocketbase.exe", ["serve", `--http=127.0.0.1:${PB_PORT}`], {
     stdio: "pipe"
