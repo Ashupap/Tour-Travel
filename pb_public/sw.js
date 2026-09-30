@@ -1,7 +1,7 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "aditya-travels-v10-bharatyatra-cache-v3-rev4";
+const CACHE_NAME = "aditya-travels-v11-bharatyatra-cache-v3-rev5";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -76,6 +76,22 @@ self.addEventListener("fetch", (event) => {
           { status: 503, headers: { "Content-Type": "application/json" } }
         );
       })
+    );
+    return;
+  }
+
+  // For admin routes & scripts: Network-first to always serve latest admin features
+  if (url.pathname.startsWith("/admin/")) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request))
     );
     return;
   }

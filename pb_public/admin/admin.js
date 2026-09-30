@@ -960,3 +960,11 @@ function adminApp() {
 }
 
 window.adminApp = adminApp;
+
+if (typeof window.Alpine !== "undefined") {
+  window.Alpine.data("adminApp", adminApp);
+} else {
+  document.addEventListener("alpine:init", () => {
+    window.Alpine.data("adminApp", adminApp);
+  });
+}
