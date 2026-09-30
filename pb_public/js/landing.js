@@ -401,7 +401,13 @@ function landingApp() {
 
     async loadServerPackages() {
       try {
-        const res = await fetch("/api/public/packages", { cache: "no-store" });
+        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 3500) : null;
+        const res = await fetch("/api/public/packages", {
+          cache: "no-store",
+          signal: controller ? controller.signal : undefined
+        });
+        if (timeoutId) clearTimeout(timeoutId);
         if (!res.ok) return;
         const data = await res.json();
         const serverPkgs = Array.isArray(data.packages) ? data.packages : [];
@@ -482,7 +488,8 @@ function landingApp() {
     get filteredPackages() {
       const dest = this.finderDest;
       const style = this.finderStyle;
-      return (this.packages || []).filter((p) => {
+      const list = (this.packages && this.packages.length) ? this.packages : TOUR_PACKAGES;
+      return list.filter((p) => {
         const destOk = dest === "all" || (p.destination || "").toLowerCase().includes(dest.toLowerCase()) || (p.title || "").toLowerCase().includes(dest.toLowerCase());
         const styleOk = style === "all" || (p.style || "") === style;
         return destOk && styleOk;

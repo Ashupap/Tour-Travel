@@ -132,8 +132,9 @@
       --copy-y: 0px;
       position: relative;
       height: 100vh;
-      min-height: 560px;
+      min-height: 580px;
       max-height: 840px;
+      padding-top: 72px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -183,15 +184,33 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
     }
 
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      background: rgba(7, 30, 46, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+    .site-header.is-scrolled {
+      background: rgba(4, 18, 28, 0.96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.28);
+      box-shadow: 0 6px 26px rgba(0, 0, 0, 0.45);
+    }
+
     .nav {
       position: relative;
-      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 24px;
-      height: 78px;
-      border-bottom: 1px solid rgba(255,255,255,.14);
+      height: 72px;
     }
 
     .logo {
@@ -204,15 +223,17 @@
       border-radius: 0 !important;
       box-shadow: none !important;
       border: 0 !important;
+      min-width: 140px;
+      min-height: 52px;
       transition: transform .25s ease;
     }
     .logo:hover {
       transform: translateY(-2px);
     }
     .logo__img {
-      height: 60px;
+      height: 56px;
       width: auto;
-      max-height: 68px;
+      max-height: 62px;
       object-fit: contain;
       display: block;
       filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 1.5px rgba(255,255,255,0.92)) contrast(1.08);
@@ -222,11 +243,36 @@
       transform: scale(1.03);
       filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 2.5px rgba(245,158,11,0.75)) contrast(1.12);
     }
+    .logo__fallback {
+      display: none;
+      align-items: center;
+      gap: 9px;
+      color: white;
+      text-decoration: none;
+    }
+    .logo__fallback b {
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 700;
+      display: block;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+    }
+    .logo__fallback small {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
     .logo--footer {
       background: transparent !important;
       padding: 0 !important;
       box-shadow: none !important;
       border: 0 !important;
+      min-width: auto;
     }
     .logo--footer .logo__img {
       height: 64px;
@@ -237,10 +283,14 @@
       display: flex;
       align-items: center;
       gap: clamp(16px, 2.5vw, 36px);
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 600;
     }
-    .nav__links a { transition: color .2s; }
+    .nav__links a {
+      color: rgba(255, 255, 255, 0.92);
+      text-decoration: none;
+      transition: color .2s;
+    }
     .nav__links a:hover { color: var(--accent); }
 
     .nav__cta {
@@ -508,6 +558,8 @@
       box-shadow: 0 6px 22px rgba(7,30,46,.05);
       transition: transform .3s, box-shadow .3s;
       cursor: pointer;
+      opacity: 1 !important;
+      visibility: visible !important;
     }
     .package-card:hover { transform: translateY(-4px); box-shadow: 0 16px 36px rgba(12,74,123,.14); }
     .package-card[hidden] { display: none; }
@@ -796,15 +848,38 @@
   <script src="/js/htmx.min.js"></script>
   <script src="/js/reveal.js"></script>
   <script src="/js/vanilla-tilt.min.js"></script>
-  <script src="/js/landing.js?v=20260930_calc"></script>
+  <script src="/js/landing.js?v=20260930_v2"></script>
   <script defer src="/js/alpine.min.js"></script>
 </head>
 
 <body x-data="landingApp()">
   <a class="skip-link" href="#circuits">Skip to content</a>
 
+  <!-- ============================ STICKY SITE HEADER ============================ -->
+  <header class="site-header" :class="{ 'is-scrolled': scrolled }">
+    <nav class="nav container" aria-label="Main navigation">
+      <a class="logo" href="#home" aria-label="Aditya Tour and Travels home">
+        <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88" fetchpriority="high" loading="eager" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='inline-flex'"/>
+        <span class="logo__fallback">
+          <span style="font-size:24px;color:var(--accent)">☸</span>
+          <span style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:var(--serif);font-size:18px;color:#fff">ADITYA</b><small style="font-size:8.5px;color:var(--accent);letter-spacing:.15em">TOUR &amp; TRAVELS</small></span>
+        </span>
+      </a>
+
+      <div class="nav__links">
+        <a href="#circuits">Sacred Circuits</a>
+        <a href="#emi-calculator-section">EMI Calculator</a>
+        <a href="#pass">Travel Pass</a>
+      </div>
+
+      <button class="nav__cta" type="button" @click="statusModalOpen = true">
+        <span>Check Pass</span> &nbsp;↗
+      </button>
+    </nav>
+  </header>
+
   <!-- ============================ HERO ============================ -->
-  <header class="hero" id="home">
+  <section class="hero" id="home">
     <div class="hero__slides" aria-hidden="true">
       <div class="hero__slide hero-slide is-active">
         <img src="/images/hero-1.jpg" alt="" width="1600" height="1142" fetchpriority="high" decoding="async"/>
@@ -819,22 +894,6 @@
 
     <div class="hero__shade" aria-hidden="true"></div>
     <div class="hero__grain" aria-hidden="true"></div>
-
-    <nav class="nav container" aria-label="Main navigation">
-      <a class="logo" href="#home" aria-label="Aditya Tour and Travels home">
-        <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88"/>
-      </a>
-
-      <div class="nav__links">
-        <a href="#circuits">Sacred Circuits</a>
-        <a href="#emi-calculator-section">EMI Calculator</a>
-        <a href="#pass">Travel Pass</a>
-      </div>
-
-      <button class="nav__cta" type="button" @click="statusModalOpen = true">
-        <span>Check Pass</span> &nbsp;↗
-      </button>
-    </nav>
 
     <div class="hero__main container">
       <div class="hero__copy">
@@ -909,7 +968,7 @@
         </div>
       </div>
     </div>
-  </header>
+  </section>
 
   <div class="marquee" aria-hidden="true">
     <div class="marquee__track">
@@ -983,7 +1042,7 @@
         <div class="package-grid" id="package-grid">
           <template x-for="pkg in filteredPackages" :key="pkg.id">
             <article
-              class="package-card package-tilt-card reveal"
+              class="package-card package-tilt-card"
               @click="selectPackage(pkg)">
               <div class="package-card__image">
                 <img
@@ -999,7 +1058,7 @@
                 <h3 x-text="pkg.title"></h3>
                 <p class="package-card__description" x-text="pkg.destination"></p>
                 <div class="package-card__footer">
-                  <div class="package-card__price"><small>From ₹<span x-text="Math.round(pkg.total_price / pkg.allowed_tenures[0]).toLocaleString('en-IN')"></span>/mo</small>₹<span x-text="pkg.total_price.toLocaleString('en-IN')"></span></div>
+                  <div class="package-card__price"><small>From ₹<span x-text="Math.round(Number(pkg.total_price || 0) / (pkg.allowed_tenures && pkg.allowed_tenures.length ? Math.max(...pkg.allowed_tenures) : 9)).toLocaleString('en-IN')"></span>/mo</small>₹<span x-text="Number(pkg.total_price || 0).toLocaleString('en-IN')"></span></div>
                   <button
                     class="package-card__button"
                     type="button"
@@ -1283,7 +1342,11 @@
       <div class="footer__grid">
         <div class="footer__brand">
           <a class="logo logo--footer" href="#home" aria-label="Aditya Tour and Travels home">
-            <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88"/>
+            <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='inline-flex'"/>
+            <span class="logo__fallback">
+              <span style="font-size:24px;color:var(--accent)">☸</span>
+              <span style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:var(--serif);font-size:18px;color:#fff">ADITYA</b><small style="font-size:8.5px;color:var(--accent);letter-spacing:.15em">TOUR &amp; TRAVELS</small></span>
+            </span>
           </a>
           <p class="footer__desc">Har Gaon Ru Char Dham — Odisha's premier rural pilgrimage network facilitating sacred tirthayatras through disciplined micro-savings.</p>
           <div class="footer__badge">

@@ -1,7 +1,7 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "aditya-travels-v7-bharatyatra-cache-v3";
+const CACHE_NAME = "aditya-travels-v8-bharatyatra-cache-v3";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -90,34 +90,52 @@ self.addEventListener("fetch", (event) => {
           }
           return networkResponse;
         })
-        .catch(() => caches.match(event.request) || caches.match("/"))
+        .catch(async () => {
+          const matched = await caches.match(event.request);
+          if (matched) return matched;
+          const rootFallback = await caches.match("/");
+          if (rootFallback) return rootFallback;
+          return caches.match("/index.html");
+        })
     );
     return;
   }
 
-  // For JS, CSS, images: Cache-First with background revalidation
+  // For JS, CSS, images, fonts: Cache-First with network fallback and background revalidation
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
       if (cachedResponse) {
-        // Fetch fresh copy in background to update cache
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse);
-            });
-          }
-        }).catch(() => {});
+        // Fetch fresh copy in background to revalidate cache
+        fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const clone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, clone);
+              });
+            }
+          })
+          .catch(() => {});
         return cachedResponse;
       }
-      return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return networkResponse;
-      });
+
+      // Not in cache: fetch from network
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(async () => {
+          // Network failed and not in exact cache: try matching pathname without query params
+          const pathnameMatch = await caches.match(url.pathname, { ignoreSearch: true });
+          if (pathnameMatch) return pathnameMatch;
+          return new Response("", { status: 408, statusText: "Offline Network Timeout" });
+        });
     })
   );
 });
