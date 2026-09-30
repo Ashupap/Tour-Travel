@@ -28,7 +28,7 @@
     }
   </style>
   <script defer src="/js/alpine.min.js"></script>
-  <script src="/admin/admin.js"></script>
+  <script src="/admin/admin.js?v=4"></script>
 </head>
 <body class="flex min-h-full flex-col font-sans" x-data="adminApp()">
 
@@ -56,7 +56,7 @@
     <div class="w-full max-w-md rounded-3xl border border-amber-500/30 bg-slate-900/90 p-8 shadow-2xl shadow-amber-500/10 backdrop-blur-xl">
       <div class="text-center">
         <div class="mx-auto flex items-center justify-center">
-          <img src="/images/logo.png" alt="Aditya Logo" class="h-14 w-auto object-contain filter drop-shadow rounded-xl p-1 bg-white/10" />
+          <img src="/images/logo-white.png" alt="Aditya Logo" class="h-16 w-auto object-contain filter drop-shadow" onerror="this.src='/images/logo.png'" />
         </div>
         <h2 class="mt-4 text-2xl font-black text-white">Admin Control Center</h2>
         <p class="mt-1 text-xs text-slate-400">Aditya Tour and Travels • Master portal for portfolio health, default risk, package management and bus manifest exports.</p>
@@ -107,7 +107,7 @@
       <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div class="flex items-center gap-3">
           <a href="/" class="flex items-center">
-            <img src="/images/logo.png" alt="Aditya Logo" class="h-9 w-auto object-contain filter drop-shadow rounded-lg p-0.5 bg-white/10" />
+            <img src="/images/logo-white.png" alt="Aditya Logo" class="h-10 w-auto object-contain filter drop-shadow" onerror="this.src='/images/logo.png'" />
           </a>
           <div>
             <div class="text-sm font-black text-white flex items-center gap-2">
@@ -179,6 +179,12 @@
       <!-- Navigation Tabs -->
       <div class="flex items-center gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
         <button
+          @click="activeTab = 'devotees'"
+          :class="activeTab === 'devotees' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
+          Devotee Bookings (<span x-text="subscriptions.length">0</span>)
+        </button>
+        <button
           @click="activeTab = 'overview'"
           :class="activeTab === 'overview' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
           class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
@@ -188,7 +194,7 @@
           @click="activeTab = 'packages'"
           :class="activeTab === 'packages' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
           class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
-          Package Manager
+          Package Manager (<span x-text="packages.length">0</span>)
         </button>
         <button
           @click="activeTab = 'manifest'"
@@ -196,7 +202,153 @@
           class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
           Bus Manifest
         </button>
+        <button
+          @click="activeTab = 'network'"
+          :class="activeTab === 'network' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-4 py-2 text-xs font-bold transition whitespace-nowrap">
+          Field Network &amp; Float
+        </button>
       </div>
+
+      <!-- DEVOTEE BOOKINGS & LEDGER -->
+      <section x-show="activeTab === 'devotees'" x-cloak class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 px-5 py-4">
+          <div>
+            <h2 class="text-sm font-black text-white">Devotee Subscriptions &amp; Status Ledger</h2>
+            <p class="text-[11px] text-slate-400">All pilgrimage bookings with real-time EMI progress, color-coded payment status, and complete passbook ledgers.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Search bar -->
+            <div class="relative">
+              <input
+                type="text"
+                x-model="subscriptionSearchQuery"
+                @input.debounce.300ms="fetchSubscriptions()"
+                placeholder="Search booking ID, name, phone…"
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-1.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none w-60"
+              />
+            </div>
+            <!-- Filter buttons -->
+            <div class="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-[11px]">
+              <button
+                @click="subscriptionFilterStatus = 'all'; fetchSubscriptions()"
+                :class="subscriptionFilterStatus === 'all' ? 'bg-slate-800 text-white font-bold' : 'text-slate-400 hover:text-white'"
+                class="px-2.5 py-1 rounded-lg transition">All</button>
+              <button
+                @click="subscriptionFilterStatus = 'eligible'; fetchSubscriptions()"
+                :class="subscriptionFilterStatus === 'eligible' ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30' : 'text-slate-400 hover:text-emerald-300'"
+                class="px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                <span>Ready (2+ Paid)</span>
+              </button>
+              <button
+                @click="subscriptionFilterStatus = 'saving'; fetchSubscriptions()"
+                :class="subscriptionFilterStatus === 'saving' ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30' : 'text-slate-400 hover:text-amber-300'"
+                class="px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                <span>In Progress</span>
+              </button>
+              <button
+                @click="subscriptionFilterStatus = 'overdue'; fetchSubscriptions()"
+                :class="subscriptionFilterStatus === 'overdue' ? 'bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30' : 'text-slate-400 hover:text-rose-300'"
+                class="px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                <span class="h-2 w-2 rounded-full bg-rose-400"></span>
+                <span>Missed EMI</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div x-show="subscriptionsLoading" class="p-8 text-center text-xs text-slate-500">Loading devotee bookings…</div>
+
+        <div x-show="!subscriptionsLoading && !subscriptions.length" class="p-10 text-center">
+          <p class="text-sm font-bold text-slate-300">No devotee subscriptions match your search</p>
+          <p class="text-[11px] text-slate-500 mt-1">Try resetting your status filter or search query.</p>
+        </div>
+
+        <div x-show="!subscriptionsLoading && subscriptions.length" class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950/60 text-[10px] uppercase tracking-wider text-slate-400">
+              <tr>
+                <th class="px-5 py-3 font-bold">Booking</th>
+                <th class="px-5 py-3 font-bold">Devotee</th>
+                <th class="px-5 py-3 font-bold">Circuit</th>
+                <th class="px-5 py-3 font-bold">EMI Progress</th>
+                <th class="px-5 py-3 font-bold text-right">Financials</th>
+                <th class="px-5 py-3 font-bold text-center">Status Badge</th>
+                <th class="px-5 py-3 font-bold text-right">Passbook</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+              <template x-for="s in subscriptions" :key="s.id">
+                <tr class="hover:bg-slate-800/40 transition"
+                  :class="{
+                    'bg-rose-950/15 border-l-2 border-rose-500': s.badge === 'overdue',
+                    'bg-emerald-950/10 border-l-2 border-emerald-500': s.badge === 'eligible',
+                    'border-l-2 border-transparent': s.badge === 'saving'
+                  }">
+                  <td class="px-5 py-3">
+                    <div class="font-mono font-bold text-amber-300" x-text="s.booking_code"></div>
+                    <div class="text-[10px] text-slate-500" x-text="new Date(s.created).toLocaleDateString('en-IN')"></div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="font-bold text-white" x-text="s.customer_name"></div>
+                    <div class="text-[10px] text-slate-400 font-mono" x-text="s.customer_phone"></div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="text-slate-200 font-medium" x-text="s.package_title"></div>
+                    <div class="text-[10px] text-slate-500" x-text="'Sahayak: ' + s.agent_name"></div>
+                  </td>
+                  <td class="px-5 py-3">
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-slate-200" x-text="s.paid_emis_count + ' / ' + s.total_emis + ' EMIs'"></span>
+                    </div>
+                    <!-- Mini progress bar -->
+                    <div class="w-24 bg-slate-800 rounded-full h-1.5 mt-1 overflow-hidden">
+                      <div class="h-1.5 rounded-full"
+                        :class="s.badge === 'overdue' ? 'bg-rose-500' : (s.badge === 'eligible' ? 'bg-emerald-400' : 'bg-amber-400')"
+                        :style="'width: ' + Math.min(100, Math.round((s.paid_emis_count / s.total_emis) * 100)) + '%'"></div>
+                    </div>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <div class="font-black text-emerald-300">₹<span x-text="s.amount_paid.toLocaleString('en-IN')"></span></div>
+                    <div class="text-[10px] text-slate-400" x-text="'of ₹' + s.total_amount.toLocaleString('en-IN')"></div>
+                    <div x-show="s.overdue_amount > 0" class="text-[10px] font-bold text-rose-400" x-text="'Overdue: ₹' + s.overdue_amount.toLocaleString('en-IN')"></div>
+                  </td>
+                  <td class="px-5 py-3 text-center">
+                    <!-- Color highlight status badge requested by user -->
+                    <template x-if="s.badge === 'eligible'">
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-1 text-[11px] font-bold text-emerald-300 shadow-sm shadow-emerald-500/20">
+                        <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                        <span>Travel Ready (2+ Paid)</span>
+                      </span>
+                    </template>
+                    <template x-if="s.badge === 'saving'">
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-1 text-[11px] font-bold text-amber-300 shadow-sm shadow-amber-500/20">
+                        <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                        <span>In Progress (&lt;2 Paid)</span>
+                      </span>
+                    </template>
+                    <template x-if="s.badge === 'overdue'">
+                      <span class="inline-flex items-center gap-1.5 rounded-full border border-rose-500/50 bg-rose-500/20 px-3 py-1 text-[11px] font-bold text-rose-300 shadow-sm shadow-rose-500/20">
+                        <span class="h-2 w-2 rounded-full bg-rose-400 animate-pulse"></span>
+                        <span>Missed EMI Overdue</span>
+                      </span>
+                    </template>
+                  </td>
+                  <td class="px-5 py-3 text-right">
+                    <button
+                      @click="openPassbook(s)"
+                      class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs font-bold text-amber-300 hover:border-amber-400 hover:bg-slate-800 transition active:scale-95 shadow">
+                      Passbook ↗
+                    </button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       <!-- RISK WATCHLIST (ADMN-02) -->
       <section x-show="activeTab === 'overview'" x-cloak class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden">
@@ -569,6 +721,299 @@
           </table>
         </div>
       </section>
+
+      <!-- FIELD NETWORK & FLOAT MONITORING -->
+      <section x-show="activeTab === 'network'" x-cloak id="admin-network-section" class="space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg">
+          <div>
+            <h2 class="text-sm font-black text-white">Field Network &amp; Cash Float Monitoring</h2>
+            <p class="text-[11px] text-slate-400">Track on-ground Sahayaks, attached Distributors, real-time cash in custody float, and OTP-verified handovers.</p>
+          </div>
+          <button
+            @click="fetchFieldNetwork()"
+            class="rounded-xl border border-slate-700 bg-slate-950 px-4 py-2 text-xs font-bold text-amber-300 hover:border-amber-400 hover:bg-slate-800 transition active:scale-95">
+            <span x-show="!fieldNetworkLoading">Refresh Float</span>
+            <span x-show="fieldNetworkLoading">Syncing…</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Sahayaks (Agents) with Real-time Float -->
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+              <div>
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-300">Field Sahayaks (Agents)</h3>
+                <p class="text-[10px] text-slate-500">Field workers collecting daily/weekly pilgrimage micro-installments</p>
+              </div>
+              <span class="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-mono font-bold text-slate-300" x-text="(fieldNetwork.agents || []).length + ' Active'"></span>
+            </div>
+
+            <div class="overflow-x-auto flex-1">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-950/60 text-[10px] uppercase tracking-wider text-slate-400">
+                  <tr>
+                    <th class="px-5 py-3 font-bold">Sahayak Name</th>
+                    <th class="px-5 py-3 font-bold">Distributor Node</th>
+                    <th class="px-5 py-3 font-bold text-center">Devotees</th>
+                    <th class="px-5 py-3 font-bold text-right">Cash Float in Custody</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  <template x-for="ag in (fieldNetwork.agents || [])" :key="ag.id">
+                    <tr class="hover:bg-slate-800/40 transition">
+                      <td class="px-5 py-3">
+                        <div class="font-bold text-white flex items-center gap-1.5">
+                          <span class="h-1.5 w-1.5 rounded-full" :class="ag.is_active ? 'bg-emerald-400' : 'bg-slate-500'"></span>
+                          <span x-text="ag.name"></span>
+                        </div>
+                        <div class="text-[10px] font-mono text-slate-400" x-text="ag.phone"></div>
+                      </td>
+                      <td class="px-5 py-3 text-slate-300 font-medium" x-text="ag.distributor_name || 'Independent'"></td>
+                      <td class="px-5 py-3 text-center">
+                        <span class="rounded bg-slate-800 px-2 py-0.5 text-[11px] font-bold text-slate-200" x-text="ag.total_subscriptions"></span>
+                      </td>
+                      <td class="px-5 py-3 text-right">
+                        <div class="font-mono font-black" :class="ag.cash_in_custody > 0 ? 'text-amber-300 text-sm' : 'text-slate-500'">
+                          ₹<span x-text="ag.cash_in_custody.toLocaleString('en-IN')"></span>
+                        </div>
+                        <div x-show="ag.cash_in_custody > 0" class="text-[9px] text-amber-400/80 font-bold uppercase tracking-wider">Unsettled Cash</div>
+                        <div x-show="ag.cash_in_custody === 0" class="text-[9px] text-emerald-400 font-medium">All Handed Over</div>
+                      </td>
+                    </tr>
+                  </template>
+                  <tr x-show="!fieldNetwork.agents || !fieldNetwork.agents.length">
+                    <td colspan="4" class="p-8 text-center text-xs text-slate-500">No Sahayaks registered yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Regional Distributors -->
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+              <div>
+                <h3 class="text-xs font-black uppercase tracking-wider text-slate-300">Regional Distributors</h3>
+                <p class="text-[10px] text-slate-500">District hubs settling cash floats</p>
+              </div>
+              <span class="rounded-full bg-slate-800 px-2.5 py-0.5 text-[10px] font-mono font-bold text-slate-300" x-text="(fieldNetwork.distributors || []).length + ' Hubs'"></span>
+            </div>
+
+            <div class="p-4 space-y-3 flex-1 overflow-y-auto">
+              <template x-for="d in (fieldNetwork.distributors || [])" :key="d.id">
+                <div class="rounded-xl border border-slate-800 bg-slate-950/70 p-4 hover:border-slate-700 transition">
+                  <div class="flex items-center justify-between">
+                    <div class="font-bold text-white text-xs" x-text="d.name"></div>
+                    <span class="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold text-emerald-300" x-text="d.agent_count + ' Sahayaks'"></span>
+                  </div>
+                  <div class="mt-1 text-[11px] font-mono text-slate-400" x-text="d.phone"></div>
+                </div>
+              </template>
+              <div x-show="!fieldNetwork.distributors || !fieldNetwork.distributors.length" class="p-6 text-center text-xs text-slate-500">
+                No distributors registered.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Cash Handovers Ledger with OTP Confirmation -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-lg overflow-hidden">
+          <div class="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+            <div>
+              <h3 class="text-xs font-black uppercase tracking-wider text-white">Recent Cash Handover Settlements</h3>
+              <p class="text-[10px] text-slate-400">Cryptographically secure OTP handovers from Sahayak to Distributor</p>
+            </div>
+            <span class="text-[10px] text-slate-500">Last 15 events</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950/60 text-[10px] uppercase tracking-wider text-slate-400">
+                <tr>
+                  <th class="px-5 py-3 font-bold">Handover Event</th>
+                  <th class="px-5 py-3 font-bold">Sahayak → Distributor</th>
+                  <th class="px-5 py-3 font-bold text-right">Settled Amount</th>
+                  <th class="px-5 py-3 font-bold text-center">Status</th>
+                  <th class="px-5 py-3 font-bold text-right">Verification Time</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                <template x-for="h in (fieldNetwork.recent_handovers || [])" :key="h.id">
+                  <tr class="hover:bg-slate-800/40 transition">
+                    <td class="px-5 py-3 font-mono text-slate-400 text-[11px]" x-text="new Date(h.created).toLocaleString('en-IN')"></td>
+                    <td class="px-5 py-3">
+                      <div class="font-bold text-white" x-text="h.agent_name + ' → ' + h.distributor_name"></div>
+                      <div class="text-[10px] font-mono text-slate-500" x-text="'Ref: ' + h.id"></div>
+                    </td>
+                    <td class="px-5 py-3 text-right font-black text-emerald-300">
+                      ₹<span x-text="h.total_amount.toLocaleString('en-IN')"></span>
+                    </td>
+                    <td class="px-5 py-3 text-center">
+                      <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                        :class="h.status === 'distributor_confirmed' ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300' : 'border-amber-500/40 bg-amber-500/15 text-amber-300'">
+                        <span class="h-1.5 w-1.5 rounded-full" :class="h.status === 'distributor_confirmed' ? 'bg-emerald-400' : 'bg-amber-400'"></span>
+                        <span x-text="h.status === 'distributor_confirmed' ? 'OTP Verified' : h.status"></span>
+                      </span>
+                    </td>
+                    <td class="px-5 py-3 text-right text-[11px] text-slate-400" x-text="h.verified_at ? new Date(h.verified_at).toLocaleTimeString('en-IN') : 'Pending confirmation'"></td>
+                  </tr>
+                </template>
+                <tr x-show="!fieldNetwork.recent_handovers || !fieldNetwork.recent_handovers.length">
+                  <td colspan="5" class="p-8 text-center text-xs text-slate-500">No cash handovers recorded in this period.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEVOTEE PASSBOOK LEDGER MODAL -->
+      <div
+        x-show="showPassbookModal"
+        x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-4 overflow-y-auto">
+        <div
+          @click.outside="showPassbookModal = false"
+          class="relative w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden">
+
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-slate-800 bg-slate-950/80 px-6 py-4">
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 text-lg font-black">
+                🪪
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-base font-black text-white" x-text="passbookData?.subscription?.customer_name || 'Devotee Passbook'"></h3>
+                  <span class="font-mono text-xs font-bold text-amber-300" x-text="passbookData?.subscription?.booking_code"></span>
+                </div>
+                <div class="text-[11px] text-slate-400" x-text="(passbookData?.package?.title || 'Tour') + ' • ' + (passbookData?.subscription?.customer_phone || '')"></div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <!-- Quick travel status change -->
+              <div class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Travel Status:</span>
+                <select
+                  :value="passbookData?.subscription?.travel_status"
+                  @change="updateTravelStatus(passbookData.subscription.id, $event.target.value)"
+                  class="rounded-lg border border-slate-700 bg-slate-950 px-2.5 py-1 text-xs font-bold text-white focus:border-amber-400 focus:outline-none">
+                  <option value="locked">🔒 Locked (&lt;2 EMIs)</option>
+                  <option value="eligible">🟢 Eligible (2+ Paid)</option>
+                  <option value="scheduled">🚌 Scheduled</option>
+                  <option value="completed">✨ Completed</option>
+                </select>
+              </div>
+
+              <button
+                @click="showPassbookModal = false"
+                class="rounded-xl border border-slate-700 bg-slate-800/80 p-2 text-slate-400 hover:text-white transition">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Modal Body -->
+          <div class="p-6 overflow-y-auto space-y-6">
+            <div x-show="passbookLoading" class="p-12 text-center text-xs text-slate-400">Loading passbook ledger…</div>
+
+            <div x-show="!passbookLoading && passbookData" class="space-y-6">
+              <!-- Summary Grid -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                  <div class="text-[10px] uppercase font-bold text-slate-500">Total Price</div>
+                  <div class="mt-1 text-lg font-black text-white">₹<span x-text="(passbookData?.subscription?.total_amount || 0).toLocaleString('en-IN')"></span></div>
+                </div>
+                <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                  <div class="text-[10px] uppercase font-bold text-slate-500">Monthly EMI</div>
+                  <div class="mt-1 text-lg font-black text-amber-300">₹<span x-text="(passbookData?.subscription?.monthly_emi_amount || 0).toLocaleString('en-IN')"></span></div>
+                </div>
+                <div class="rounded-xl border border-emerald-500/30 bg-emerald-950/15 p-3">
+                  <div class="text-[10px] uppercase font-bold text-emerald-400">EMIs Paid</div>
+                  <div class="mt-1 text-lg font-black text-emerald-300" x-text="(passbookData?.subscription?.paid_emis_count || 0) + ' / ' + (passbookData?.subscription?.tenure_months || 0)"></div>
+                </div>
+                <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-3">
+                  <div class="text-[10px] uppercase font-bold text-slate-500">Sahayak Node</div>
+                  <div class="mt-1 text-xs font-bold text-slate-200" x-text="passbookData?.agent?.name || 'Assigned Agent'"></div>
+                  <div class="text-[10px] font-mono text-slate-500" x-text="passbookData?.agent?.phone"></div>
+                </div>
+              </div>
+
+              <!-- Installments Timeline & Ledger -->
+              <div>
+                <h4 class="text-xs font-black uppercase tracking-wider text-slate-300 mb-3">Installment Schedule &amp; Collection Slips</h4>
+                <div class="overflow-x-auto rounded-xl border border-slate-800">
+                  <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-950/80 text-[10px] uppercase tracking-wider text-slate-400">
+                      <tr>
+                        <th class="px-4 py-3 font-bold">EMI #</th>
+                        <th class="px-4 py-3 font-bold">Due Date</th>
+                        <th class="px-4 py-3 font-bold text-right">Amount</th>
+                        <th class="px-4 py-3 font-bold text-center">Status</th>
+                        <th class="px-4 py-3 font-bold">Receipt Slip</th>
+                        <th class="px-4 py-3 font-bold">Handover Status</th>
+                        <th class="px-4 py-3 font-bold text-right">Paid At</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                      <template x-for="inst in (passbookData?.installments || [])" :key="inst.id">
+                        <tr class="hover:bg-slate-800/40 transition"
+                          :class="{
+                            'bg-emerald-950/10': inst.status === 'paid',
+                            'bg-rose-950/15': inst.status === 'overdue'
+                          }">
+                          <td class="px-4 py-3 font-bold text-white" x-text="'EMI ' + inst.installment_number"></td>
+                          <td class="px-4 py-3 font-mono text-slate-400 text-[11px]" x-text="inst.due_date ? new Date(inst.due_date).toLocaleDateString('en-IN') : '—'"></td>
+                          <td class="px-4 py-3 text-right font-black" :class="inst.status === 'paid' ? 'text-emerald-300' : 'text-slate-200'">
+                            ₹<span x-text="inst.amount.toLocaleString('en-IN')"></span>
+                          </td>
+                          <td class="px-4 py-3 text-center">
+                            <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider"
+                              :class="{
+                                'border-emerald-500/40 bg-emerald-500/15 text-emerald-300': inst.status === 'paid',
+                                'border-rose-500/50 bg-rose-500/20 text-rose-300': inst.status === 'overdue',
+                                'border-slate-700 bg-slate-800 text-slate-400': inst.status === 'pending'
+                              }">
+                              <span class="h-1.5 w-1.5 rounded-full"
+                                :class="{
+                                  'bg-emerald-400': inst.status === 'paid',
+                                  'bg-rose-400': inst.status === 'overdue',
+                                  'bg-slate-500': inst.status === 'pending'
+                                }"></span>
+                              <span x-text="inst.status"></span>
+                            </span>
+                          </td>
+                          <td class="px-4 py-3 font-mono text-[11px]" :class="inst.receipt_slip_id ? 'text-amber-300 font-bold' : 'text-slate-600'" x-text="inst.receipt_slip_id || '—'"></td>
+                          <td class="px-4 py-3 text-[11px]">
+                            <span x-show="inst.status === 'paid'" class="rounded px-1.5 py-0.5 text-[10px] font-medium"
+                              :class="inst.handover_status === 'distributor_confirmed' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'"
+                              x-text="inst.handover_status === 'distributor_confirmed' ? 'Settled to Distributor' : 'With Sahayak'"></span>
+                            <span x-show="inst.status !== 'paid'" class="text-slate-600">—</span>
+                          </td>
+                          <td class="px-4 py-3 text-right text-[11px] text-slate-400" x-text="inst.paid_at ? new Date(inst.paid_at).toLocaleDateString('en-IN') : '—'"></td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal Footer -->
+          <div class="border-t border-slate-800 bg-slate-950/80 px-6 py-3 flex items-center justify-between text-xs text-slate-400">
+            <span>BharatYatra Tamper-Evident Devotee Passbook</span>
+            <button
+              @click="showPassbookModal = false"
+              class="rounded-xl border border-slate-700 px-4 py-1.5 font-bold text-slate-200 hover:bg-slate-800 transition">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
 
     </main>
 

@@ -15,7 +15,7 @@ function adminApp() {
     watchlist: [],
     sortBy: "days",
     sortOrder: "desc",
-    activeTab: "overview",
+    activeTab: "devotees",
     loading: false,
     toastMessage: "",
     toastType: "info",
@@ -105,7 +105,13 @@ function adminApp() {
     async loadAll() {
       this.loading = true;
       try {
-        await Promise.all([this.fetchPortfolio(), this.fetchWatchlist(), this.fetchPackages()]);
+        await Promise.all([
+          this.fetchPortfolio(),
+          this.fetchWatchlist(),
+          this.fetchPackages(),
+          this.fetchSubscriptions(),
+          this.fetchFieldNetwork()
+        ]);
       } catch (err) {
         console.error("Error loading admin dashboard data:", err);
         if (err && err.status === 401) {
@@ -113,6 +119,106 @@ function adminApp() {
         }
       } finally {
         this.loading = false;
+      }
+    },
+
+    // ---------- Subscriptions & Devotees Management ----------
+    subscriptions: [],
+    subscriptionsLoading: false,
+    subscriptionSearchQuery: "",
+    subscriptionFilterStatus: "all",
+    showPassbookModal: false,
+    passbookData: null,
+    passbookLoading: false,
+
+    async fetchSubscriptions() {
+      this.subscriptionsLoading = true;
+      try {
+        const params = new URLSearchParams();
+        if (this.subscriptionFilterStatus && this.subscriptionFilterStatus !== "all") {
+          params.append("status", this.subscriptionFilterStatus);
+        }
+        if (this.subscriptionSearchQuery) {
+          params.append("search", this.subscriptionSearchQuery);
+        }
+        const res = await fetch(`/api/admin/subscriptions?${params.toString()}`, {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          const data = await res.json();
+          this.subscriptions = data.subscriptions || [];
+        }
+      } catch (err) {
+        console.error("Error fetching subscriptions:", err);
+      } finally {
+        this.subscriptionsLoading = false;
+      }
+    },
+
+    async openPassbook(sub) {
+      this.showPassbookModal = true;
+      this.passbookLoading = true;
+      this.passbookData = null;
+      try {
+        const res = await fetch(`/api/admin/subscriptions/${sub.id}`, {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          this.passbookData = await res.json();
+        } else {
+          this.showToast("Failed to load passbook ledger", "error");
+        }
+      } catch (err) {
+        this.showToast("Network error loading passbook", "error");
+      } finally {
+        this.passbookLoading = false;
+      }
+    },
+
+    async updateTravelStatus(subId, newStatus) {
+      try {
+        const res = await fetch(`/api/admin/subscriptions/${subId}/travel-status`, {
+          method: "PATCH",
+          headers: this.getHeaders(),
+          body: JSON.stringify({ travel_status: newStatus })
+        });
+        if (res.ok) {
+          this.showToast(`Travel status updated to ${newStatus}`, "success");
+          if (this.passbookData && this.passbookData.subscription) {
+            this.passbookData.subscription.travel_status = newStatus;
+          }
+          await this.fetchSubscriptions();
+          await this.fetchWatchlist();
+        } else {
+          const err = await res.json();
+          this.showToast(err.message || "Failed to update travel status", "error");
+        }
+      } catch (e) {
+        this.showToast("Network error updating status", "error");
+      }
+    },
+
+    // ---------- Field Network & Float Monitoring ----------
+    fieldNetwork: {
+      distributors: [],
+      agents: [],
+      recent_handovers: []
+    },
+    fieldNetworkLoading: false,
+
+    async fetchFieldNetwork() {
+      this.fieldNetworkLoading = true;
+      try {
+        const res = await fetch("/api/admin/field-network", {
+          headers: this.getHeaders()
+        });
+        if (res.ok) {
+          this.fieldNetwork = await res.json();
+        }
+      } catch (err) {
+        console.error("Error loading field network:", err);
+      } finally {
+        this.fieldNetworkLoading = false;
       }
     },
 
