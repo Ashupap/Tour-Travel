@@ -169,10 +169,9 @@
       inset: 0;
       pointer-events: none;
       background:
-        radial-gradient(ellipse at 78% 35%, rgba(245, 158, 11, .18), transparent 44%),
-        radial-gradient(ellipse at 25% 65%, rgba(22, 126, 136, .16), transparent 50%),
-        linear-gradient(90deg, rgba(7,30,46,.95), rgba(7,30,46,.72) 48%, rgba(7,30,46,.28)),
-        linear-gradient(0deg, rgba(7,30,46,.95), transparent 46%, rgba(7,30,46,.28));
+        radial-gradient(ellipse at 80% 30%, rgba(245, 158, 11, .14), transparent 45%),
+        linear-gradient(90deg, rgba(5, 20, 32, 0.82) 0%, rgba(5, 20, 32, 0.6) 48%, rgba(5, 20, 32, 0.18) 100%),
+        linear-gradient(180deg, rgba(4, 16, 26, 0.45) 0%, transparent 24%, rgba(4, 16, 26, 0.88) 100%);
     }
 
     .hero__grain {
@@ -190,16 +189,16 @@
       left: 0;
       right: 0;
       z-index: 60;
-      background: rgba(7, 30, 46, 0.45);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,.12);
+      background: rgba(5, 20, 32, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.08);
       transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
     }
     .site-header.is-scrolled {
-      background: rgba(4, 18, 28, 0.96);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(3, 14, 22, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(245, 158, 11, 0.28);
       box-shadow: 0 6px 26px rgba(0, 0, 0, 0.45);
     }
@@ -236,12 +235,12 @@
       max-height: 62px;
       object-fit: contain;
       display: block;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 1.5px rgba(255,255,255,0.92)) contrast(1.08);
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.32));
       transition: transform .25s ease, filter .25s ease;
     }
     .logo:hover .logo__img {
       transform: scale(1.03);
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)) drop-shadow(0 0 2.5px rgba(245,158,11,0.75)) contrast(1.12);
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.45));
     }
     .logo__fallback {
       display: none;
@@ -276,7 +275,7 @@
     }
     .logo--footer .logo__img {
       height: 64px;
-      filter: drop-shadow(0 2px 10px rgba(0,0,0,0.55)) drop-shadow(0 0 2px rgba(255,255,255,0.9));
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
     }
 
     .nav__links {
@@ -776,55 +775,132 @@
       .closing__grid { grid-template-columns: 1fr; gap: 32px; }
       .footer__grid { grid-template-columns: 1fr 1fr; gap: 24px; }
     }
-    @media (max-width: 700px) {
-      .container { width: min(100% - 32px, 1320px); }
-      .nav { height: 68px; }
+    @media (max-width: 768px) {
+      .container { width: min(100% - 28px, 1320px); }
+      .nav { height: 64px; }
       .nav__links { display: none; }
       .nav__cta { padding: 8px 12px; font-size: 10.5px; }
-      .hero { height: auto; min-height: 540px; max-height: none; }
-      .hero__main { padding-top: 30px; padding-bottom: 30px; }
-      .hero h1 { font-size: clamp(34px, 8vw, 48px); }
-      .hero__description { font-size: 12.5px; }
-      .trip-finder { width: 100%; grid-template-columns: 1fr; }
+      .logo { min-width: auto; min-height: 48px; }
+      .logo__img { height: 48px; max-height: 48px; }
+      .hero {
+        height: auto;
+        min-height: auto;
+        max-height: none;
+        padding-top: 64px;
+        padding-bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      .hero__main {
+        padding-top: 14px;
+        padding-bottom: 12px;
+        align-items: flex-start;
+        flex: 0 0 auto;
+      }
+      .hero__copy { width: 100%; }
+      .eyebrow { font-size: 9.5px; letter-spacing: .18em; }
+      .hero h1 {
+        font-size: clamp(30px, 8vw, 42px);
+        margin: 6px 0 10px;
+        line-height: 1.1;
+      }
+      .hero__odia-sub {
+        font-size: clamp(16px, 4.2vw, 20px);
+        margin-bottom: 3px;
+      }
+      .hero__description {
+        font-size: 12.5px;
+        line-height: 1.55;
+        margin-bottom: 10px;
+        max-width: 100%;
+      }
+      .hero__points {
+        margin-top: 8px;
+        gap: 6px 14px;
+        font-size: 11px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero__actions {
+        margin-top: 14px;
+        margin-bottom: 16px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .hero__actions .button {
+        min-height: 44px;
+        padding: 0 16px;
+        font-size: 11px;
+      }
+      .hero__bottom {
+        position: relative;
+        inset: auto;
+        margin-top: 10px;
+        width: 100%;
+      }
+      .hero__bottom-inner {
+        padding: 0;
+        width: 100%;
+        display: block;
+      }
+      .trip-finder {
+        width: 100%;
+        grid-template-columns: 1fr;
+        padding: 8px 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,.3);
+        border-radius: 4px;
+      }
       .trip-finder__field + .trip-finder__field { border-left: 0; border-top: 1px solid #DCE7EC; }
       .hero__controls { display: none; }
-      .intro { padding: 44px 0 34px; }
+      .hero__scene { display: none; }
+      .intro { padding: 40px 0 30px; }
       .intro__grid { grid-template-columns: 1fr; gap: 16px; }
       .steps ol { grid-template-columns: 1fr; gap: 18px; }
-      .packages { padding: 44px 0 48px; }
+      .packages { padding: 40px 0 44px; }
       .packages__heading { align-items: flex-start; flex-direction: column; gap: 12px; }
       .package-grid { grid-template-columns: 1fr; }
-      .calculator { padding: 44px 0 48px; }
+      .calculator { padding: 40px 0 44px; }
       .calculator__card { padding: 20px 16px; }
       .circuit-selector { grid-template-columns: 1fr; }
-      .pass { padding: 44px 0 48px; }
-      .voices { padding: 44px 0 48px; }
-      .closing { padding: 44px 0; }
+      .pass { padding: 40px 0 44px; }
+      .voices { padding: 40px 0 44px; }
+      .closing { padding: 40px 0; }
       .footer__grid { grid-template-columns: 1fr; gap: 24px; }
     }
     @media (max-width: 480px) {
-      .logo { font-size: 22px; }
-      .logo__mark { font-size: 28px; }
-      .nav__cta { padding: 10px 11px; font-size: 10px; }
-      .hero { min-height: 790px; min-height: max(790px, 100svh); }
-      .hero__main { padding-top: 86px; }
-      .hero h1 { font-size: clamp(53px, 12vw, 65px); }
-      .hero__description { font-size: 13px; }
-      .hero__actions { gap: 17px; flex-wrap: wrap; }
-      .hero__actions .button { padding: 0 15px; gap: 9px; }
-      .text-link { font-size: 11px; }
-      .hero__scene { top: 48%; right: -18%; opacity: .26; transform: translate3d(var(--scene-x), var(--scene-y), 0) scale(.55); }
+      .container { width: min(100% - 24px, 1320px); }
+      .logo__img { height: 44px; max-height: 46px; }
+      .nav { height: 58px; }
+      .nav__cta { padding: 6px 10px; font-size: 10px; }
+      .hero {
+        padding-top: 58px;
+        padding-bottom: 16px;
+      }
+      .hero__main {
+        padding-top: 8px;
+        padding-bottom: 6px;
+      }
+      .hero h1 { font-size: clamp(27px, 8.2vw, 35px); }
+      .hero__description { font-size: 12px; }
+      .hero__points { font-size: 10.5px; gap: 5px; }
+      .hero__actions { margin-top: 10px; margin-bottom: 12px; gap: 10px; }
+      .hero__actions .button { min-height: 42px; padding: 0 14px; font-size: 10.5px; }
+      .text-link { font-size: 10.5px; }
+      .hero__bottom { margin-top: 6px; }
+      .trip-finder { padding: 6px 8px; }
       .trip-finder select { font-size: 11px; }
-      .section-title { font-size: 46px; }
-      .interlude { min-height: 440px; }
-      .interlude h2 { font-size: 51px; }
+      .section-title { font-size: 36px; }
+      .interlude { min-height: 360px; }
+      .interlude h2 { font-size: 38px; }
       .package-grid { grid-template-columns: 1fr; }
-      .package-card__image { height: 290px; }
-      .closing__stats { gap: 22px; }
+      .package-card__image { height: 240px; }
+      .closing__stats { gap: 16px; }
       .footer__inner { align-items: flex-start; flex-direction: column; }
-      .dialog__panel { padding: 27px 21px; }
+      .dialog__panel { padding: 22px 16px; }
       .pass-lookup { grid-template-columns: 1fr; }
-      .calc-result { padding: 26px 22px; }
+      .calc-result { padding: 20px 16px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -859,7 +935,7 @@
   <header class="site-header" :class="{ 'is-scrolled': scrolled }">
     <nav class="nav container" aria-label="Main navigation">
       <a class="logo" href="#home" aria-label="Aditya Tour and Travels home">
-        <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88" fetchpriority="high" loading="eager" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='inline-flex'"/>
+        <img class="logo__img" src="/images/logo-white.png" alt="Aditya Tour and Travels" width="160" height="88" fetchpriority="high" loading="eager" decoding="async" onerror="this.src='/images/logo.png'"/>
         <span class="logo__fallback">
           <span style="font-size:24px;color:var(--accent)">☸</span>
           <span style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:var(--serif);font-size:18px;color:#fff">ADITYA</b><small style="font-size:8.5px;color:var(--accent);letter-spacing:.15em">TOUR &amp; TRAVELS</small></span>
@@ -1342,7 +1418,7 @@
       <div class="footer__grid">
         <div class="footer__brand">
           <a class="logo logo--footer" href="#home" aria-label="Aditya Tour and Travels home">
-            <img class="logo__img" src="/images/logo.png" alt="Aditya Tour and Travels" width="160" height="88" loading="lazy" decoding="async" onerror="this.style.display='none';if(this.nextElementSibling)this.nextElementSibling.style.display='inline-flex'"/>
+            <img class="logo__img" src="/images/logo-white.png" alt="Aditya Tour and Travels" width="160" height="88" loading="lazy" decoding="async" onerror="this.src='/images/logo.png'"/>
             <span class="logo__fallback">
               <span style="font-size:24px;color:var(--accent)">☸</span>
               <span style="display:flex;flex-direction:column;line-height:1.1"><b style="font-family:var(--serif);font-size:18px;color:#fff">ADITYA</b><small style="font-size:8.5px;color:var(--accent);letter-spacing:.15em">TOUR &amp; TRAVELS</small></span>

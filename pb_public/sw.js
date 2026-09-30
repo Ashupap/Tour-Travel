@@ -1,7 +1,7 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "aditya-travels-v8-bharatyatra-cache-v3";
+const CACHE_NAME = "aditya-travels-v9-bharatyatra-cache-v3";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -23,6 +23,7 @@ const STATIC_ASSETS = [
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",
   "/images/logo.png",
+  "/images/logo-white.png",
   "/images/hero-1.jpg",
   "/images/hero-2.jpg",
   "/images/hero-3.jpg",
