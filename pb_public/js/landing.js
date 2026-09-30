@@ -407,44 +407,71 @@ function landingApp() {
         const serverPkgs = Array.isArray(data.packages) ? data.packages : [];
         if (!serverPkgs.length) return;
 
-        const seenTitles = new Set();
-        const uniquePkgs = [];
-        for (const sp of serverPkgs) {
-          const key = encodeURIComponent((sp.title || sp.id || "").toLowerCase());
-          if (seenTitles.has(key)) continue;
-          seenTitles.add(key);
-          uniquePkgs.push(sp);
-        }
+        // Filter out test dummy packages from automated test suites
+        const isTestDummy = (p) => {
+          const t = (p.title || "").toLowerCase();
+          return t.startsWith("manifest yatra") || t.startsWith("portfolio yatra") || t.startsWith("test ") || t.includes("phase 3");
+        };
 
-        const staticPkgs = Array.isArray(TOUR_PACKAGES) ? TOUR_PACKAGES : [];
-        const merged = uniquePkgs.map((sp, i) => {
-          const base = staticPkgs.find((p) => p.id === sp.id) || staticPkgs[i] || {};
-          const tenures = Array.isArray(sp.allowed_tenures) && sp.allowed_tenures.length
-            ? sp.allowed_tenures.map((x) => Number(x))
-            : (base.allowed_tenures || [6, 9, 12]);
+        const staticPkgs = Array.isArray(TOUR_PACKAGES) ? [...TOUR_PACKAGES] : [];
+
+        // Update static packages if server has updated details for them
+        const merged = staticPkgs.map((base) => {
+          const matching = serverPkgs.find((sp) => {
+            if (sp.id && sp.id === base.id) return true;
+            const spTitle = (sp.title || "").toLowerCase().trim();
+            const baseTitle = (base.title || "").toLowerCase().trim();
+            return spTitle.length > 5 && (spTitle.includes(baseTitle.substring(0, 10)) || baseTitle.includes(spTitle.substring(0, 10)));
+          });
+          if (!matching) return base;
+          const tenures = Array.isArray(matching.allowed_tenures) && matching.allowed_tenures.length
+            ? matching.allowed_tenures.map((x) => Number(x)).filter((n) => !isNaN(n) && n > 0)
+            : base.allowed_tenures;
           return {
             ...base,
-            id: sp.id,
-            title: sp.title || base.title,
-            destination: sp.destination || base.destination,
-            duration_days: Number(sp.duration_days) || base.duration_days,
-            total_price: Number(sp.total_price) || base.total_price,
-            allowed_tenures: tenures,
-            min_emis_to_travel: Number(sp.min_emis_to_travel) || base.min_emis_to_travel || 2,
-            image: sp.cover_image_url || base.image || "/images/pkg-kashi.jpg",
-            badge: base.badge || "",
-            style: base.style || "devotion",
-            highlights: Array.isArray(base.highlights) ? base.highlights : [],
-            odia_title: base.odia_title || "",
-            odia_destination: base.odia_destination || ""
+            total_price: Number(matching.total_price) || base.total_price,
+            duration_days: Number(matching.duration_days) || base.duration_days,
+            allowed_tenures: tenures && tenures.length ? tenures : base.allowed_tenures,
+            min_emis_to_travel: Number(matching.min_emis_to_travel) || base.min_emis_to_travel || 2,
+            image: matching.cover_image_url || base.image
           };
         });
 
+        // Add any non-test genuine packages from server
+        for (const sp of serverPkgs) {
+          if (isTestDummy(sp)) continue;
+          const already = merged.some((m) => m.id === sp.id || (m.title || "").toLowerCase() === (sp.title || "").toLowerCase());
+          if (!already) {
+            const tenures = Array.isArray(sp.allowed_tenures) && sp.allowed_tenures.length
+              ? sp.allowed_tenures.map((x) => Number(x)).filter((n) => !isNaN(n) && n > 0)
+              : [6, 9, 12];
+            merged.push({
+              id: sp.id,
+              title: sp.title || "Pilgrimage Yatra",
+              destination: sp.destination || "Odisha direct pilgrimage",
+              duration_days: Number(sp.duration_days) || 7,
+              total_price: Number(sp.total_price) || 20000,
+              allowed_tenures: tenures,
+              min_emis_to_travel: Number(sp.min_emis_to_travel) || 2,
+              image: sp.cover_image_url || "/images/pkg-kashi.jpg",
+              badge: "Odisha Circuit",
+              style: "devotion",
+              highlights: [],
+              odia_title: sp.title || "",
+              odia_destination: sp.destination || ""
+            });
+          }
+        }
+
         this.packages = merged;
-        const stillSelected = merged.find((p) => this.selectedPackage && p.id === this.selectedPackage.id);
+        // Keep selectedPackage valid
+        const stillSelected = merged.find((p) => this.selectedPackage && (p.id === this.selectedPackage.id || p.title === this.selectedPackage.title));
         this.selectedPackage = stillSelected || merged[0];
-        if (!this.selectedPackage.allowed_tenures.includes(this.selectedTenure)) {
-          this.selectedTenure = this.selectedPackage.allowed_tenures[0];
+        const validTenures = (this.selectedPackage && Array.isArray(this.selectedPackage.allowed_tenures) && this.selectedPackage.allowed_tenures.length)
+          ? this.selectedPackage.allowed_tenures
+          : [6, 9, 12];
+        if (!validTenures.includes(this.selectedTenure)) {
+          this.selectedTenure = validTenures[0];
         }
         this.$nextTick(() => this.initTilt());
       } catch (err) {
@@ -462,8 +489,21 @@ function landingApp() {
       });
     },
 
+    // Limit calculator to 3-4 curated packages only
+    get calculatorPackages() {
+      const base = (this.packages && this.packages.length) ? this.packages : TOUR_PACKAGES;
+      const core = base.slice(0, 4);
+      // If user selected a package outside the first 4, include it so the selected card is visible
+      if (this.selectedPackage && !core.some((p) => p.id === this.selectedPackage.id)) {
+        return [this.selectedPackage, ...core.slice(0, 3)];
+      }
+      return core;
+    },
+
     get monthlyEmi() {
-      return Math.round(this.selectedPackage.total_price / this.selectedTenure);
+      if (!this.selectedPackage || !this.selectedTenure || this.selectedTenure <= 0) return 0;
+      const price = Number(this.selectedPackage.total_price) || 0;
+      return Math.round(price / this.selectedTenure);
     },
 
     get dailyCost() {
@@ -471,7 +511,9 @@ function landingApp() {
     },
 
     get minEmis() {
-      return this.selectedPackage ? this.selectedPackage.min_emis_to_travel : 2;
+      return (this.selectedPackage && Number(this.selectedPackage.min_emis_to_travel))
+        ? Number(this.selectedPackage.min_emis_to_travel)
+        : 2;
     },
 
     get travelUnlockCost() {
@@ -480,10 +522,12 @@ function landingApp() {
 
     get remainingBalance() {
       if (!this.selectedPackage) return 0;
-      return this.selectedPackage.total_price - this.travelUnlockCost;
+      const price = Number(this.selectedPackage.total_price) || 0;
+      return Math.max(0, price - this.travelUnlockCost);
     },
 
     get remainingTenure() {
+      if (!this.selectedTenure) return 0;
       return Math.max(0, this.selectedTenure - this.minEmis);
     },
 
@@ -493,9 +537,13 @@ function landingApp() {
     },
 
     selectPackage(pkg) {
+      if (!pkg) return;
       this.selectedPackage = pkg;
-      if (!pkg.allowed_tenures.includes(this.selectedTenure)) {
-        this.selectedTenure = pkg.allowed_tenures[0];
+      const validTenures = (Array.isArray(pkg.allowed_tenures) && pkg.allowed_tenures.length)
+        ? pkg.allowed_tenures
+        : [6, 9, 12];
+      if (!validTenures.includes(this.selectedTenure)) {
+        this.selectedTenure = validTenures[0];
       }
       const calcEl = document.getElementById("emi-calculator-section");
       if (calcEl) {

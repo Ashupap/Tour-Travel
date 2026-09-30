@@ -555,14 +555,16 @@
       border: 1px solid #CFDEE5;
       background: white;
       text-align: left;
-      transition: border-color .2s, background .2s;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+      cursor: pointer;
+      border-radius: 4px;
     }
     .calc-option:hover { border-color: var(--accent); }
     .calc-option[aria-pressed="true"] { border-color: var(--accent-deep); background: #EBF3F7; }
     .calc-option b { font-size: 13.5px; font-weight: 700; display: block; margin-top: 3px; font-family: var(--serif); font-weight: 500; }
     .calc-option .calc-option__days { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
     .calc-option small { color: var(--muted); font-size: 10.5px; display: block; margin-top: 4px; }
-    .calc-option small b { display: inline; font-family: var(--sans); font-weight: 700; color: var(--accent-deep); }
+    .calc-option small b, .calc-option small .calc-option__emi-tag { display: inline; font-family: var(--sans); font-weight: 700; color: var(--accent-deep); }
 
     .tenure-choice { margin-top: 22px; }
     .choice-pills { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -794,7 +796,7 @@
   <script src="/js/htmx.min.js"></script>
   <script src="/js/reveal.js"></script>
   <script src="/js/vanilla-tilt.min.js"></script>
-  <script src="/js/landing.js"></script>
+  <script src="/js/landing.js?v=20260930_calc"></script>
   <script defer src="/js/alpine.min.js"></script>
 </head>
 
@@ -1027,7 +1029,7 @@
             <div>
               <p class="calc-label">1. Choose Pilgrimage Circuit</p>
               <div class="circuit-selector" id="circuit-selector">
-                <template x-for="p in packages" :key="p.id">
+                <template x-for="p in calculatorPackages" :key="p.id">
                   <button
                     class="calc-option"
                     type="button"
@@ -1035,7 +1037,7 @@
                     :aria-pressed="selectedPackage && selectedPackage.id === p.id ? 'true' : 'false'">
                     <span class="calc-option__days" x-text="p.duration_days + ' Days'"></span>
                     <b x-text="p.title"></b>
-                    <small>₹<span x-text="p.total_price.toLocaleString('en-IN')"></span> &nbsp;<b>EMI ₹<span x-text="Math.round(p.total_price / 9).toLocaleString('en-IN')"></span>/mo</b></small>
+                    <small>₹<span x-text="Number(p.total_price || 0).toLocaleString('en-IN')"></span> &nbsp;<span class="calc-option__emi-tag">From ₹<span x-text="Math.round(Number(p.total_price || 0) / (p.allowed_tenures && p.allowed_tenures.length ? Math.max(...p.allowed_tenures) : 9)).toLocaleString('en-IN')"></span>/mo</span></small>
                   </button>
                 </template>
               </div>
@@ -1043,7 +1045,7 @@
               <div class="tenure-choice">
                 <p class="calc-label">2. Repayment Duration</p>
                 <div class="choice-pills" id="tenure-selector">
-                  <template x-for="ten in selectedPackage.allowed_tenures" :key="ten">
+                  <template x-for="ten in (selectedPackage && selectedPackage.allowed_tenures ? selectedPackage.allowed_tenures : [6, 9, 12])" :key="ten">
                     <button
                       class="choice-pill"
                       type="button"
@@ -1077,16 +1079,16 @@
                   <span>ESTIMATED MONTHLY EMI</span>
                   <span class="calc-result__badge">Auto Approved</span>
                 </div>
-                <div class="calc-result__emi">₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span> <small>/ month</small></div>
+                <div class="calc-result__emi" :class="{ 'emi-pulse': emiPulse }">₹<span x-text="monthlyEmi.toLocaleString('en-IN')"></span> <small>/ month</small></div>
 
                 <div class="calc-result__rows">
                   <div class="calc-result__row">
                     <span>Required to Board Coach:</span>
-                    <b>₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span></b>
+                    <b>₹<span x-text="travelUnlockCost.toLocaleString('en-IN')"></span> <small style="font-size: 11px; font-weight: normal; opacity: 0.85;">(<span x-text="minEmis"></span> EMIs)</small></b>
                   </div>
                   <div class="calc-result__row">
                     <span>Post-Travel Balance:</span>
-                    <b>₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> <span x-text="'(' + remainingTenure + ')'"></span></b>
+                    <b>₹<span x-text="remainingBalance.toLocaleString('en-IN')"></span> <small style="font-size: 11px; font-weight: normal; opacity: 0.85;">(<span x-text="remainingTenure"></span> mos remaining)</small></b>
                   </div>
                   <div class="calc-result__row">
                     <span>Collection Channel:</span>
@@ -1094,7 +1096,7 @@
                   </div>
                 </div>
 
-                <p class="calc-result__footnote">➤ Costs less than 2 cups of tea a day</p>
+                <p class="calc-result__footnote">➤ Costs approx ₹<span x-text="dailyCost"></span>/day — less than 2 cups of tea</p>
 
                 <button class="button" type="button" @click="statusModalOpen = true">Book Doorstep Consultation ↗</button>
               </div>
