@@ -164,6 +164,12 @@ if systemctl is-active --quiet bharatyatra.service; then
   HEALTH_CHECK=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8090/api/health || echo "failed")
   if [ "${HEALTH_CHECK}" = "200" ]; then
     echo -e "${GREEN}[✓] PocketBase Health Check returned HTTP 200 OK!${NC}"
+    
+    # Seed development test users & demo data
+    if command -v node >/dev/null 2>&1 && [ -f "${APP_DIR}/scripts/seed-test-users.js" ]; then
+      echo -e "\n${CYAN}--- Step 5b: Seeding Development Test Users ---${NC}"
+      node "${APP_DIR}/scripts/seed-test-users.js" || true
+    fi
   else
     echo -e "${YELLOW}[WARN] Health check returned HTTP ${HEALTH_CHECK}. Service is running, checking logs:${NC}"
     journalctl -u bharatyatra -n 10 --no-pager
@@ -185,6 +191,13 @@ echo -e "\n${PURPLE}============================================================
 echo -e "${GREEN}🎉 BharatYatra Ubuntu Setup Completed Successfully! 🎉${NC}"
 echo -e "${PURPLE}================================================================${NC}"
 echo -e "Application Status: ${GREEN}RUNNING on http://127.0.0.1:8090${NC}"
+echo -e "\n${YELLOW}Development Test Users Active:${NC}"
+echo -e "  Admin:       ${CYAN}admin@bharatyatra.local       / password123456${NC}"
+echo -e "  Distributor: ${CYAN}tarini_hub@bharatyatra.local  / password123456${NC}"
+echo -e "  Sahayak:     ${CYAN}balaram_puri@bharatyatra.local / password123456${NC}"
+echo -e "\n${YELLOW}To update code from git at any time:${NC}"
+echo -e "  Run: ${CYAN}sudo bash scripts/deploy.sh${NC}"
+
 echo -e "\n${YELLOW}Service Management Commands:${NC}"
 echo -e "  Check status:  ${CYAN}sudo systemctl status bharatyatra${NC}"
 echo -e "  Restart:       ${CYAN}sudo systemctl restart bharatyatra${NC}"

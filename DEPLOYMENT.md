@@ -217,18 +217,58 @@ In the Cloudflare Tunnel configuration tab:
 
 ---
 
-## 7. Deploying Updates (Zero Downtime)
+---
 
-When updating your code, run:
-```bash
-cd /var/www/bharatyatra
-sudo bash scripts/update-app.sh
-```
-This pulls git changes, optionally builds CSS, and smoothly restarts the service in under 1 second.
+## 7. Development Test Users
+
+The deployment automatically seeds standard test users into the SQLite database so you can log in immediately:
+
+| Role | Email Identity | Password | Description |
+| :--- | :--- | :--- | :--- |
+| **Super Admin** | `admin@bharatyatra.local` | `password123456` | Master Administrator (Access to `/_/` & `/admin/`) |
+| **Portal Admin** | `portaladmin@bharatyatra.local` | `password123456` | Operations Admin (`/admin/index.html`) |
+| **Distributor** | `tarini_hub@bharatyatra.local` | `password123456` | Maa Tarini Hub Manager (`/distributor/index.html`) |
+| **Field Sahayak** | `balaram_puri@bharatyatra.local` | `password123456` | Puri Route Agent (`/agent/index.html`) |
+
+> You can also re-seed or verify these test accounts anytime by running:
+> ```bash
+> node scripts/seed-test-users.js
+> ```
 
 ---
 
-## 8. Automated Database Backups (Cron)
+## 8. Continuous Deployment from Git (Pull & Redeploy)
+
+Whenever you push modifications from your local development environment to GitHub, you can redeploy on Ubuntu in seconds:
+
+### Option A: Manual 1-Command Redeploy
+Run the master deploy script on the server:
+```bash
+cd /var/www/bharatyatra
+sudo bash scripts/deploy.sh
+```
+This automatically:
+1. Fetches latest commits from `origin/main`.
+2. Hard-resets to remote HEAD without file merge conflicts.
+3. Builds CSS bundles (`npm run build:css`) if needed.
+4. Verifies permissions (`pb_data`, `pb_hooks`, `pb_public`).
+5. Restarts the systemd daemon (`sudo systemctl restart bharatyatra`).
+6. Ensures test users exist and verifies HTTP 200 health.
+
+### Option B: Automatic Git Polling (Cron Auto-Deploy)
+If you want the server to automatically check Git for new commits and redeploy without logging in:
+```bash
+sudo crontab -e
+```
+Add the following line to check Git every 5 minutes:
+```cron
+*/5 * * * * /bin/bash /var/www/bharatyatra/scripts/deploy.sh --auto >> /var/log/bharatyatra-autodeploy.log 2>&1
+```
+*(The `--auto` flag only performs a rebuild and restart if new commits actually exist on the remote repository).*
+
+---
+
+## 9. Automated Database Backups (Cron)
 
 PocketBase includes built-in hot backup support for SQLite WAL databases.
 
