@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Distributor Territory Portal — BharatYatra</title>
-  <meta name="description" content="BharatYatra Regional Territory & Micro-Collection Control Center. Monitor village field agents, verify OTP cash handovers, and track delinquent accounts.">
+  <meta name="description" content="BharatYatra Regional Territory & Micro-Collection Control Center. Manage field sahayaks, verify OTP cash handovers, view devotee bookings, and track settlements.">
 
   <!-- Standalone Vendor CSS & PWA Manifest -->
   <link rel="stylesheet" href="/css/tailwind.css">
@@ -12,8 +12,38 @@
   <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
   <meta name="theme-color" content="#D97706">
 
-  <!-- Core Scripts -->
-  <script src="/js/distributor/distributor.js" onerror="this.src='/distributor/distributor.js'"></script>
+  <style>
+    @media print {
+      body { background: #ffffff !important; color: #000000 !important; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      .print-sheet { border: 1px solid #ccc !important; padding: 20px !important; color: #000 !important; }
+    }
+    .print-only { display: none; }
+
+    /* Sleek Custom Scrollbar & Smooth Scrolling */
+    .smooth-scroll {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(245, 158, 11, 0.35);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 158, 11, 0.65);
+    }
+  </style>
+
+  <script src="/distributor/distributor.js?v=8"></script>
   <script defer src="/js/alpine.min.js"></script>
 </head>
 <body class="flex min-h-full flex-col font-sans" x-data="distributorApp()">
@@ -28,7 +58,7 @@
     x-transition:leave="transition ease-in duration-200 transform"
     x-transition:leave-start="opacity-100 translate-y-0"
     x-transition:leave-end="opacity-0 translate-y-4"
-    class="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-xl text-xs font-bold"
+    class="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-xl text-xs font-bold no-print"
     :class="{
       'border-emerald-500/50 bg-emerald-950/90 text-emerald-200 shadow-emerald-500/20': toastType === 'success',
       'border-red-500/50 bg-red-950/90 text-red-200 shadow-red-500/20': toastType === 'error',
@@ -37,62 +67,10 @@
     <span x-text="toastMessage"></span>
   </div>
 
-  <!-- 2. LOGIN VIEW (if unauthenticated) -->
-  <div x-show="!token" x-cloak class="flex min-h-full flex-1 items-center justify-center p-4">
-    <div class="w-full max-w-md rounded-3xl border border-amber-500/30 bg-slate-900/90 p-8 shadow-2xl shadow-amber-500/10 backdrop-blur-xl">
-      <!-- Logo Header -->
-      <div class="text-center">
-        <div class="mx-auto flex items-center justify-center">
-          <img src="/images/logo.png" alt="Aditya Logo" class="h-14 w-auto object-contain filter drop-shadow rounded-xl p-1 bg-white/10" />
-        </div>
-        <h2 class="mt-4 text-2xl font-black text-white">Distributor Territory Portal</h2>
-        <p class="mt-1 text-xs text-slate-400">Aditya Tour and Travels • Sign in with registered distributor credentials to manage field recovery and OTP handovers.</p>
-      </div>
-
-      <!-- Error Alert -->
-      <div x-show="loginError" x-cloak class="mt-4 rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-300 font-medium text-center" x-text="loginError"></div>
-
-      <!-- Login Form -->
-      <form class="mt-6 space-y-4" @submit.prevent="login()">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Email Address</label>
-          <input 
-            type="email" 
-            x-model="loginEmail" 
-            required 
-            placeholder="distributor@bharatyatra.local"
-            class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Password</label>
-          <input 
-            type="password" 
-            x-model="loginPassword" 
-            required 
-            placeholder="••••••••"
-            class="mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
-        </div>
-
-        <button 
-          type="submit" 
-          :disabled="loading"
-          class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 py-3 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 disabled:opacity-50">
-          <span x-show="!loading">Enter Control Center →</span>
-          <span x-show="loading">Authenticating...</span>
-        </button>
-      </form>
-
-      <div class="mt-6 text-center text-[11px] text-slate-500">
-        <a href="/" class="text-amber-400 hover:underline">← Back to Public Landing Page</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. AUTHENTICATED DISTRIBUTOR PORTAL -->
+  <!-- AUTHENTICATED DISTRIBUTOR PORTAL -->
   <div x-show="token" x-cloak class="flex min-h-full flex-1 flex-col">
     <!-- Top Header -->
-    <header class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl">
+    <header class="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/80 backdrop-blur-xl no-print">
       <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <div class="flex items-center gap-3">
           <a href="/" class="flex items-center">
@@ -102,12 +80,30 @@
             <div class="text-sm font-black text-white flex items-center gap-2">
               <span>Territory Control Center</span>
               <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30 uppercase">Distributor</span>
+              <!-- Realtime Live Sync Indicator -->
+              <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold transition"
+                   :class="isRealtimeConnected ? 'bg-emerald-950/70 border-emerald-500/40 text-emerald-400' : 'bg-slate-900 border-slate-700 text-slate-400'">
+                <span class="w-1.5 h-1.5 rounded-full" :class="isRealtimeConnected ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'"></span>
+                <span x-text="isRealtimeConnected ? 'Live' : 'Connecting'"></span>
+              </div>
             </div>
-            <div class="text-[10px] text-slate-400" x-text="distributor ? distributor.name + ' • ' + distributor.phone : 'Loading...'"></div>
+            <div class="text-[10px] text-slate-400" x-text="distributor ? distributor.name + ' • ' + (distributor.phone || '') : 'Loading...'"></div>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Print Report Button -->
+          <button 
+            @click="printTerritoryReport()" 
+            title="Print EOD Territory Settlement Report"
+            class="flex items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition active:scale-95">
+            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span class="hidden sm:inline">EOD Report</span>
+          </button>
+
+          <!-- Refresh Button -->
           <button 
             @click="loadAll()" 
             :disabled="loading"
@@ -115,9 +111,10 @@
             <svg class="h-3.5 w-3.5 text-amber-400" :class="{ 'animate-spin': loading }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>Refresh</span>
+            <span class="hidden sm:inline">Refresh</span>
           </button>
 
+          <!-- Logout Button -->
           <button 
             @click="logout()" 
             class="rounded-lg border border-red-500/30 bg-red-950/30 px-3 py-1.5 text-xs font-semibold text-red-300 hover:bg-red-900/40 transition active:scale-95">
@@ -130,101 +127,241 @@
     <!-- Main Dashboard Container -->
     <main class="mx-auto max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 w-full space-y-6">
       
-      <!-- 4-Card Territory KPI Grid (DIST-01) -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <!-- Active Subscriptions -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 shadow-lg">
-          <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Active Subscriptions</div>
-          <div class="mt-2 flex items-baseline justify-between">
-            <div class="text-3xl font-black text-white" x-text="metrics.total_active_subscriptions">0</div>
-            <span class="rounded bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-300">Territory Total</span>
+      <!-- Territory KPI Grid (DIST-01, DIST-05) -->
+      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 no-print">
+        <!-- Cash in Custody (Held at Hub) -->
+        <div class="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 to-slate-900/70 p-4 shadow-lg">
+          <div class="text-[9px] uppercase font-bold tracking-wider text-emerald-400">Cash in Custody</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <div class="text-xl sm:text-2xl font-black text-emerald-300">₹<span x-text="metrics.total_cash_in_custody.toLocaleString('en-IN')">0</span></div>
           </div>
+          <div class="mt-1 text-[9px] text-emerald-400/80 font-medium">Reconciled in Safe</div>
         </div>
 
-        <!-- Today's Collections -->
-        <div class="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 to-slate-900/60 p-5 shadow-lg">
-          <div class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Collected Today</div>
-          <div class="mt-2 flex items-baseline justify-between">
-            <div class="text-3xl font-black text-emerald-300">₹<span x-text="metrics.collected_today.toLocaleString('en-IN')">0</span></div>
-            <span class="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300 border border-emerald-500/30">Verified Real-Time</span>
+        <!-- Cash in Transit (Field Sahayak Float) -->
+        <div class="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/30 to-slate-900/70 p-4 shadow-lg">
+          <div class="text-[9px] uppercase font-bold tracking-wider text-amber-400">Cash in Transit</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <div class="text-xl sm:text-2xl font-black text-amber-200">₹<span x-text="metrics.cash_in_agents_custody.toLocaleString('en-IN')">0</span></div>
           </div>
+          <div class="mt-1 text-[9px] text-amber-300/80 font-medium">Sahayak Float</div>
         </div>
 
-        <!-- Overdue Amount -->
-        <div class="rounded-2xl border border-rose-500/30 bg-gradient-to-br from-rose-950/20 to-slate-900/60 p-5 shadow-lg">
-          <div class="text-[10px] uppercase font-bold tracking-wider text-rose-400">Outstanding Overdue</div>
-          <div class="mt-2 flex items-baseline justify-between">
-            <div class="text-3xl font-black text-rose-300">₹<span x-text="metrics.total_overdue_amount.toLocaleString('en-IN')">0</span></div>
-            <span class="rounded bg-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-rose-300 border border-rose-500/30">Unpaid EMIs</span>
+        <!-- Collected Today -->
+        <div class="rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-950/20 to-slate-900/70 p-4 shadow-lg">
+          <div class="text-[9px] uppercase font-bold tracking-wider text-blue-400">Today's Inflow</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <div class="text-xl sm:text-2xl font-black text-blue-300">₹<span x-text="metrics.collected_today.toLocaleString('en-IN')">0</span></div>
           </div>
+          <div class="mt-1 text-[9px] text-blue-400/80 font-medium">Collected Today</div>
         </div>
 
-        <!-- Cash in Agents' Custody (Field Float) -->
-        <div class="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/30 to-slate-900/60 p-5 shadow-lg">
-          <div class="text-[10px] uppercase font-bold tracking-wider text-amber-400">Cash in Agents' Custody</div>
-          <div class="mt-2 flex items-baseline justify-between">
-            <div class="text-3xl font-black text-amber-200">₹<span x-text="metrics.cash_in_agents_custody.toLocaleString('en-IN')">0</span></div>
-            <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30">Awaiting Handover</span>
+        <!-- Lifetime Reconciled -->
+        <div class="rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/20 to-slate-900/70 p-4 shadow-lg">
+          <div class="text-[9px] uppercase font-bold tracking-wider text-purple-400">Lifetime Settled</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <div class="text-xl sm:text-2xl font-black text-purple-300">₹<span x-text="metrics.total_settled_amount.toLocaleString('en-IN')">0</span></div>
           </div>
+          <div class="mt-1 text-[9px] text-purple-400/80 font-medium">Verified Handovers</div>
+        </div>
+
+        <!-- Field Sahayaks -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
+          <div class="text-[9px] uppercase font-bold tracking-wider text-slate-400">Active Sahayaks</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <div class="text-xl sm:text-2xl font-black text-white" x-text="metrics.active_sahayaks_count">0</div>
+          </div>
+          <div class="mt-1 text-[9px] text-slate-400 font-medium" x-text="agents.length + ' Registered'"></div>
+        </div>
+
+        <!-- Devotees Enrolled -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow-lg">
+          <div class="text-[9px] uppercase font-bold tracking-wider text-slate-400">Territory Devotees</div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <div class="text-xl sm:text-2xl font-black text-amber-400" x-text="metrics.devotees_count">0</div>
+          </div>
+          <div class="mt-1 text-[9px] text-slate-400 font-medium">Active Bookings</div>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+      <!-- Navigation Tabs (DIST-01..05) -->
+      <div class="flex items-center gap-1.5 sm:gap-2 border-b border-slate-800 pb-3 overflow-x-auto custom-scrollbar no-print">
+        <!-- Overview & Handovers -->
         <button 
           @click="activeTab = 'overview'" 
           :class="activeTab === 'overview' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
-          class="rounded-xl border px-4 py-2 text-xs font-bold transition">
-          Overview & Handovers
-          <span x-show="handovers.length > 0" class="ml-1.5 rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-black text-black" x-text="handovers.length"></span>
+          class="rounded-xl border px-3.5 py-2 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5">
+          <span>Overview & Handovers</span>
+          <span x-show="handovers.length > 0" class="rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-black text-black" x-text="handovers.length"></span>
         </button>
 
+        <!-- Field Sahayaks -->
         <button 
           @click="activeTab = 'agents'" 
           :class="activeTab === 'agents' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
-          class="rounded-xl border px-4 py-2 text-xs font-bold transition">
-          Subordinate Agents (<span x-text="agents.length">0</span>)
+          class="rounded-xl border px-3.5 py-2 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5">
+          <span>Field Sahayaks</span>
+          <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300" x-text="agents.length">0</span>
         </button>
 
+        <!-- Devotee Bookings -->
+        <button 
+          @click="activeTab = 'devotees'" 
+          :class="activeTab === 'devotees' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-3.5 py-2 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5">
+          <span>Devotee Bookings</span>
+          <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300" x-text="devotees.length">0</span>
+        </button>
+
+        <!-- All Transactions -->
+        <button 
+          @click="activeTab = 'transactions'" 
+          :class="activeTab === 'transactions' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-3.5 py-2 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5">
+          <span>All Transactions</span>
+          <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300" x-text="transactions.length">0</span>
+        </button>
+
+        <!-- Settlement History -->
+        <button 
+          @click="activeTab = 'settlements'" 
+          :class="activeTab === 'settlements' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
+          class="rounded-xl border px-3.5 py-2 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5">
+          <span>Settlement History</span>
+          <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-300" x-text="handoverHistory.length">0</span>
+        </button>
+
+        <!-- Delinquency Watchlist -->
         <button 
           @click="activeTab = 'delinquents'" 
           :class="activeTab === 'delinquents' ? 'border-amber-500 text-amber-300 bg-amber-500/10' : 'border-transparent text-slate-400 hover:text-slate-200'"
-          class="rounded-xl border px-4 py-2 text-xs font-bold transition">
-          Delinquency Warnings (>30 Days)
-          <span x-show="delinquents.length > 0" class="ml-1.5 rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-black text-white" x-text="delinquents.length"></span>
+          class="rounded-xl border px-3.5 py-2 text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5">
+          <span>Watchlist (>30d)</span>
+          <span x-show="delinquents.length > 0" class="rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-black text-white" x-text="delinquents.length"></span>
         </button>
       </div>
 
+      <!-- ========================================== -->
       <!-- TAB 1: OVERVIEW & PENDING HANDOVERS (DIST-02) -->
+      <!-- ========================================== -->
       <div x-show="activeTab === 'overview'" class="space-y-6">
         
-        <!-- Pending Handovers Panel -->
-        <div class="rounded-3xl border border-amber-500/30 bg-slate-900/80 p-6 shadow-xl">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <!-- Section A: Field Cash Float in Transit (Active Field Custody) -->
+        <div class="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 via-slate-900/90 to-slate-950 p-6 shadow-xl">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
             <div>
-              <h3 class="text-base font-black text-white flex items-center gap-2">
-                <span>Pending Cash Handovers from Agents</span>
-                <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30" x-text="handovers.length + ' Pending'"></span>
-              </h3>
-              <p class="text-xs text-slate-400 mt-0.5">Field agents initiate physical cash handovers upon returning from village routes. Enter the 4-digit OTP provided by the agent to confirm custody transfer.</p>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-2.5 w-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <h3 class="text-base font-black text-white">Field Cash Float in Transit</h3>
+                <span class="rounded-full bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-amber-300 border border-amber-500/40">
+                  ₹<span x-text="metrics.cash_in_agents_custody.toLocaleString('en-IN')">0</span> in Field
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Physical cash currently held by field Sahayaks after door-to-door village collections. When a Sahayak submits cash at the hub, they generate a 6-digit Passcode on their app for verification.</p>
+            </div>
+            <button 
+              @click="activeTab = 'agents'"
+              class="self-start sm:self-auto rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-[11px] font-bold text-slate-300 hover:text-white hover:bg-slate-700 transition">
+              Manage All Sahayaks &rarr;
+            </button>
+          </div>
+
+          <!-- If there is cash in transit (agents with cash_in_custody > 0) -->
+          <div class="mt-4" x-show="agents.filter(a => (Number(a.cash_in_custody) || 0) > 0).length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <template x-for="agent in agents.filter(a => (Number(a.cash_in_custody) || 0) > 0)" :key="agent.id">
+                <div class="rounded-2xl border border-amber-500/40 bg-slate-900/90 p-4 shadow-lg flex flex-col justify-between hover:border-amber-400/60 transition">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <div class="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-black text-sm">
+                        <span x-text="agent.name.charAt(0)">S</span>
+                      </div>
+                      <div>
+                        <div class="font-bold text-white text-sm" x-text="agent.name"></div>
+                        <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                          <a :href="'tel:' + agent.phone" class="text-amber-400 hover:underline flex items-center gap-1 font-mono">
+                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            <span x-text="agent.phone"></span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-[10px] uppercase font-bold text-amber-400 tracking-wider">Unsettled Float</span>
+                      <div class="text-xl font-black text-amber-300">₹<span x-text="Number(agent.cash_in_custody).toLocaleString('en-IN')"></span></div>
+                    </div>
+                  </div>
+
+                  <div class="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] text-amber-300/90 font-medium">
+                      <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
+                      <span>Awaiting Sahayak Passcode Submission</span>
+                    </span>
+                    <button 
+                      @click="openSahayakDrilldown(agent)"
+                      class="text-[11px] font-bold text-amber-400 hover:text-amber-300 hover:underline">
+                      View Devotee Collections &rarr;
+                    </button>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
 
-          <!-- Empty State -->
-          <div x-show="handovers.length === 0" class="py-12 text-center text-xs text-slate-500">
-            <svg class="mx-auto h-8 w-8 text-slate-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <!-- If NO cash in transit -->
+          <div x-show="agents.filter(a => (Number(a.cash_in_custody) || 0) > 0).length === 0" class="py-8 text-center text-xs text-slate-400">
+            <svg class="mx-auto h-8 w-8 text-emerald-400 mb-2 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            No pending cash handovers in your territory. All field float is reconciled!
+            <div class="font-bold text-slate-200">All Field Float Reconciled</div>
+            <p class="mt-1 text-slate-500">No Sahayak currently has unsettled cash float. All collected payments have been verified into the hub safe.</p>
+          </div>
+        </div>
+
+        <!-- Section B: Pending Cash Handover Submissions (Passcode Verification) -->
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div>
+              <h3 class="text-base font-black text-white flex items-center gap-2">
+                <span>Passcode Verification & Handover Acceptance</span>
+                <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30" x-text="handovers.length + ' Awaiting Verification'"></span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">When the Sahayak physically delivers the cash to the hub desk, they tap "Handover to Distributor" on their app and generate a 6-digit Passcode. Enter the Passcode below to accept cash into the safe.</p>
+            </div>
           </div>
 
-          <!-- Handovers List (DIST-02) -->
-          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <!-- Empty State: Context-aware -->
+          <div x-show="handovers.length === 0" class="py-10 text-center text-xs">
+            <template x-if="metrics.cash_in_agents_custody > 0">
+              <div class="space-y-2">
+                <div class="mx-auto w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                  <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div class="font-bold text-amber-300 text-sm">₹<span x-text="metrics.cash_in_agents_custody.toLocaleString('en-IN')"></span> Float in Transit</div>
+                <p class="text-slate-400 max-w-md mx-auto">Field Sahayaks are holding collected EMI cash (see above). Once a Sahayak reaches the hub desk, taps <strong>"Handover to Distributor"</strong> on their phone, and generates their 6-digit Passcode, their handover ticket will appear here for verification.</p>
+              </div>
+            </template>
+            <template x-if="metrics.cash_in_agents_custody === 0">
+              <div class="space-y-2 text-slate-500">
+                <svg class="mx-auto h-8 w-8 text-emerald-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div class="font-bold text-slate-300">All Field Float Reconciled</div>
+                <p>No pending cash handover requests. Safe balance: ₹<span x-text="metrics.total_cash_in_custody.toLocaleString('en-IN')"></span></p>
+              </div>
+            </template>
+          </div>
+
+          <!-- Active Handovers List -->
+          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" x-show="handovers.length > 0">
             <template x-for="h in handovers" :key="h.id">
-              <div class="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-amber-950/30 via-slate-900 to-black p-5 shadow-lg">
-                <div class="flex items-start justify-between">
+              <div class="rounded-2xl border-2 border-amber-500 bg-gradient-to-br from-amber-950/40 via-slate-900 to-black p-5 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-amber-500 text-black font-black text-[9px] uppercase px-3 py-1 rounded-bl-xl tracking-wider">
+                  Ready For Passcode
+                </div>
+                <div class="flex items-start justify-between pr-16">
                   <div>
-                    <div class="text-[10px] uppercase font-bold text-amber-400">Agent Handover Request</div>
+                    <span class="text-[10px] uppercase font-bold text-amber-400">Sahayak Handover Submission</span>
                     <h4 class="text-base font-black text-white mt-0.5" x-text="h.agent_name"></h4>
                     <div class="text-xs text-slate-400" x-text="h.agent_phone"></div>
                   </div>
@@ -234,21 +371,22 @@
                   </div>
                 </div>
 
-                <!-- OTP Verification Input Box -->
+                <!-- Passcode Verification Box -->
                 <div class="mt-4 pt-4 border-t border-slate-800">
-                  <label class="block text-[11px] font-bold text-slate-300">Enter 4-Digit Agent OTP</label>
-                  <div class="mt-2 flex gap-2">
+                  <label class="block text-[11px] font-bold text-slate-200">Enter 6-Digit Sahayak Passcode</label>
+                  <p class="text-[10px] text-slate-400 mb-2">Ask the Sahayak to read the 6-digit verification passcode generated on their device screen.</p>
+                  <div class="flex gap-2">
                     <input 
                       type="text" 
-                      maxlength="4" 
+                      maxlength="6" 
                       x-model="otpInputs[h.id]"
-                      placeholder="••••" 
-                      class="w-28 rounded-xl border border-amber-500/40 bg-slate-950 px-3 py-2 text-center text-lg font-black tracking-widest text-amber-300 placeholder-slate-600 focus:border-amber-400 focus:outline-none">
+                      placeholder="••••••" 
+                      class="w-32 rounded-xl border border-amber-500/50 bg-slate-950 px-3 py-2 text-center text-lg font-black tracking-widest text-amber-300 placeholder-slate-600 focus:border-amber-400 focus:outline-none">
                     <button 
                       @click="verifyHandover(h.id)"
                       :disabled="loading"
                       class="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2 text-xs font-black text-black shadow-md shadow-amber-500/20 hover:brightness-110 active:scale-95 disabled:opacity-50">
-                      Verify & Confirm
+                      Verify Passcode & Accept Cash
                     </button>
                   </div>
                 </div>
@@ -257,56 +395,512 @@
           </div>
         </div>
 
+        <!-- Package Demand Breakdown -->
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl">
+          <h3 class="text-base font-black text-white">Territory Package Distribution</h3>
+          <p class="text-xs text-slate-400 mt-0.5">Active subscriber volume across published pilgrimage tour packages in your region.</p>
+
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <template x-for="pkg in packages" :key="pkg.package_id">
+              <div class="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                <div class="text-xs font-bold text-white line-clamp-1" x-text="pkg.title"></div>
+                <div class="mt-2 flex items-baseline justify-between">
+                  <div class="text-2xl font-black text-amber-400" x-text="pkg.subscribers_count"></div>
+                  <span class="text-[10px] text-slate-500 font-semibold">Devotees</span>
+                </div>
+                <div class="mt-2 flex justify-between text-[11px] text-slate-400 border-t border-slate-800/80 pt-2">
+                  <span>Price: ₹<span x-text="pkg.price ? pkg.price.toLocaleString('en-IN') : '0'"></span></span>
+                  <span class="text-emerald-400">₹<span x-text="pkg.monthly_emi ? pkg.monthly_emi.toLocaleString('en-IN') : '0'"></span>/mo</span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
       </div>
 
-      <!-- TAB 2: SUBORDINATE AGENT ROSTER (DIST-03) -->
+      <!-- ========================================== -->
+      <!-- TAB 2: FIELD SAHAYAKS (DIST-03 + REGISTRATION) -->
+      <!-- ========================================== -->
       <div x-show="activeTab === 'agents'" class="space-y-4">
         <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
-          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
             <div>
-              <h3 class="text-base font-black text-white">Subordinate Field Agents</h3>
-              <p class="text-xs text-slate-400 mt-0.5">Real-time performance tracking of village recovery agents assigned to your territory.</p>
+              <h3 class="text-base font-black text-white flex items-center gap-2">
+                <span>Field Sahayak Force</span>
+                <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30" x-text="agents.length + ' Registered'"></span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Manage door-to-door micro-collection Sahayaks assigned directly to your territory hub.</p>
             </div>
-            <span class="rounded-full bg-slate-800 px-3 py-1 text-xs font-bold text-slate-300" x-text="agents.length + ' Agents Registered'"></span>
+            
+            <div class="flex items-center gap-2.5">
+              <!-- Search -->
+              <input 
+                type="text" 
+                x-model="agentSearch" 
+                placeholder="Search Sahayak..." 
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+              
+              <!-- Register Sahayak Button -->
+              <button 
+                @click="openCreateSahayakModal()" 
+                class="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 transition">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>+ Register Sahayak</span>
+              </button>
+            </div>
           </div>
 
-          <!-- Table -->
+          <!-- Sahayak Table -->
           <div class="mt-4 overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="border-b border-slate-800 bg-slate-950/50 text-slate-400 uppercase text-[10px] tracking-wider">
                 <tr>
-                  <th class="py-3 px-4 font-bold">Agent Name</th>
-                  <th class="py-3 px-4 font-bold">Contact</th>
-                  <th class="py-3 px-4 font-bold text-right">Today's Collections</th>
-                  <th class="py-3 px-4 font-bold text-right">Cash in Hand (Float)</th>
-                  <th class="py-3 px-4 font-bold text-center">Subscribers</th>
-                  <th class="py-3 px-4 font-bold text-center">Action</th>
+                  <th class="py-3 px-4 font-bold">Sahayak Name & Contact</th>
+                  <th class="py-3 px-4 font-bold text-center">Status</th>
+                  <th class="py-3 px-4 font-bold text-center">Devotees</th>
+                  <th class="py-3 px-4 font-bold text-right">Cash Float (Transit)</th>
+                  <th class="py-3 px-4 font-bold text-right">Total Recovered</th>
+                  <th class="py-3 px-4 font-bold text-right">Actions</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-800/60">
-                <template x-for="agent in agents" :key="agent.id">
+                <template x-for="agent in filteredAgents" :key="agent.id">
                   <tr class="hover:bg-slate-800/30 transition">
-                    <td class="py-3 px-4 font-bold text-white" x-text="agent.name"></td>
-                    <td class="py-3 px-4 text-slate-400 font-mono" x-text="agent.phone"></td>
-                    <td class="py-3 px-4 text-right font-bold text-emerald-400">₹<span x-text="agent.collected_today.toLocaleString('en-IN')"></span></td>
-                    <td class="py-3 px-4 text-right font-bold text-amber-300">₹<span x-text="agent.cash_in_custody.toLocaleString('en-IN')"></span></td>
-                    <td class="py-3 px-4 text-center font-semibold text-slate-300" x-text="agent.subscriptions_count"></td>
+                    <td class="py-3 px-4">
+                      <div class="font-bold text-white flex items-center gap-2">
+                        <span x-text="agent.name"></span>
+                      </div>
+                      <div class="text-[11px] text-slate-400 font-mono" x-text="agent.phone + ' • ' + agent.email"></div>
+                    </td>
+
+                    <!-- Status -->
                     <td class="py-3 px-4 text-center">
-                      <a 
-                        :href="'tel:' + agent.phone"
-                        class="rounded-lg border border-slate-700 bg-slate-800 px-2.5 py-1 text-[11px] font-bold text-slate-200 hover:bg-slate-700">
-                        Call Agent
-                      </a>
+                      <span 
+                        class="rounded-full px-2.5 py-0.5 text-[10px] font-bold border"
+                        :class="agent.is_active ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40'"
+                        x-text="agent.is_active ? 'Active' : 'Deactivated'">
+                      </span>
+                    </td>
+
+                    <!-- Subscriptions -->
+                    <td class="py-3 px-4 text-center font-bold text-slate-200" x-text="agent.subscriptions_count"></td>
+
+                    <!-- Cash in Transit Float -->
+                    <td class="py-3 px-4 text-right font-bold text-amber-300">
+                      ₹<span x-text="agent.cash_in_custody.toLocaleString('en-IN')"></span>
+                    </td>
+
+                    <!-- Total Recovered -->
+                    <td class="py-3 px-4 text-right font-bold text-emerald-400">
+                      ₹<span x-text="agent.total_collected.toLocaleString('en-IN')"></span>
+                    </td>
+
+                    <!-- Actions -->
+                    <td class="py-3 px-4 text-right">
+                      <div class="flex items-center justify-end gap-1.5">
+                        <!-- Drilldown Analytics -->
+                        <button 
+                          @click="openSahayakDrilldown(agent)" 
+                          title="View Sahayak Performance & Devotee Roster"
+                          class="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] font-bold text-amber-300 hover:bg-slate-700">
+                          Analytics
+                        </button>
+
+                        <!-- Edit -->
+                        <button 
+                          @click="openEditSahayakModal(agent)" 
+                          title="Edit Sahayak Profile"
+                          class="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] font-bold text-slate-300 hover:bg-slate-700">
+                          Edit
+                        </button>
+
+                        <!-- Reset Password -->
+                        <button 
+                          @click="openResetPasswordModal(agent)" 
+                          title="Reset Password"
+                          class="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] font-bold text-slate-300 hover:bg-slate-700">
+                          Password
+                        </button>
+
+                        <!-- Toggle Active/Inactive -->
+                        <button 
+                          @click="toggleSahayakActive(agent)" 
+                          :title="agent.is_active ? 'Deactivate account' : 'Reactivate account'"
+                          class="rounded-lg border px-2 py-1 text-[11px] font-bold transition"
+                          :class="agent.is_active ? 'border-red-500/30 text-red-400 hover:bg-red-950/40' : 'border-emerald-500/30 text-emerald-400 hover:bg-emerald-950/40'">
+                          <span x-text="agent.is_active ? 'Block' : 'Unblock'"></span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </template>
+
+                <tr x-show="filteredAgents.length === 0">
+                  <td colspan="6" class="py-8 text-center text-slate-500 text-xs">
+                    No field sahayaks found matching your query.
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 3: DELINQUENT ACCOUNTS WATCHLIST (DIST-04) -->
+      <!-- ========================================== -->
+      <!-- TAB 3: DEVOTEE BOOKINGS LEDGER -->
+      <!-- ========================================== -->
+      <div x-show="activeTab === 'devotees'" class="space-y-4">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div>
+              <h3 class="text-base font-black text-white flex items-center gap-2">
+                <span>Territory Devotee Ledger</span>
+                <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30" x-text="devotees.length + ' Enrolled'"></span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Real-time status of all pilgrim bookings, EMI payment progress, and travel pass eligibility.</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap items-center gap-2">
+              <select 
+                x-model="devoteeFilter" 
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white focus:border-amber-400 focus:outline-none">
+                <option value="all">All Devotees</option>
+                <option value="unlocked">Travel Unlocked (Eligible)</option>
+                <option value="progress">Saving in Progress</option>
+                <option value="overdue">Overdue / Delinquent</option>
+              </select>
+
+              <input 
+                type="text" 
+                x-model="devoteeSearch" 
+                placeholder="Search name, phone, code..." 
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none w-48">
+            </div>
+          </div>
+
+          <!-- Devotees Table -->
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="border-b border-slate-800 bg-slate-950/50 text-slate-400 uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="py-3 px-4 font-bold">Booking Code</th>
+                  <th class="py-3 px-4 font-bold">Devotee Name & Contact</th>
+                  <th class="py-3 px-4 font-bold">Tour Package</th>
+                  <th class="py-3 px-4 font-bold text-center">EMI Progress</th>
+                  <th class="py-3 px-4 font-bold text-right">Paid / Total</th>
+                  <th class="py-3 px-4 font-bold text-center">Travel Status</th>
+                  <th class="py-3 px-4 font-bold">Assigned Sahayak</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <template x-for="d in filteredDevotees" :key="d.id">
+                  <tr class="hover:bg-slate-800/30 transition">
+                    <td class="py-3 px-4 font-mono font-bold text-amber-300" x-text="d.booking_code"></td>
+                    <td class="py-3 px-4">
+                      <div class="font-bold text-white" x-text="d.customer_name"></div>
+                      <div class="text-[11px] text-slate-400 font-mono" x-text="d.customer_phone"></div>
+                    </td>
+                    <td class="py-3 px-4 text-slate-300 font-medium max-w-xs truncate" x-text="d.package_title"></td>
+                    
+                    <!-- Progress Bar -->
+                    <td class="py-3 px-4 text-center">
+                      <div class="flex items-center justify-center gap-2">
+                        <span class="font-bold text-white font-mono" x-text="d.paid_emis_count + '/' + d.total_emis"></span>
+                        <div class="w-16 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                          <div class="bg-amber-400 h-1.5 rounded-full" :style="'width: ' + Math.min(100, Math.round((d.paid_emis_count / d.total_emis) * 100)) + '%'"></div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Paid / Total Amount -->
+                    <td class="py-3 px-4 text-right">
+                      <div class="font-bold text-emerald-400">₹<span x-text="d.amount_paid.toLocaleString('en-IN')"></span></div>
+                      <div class="text-[10px] text-slate-500 font-mono">of ₹<span x-text="d.total_amount.toLocaleString('en-IN')"></span></div>
+                    </td>
+
+                    <!-- Travel Status Badge -->
+                    <td class="py-3 px-4 text-center">
+                      <span 
+                        class="rounded-full px-2.5 py-0.5 text-[10px] font-bold border inline-flex items-center gap-1"
+                        :class="d.travel_status === 'unlocked' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-800 text-slate-400 border-slate-700'">
+                        <span x-show="d.travel_status === 'unlocked'">✨ Travel Ready</span>
+                        <span x-show="d.travel_status !== 'unlocked'">Saving (Locked)</span>
+                      </span>
+                    </td>
+
+                    <!-- Assigned Sahayak -->
+                    <td class="py-3 px-4">
+                      <div class="text-white font-medium truncate max-w-xs" x-text="d.agent_name || 'Unassigned'"></div>
+                      <div class="text-[10px] text-slate-400 font-mono" x-text="d.agent_phone"></div>
+                    </td>
+                  </tr>
+                </template>
+
+                <tr x-show="filteredDevotees.length === 0">
+                  <td colspan="7" class="py-8 text-center text-slate-500 text-xs">
+                    No devotees found matching the current search / filter criteria.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB: ALL TRANSACTIONS & COLLECTIONS LEDGER -->
+      <!-- ========================================== -->
+      <div x-show="activeTab === 'transactions'" class="space-y-4">
+        
+        <!-- Summary Cards Header -->
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 no-print">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+            <div class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Total Transactions</div>
+            <div class="mt-1 text-2xl font-black text-white" x-text="transactionSummary.total_transactions || transactions.length">0</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Verified Collections</div>
+          </div>
+          <div class="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-4">
+            <div class="text-[9px] uppercase font-bold text-emerald-400 tracking-wider">Total Realized Inflow</div>
+            <div class="mt-1 text-2xl font-black text-emerald-300">₹<span x-text="(transactionSummary.total_collected || 0).toLocaleString('en-IN')">0</span></div>
+            <div class="text-[10px] text-emerald-400/80 mt-0.5">Territory EMI Collections</div>
+          </div>
+          <div class="rounded-2xl border border-emerald-500/40 bg-emerald-950/30 p-4">
+            <div class="text-[9px] uppercase font-bold text-emerald-400 tracking-wider">Reconciled in Safe</div>
+            <div class="mt-1 text-2xl font-black text-emerald-400">₹<span x-text="(transactionSummary.total_in_safe || 0).toLocaleString('en-IN')">0</span></div>
+            <div class="text-[10px] text-emerald-400/80 mt-0.5">Confirmed at Hub Desk</div>
+          </div>
+          <div class="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-4">
+            <div class="text-[9px] uppercase font-bold text-amber-400 tracking-wider">In Field Transit</div>
+            <div class="mt-1 text-2xl font-black text-amber-300">₹<span x-text="(transactionSummary.total_in_transit || 0).toLocaleString('en-IN')">0</span></div>
+            <div class="text-[10px] text-amber-400/80 mt-0.5">With Field Sahayaks</div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+          <!-- Title & Controls Header -->
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div>
+              <h3 class="text-base font-black text-white flex items-center gap-2">
+                <span>Territory Collection Transactions Ledger</span>
+                <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30" x-text="filteredTransactions.length + ' Shown'"></span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Granular record of every devotee EMI collection payment received across all route Sahayaks in your territory.</p>
+            </div>
+
+            <!-- Filters & Search Toolbar -->
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Search -->
+              <input 
+                type="text" 
+                x-model="txSearch" 
+                placeholder="Search devotee, slip ID, phone, Sahayak..." 
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none w-52 sm:w-64">
+
+              <!-- Custody Filter -->
+              <select 
+                x-model="txCustodyFilter" 
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white focus:border-amber-400 focus:outline-none">
+                <option value="all">All Custody Status</option>
+                <option value="distributor_confirmed">✓ In Hub Safe (Reconciled)</option>
+                <option value="agent_custody">⚠️ In Transit (With Sahayak)</option>
+              </select>
+
+              <!-- Payment Mode Filter -->
+              <select 
+                x-model="txModeFilter" 
+                class="rounded-xl border border-slate-700 bg-slate-950 px-3 py-1.5 text-xs text-white focus:border-amber-400 focus:outline-none">
+                <option value="all">All Modes</option>
+                <option value="cash">Cash</option>
+                <option value="upi">UPI</option>
+              </select>
+
+              <!-- Refresh Button -->
+              <button 
+                @click="fetchTransactions()" 
+                title="Refresh Transactions Ledger"
+                class="rounded-xl border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white transition">
+                ↻
+              </button>
+            </div>
+          </div>
+
+          <!-- Transactions Table -->
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="border-b border-slate-800 bg-slate-950/50 text-slate-400 uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="py-3 px-4 font-bold">Receipt / Slip ID</th>
+                  <th class="py-3 px-4 font-bold">Collection Date & Time</th>
+                  <th class="py-3 px-4 font-bold">Devotee & Booking</th>
+                  <th class="py-3 px-4 font-bold">Package & Installment</th>
+                  <th class="py-3 px-4 font-bold text-right">Amount</th>
+                  <th class="py-3 px-4 font-bold text-center">Payment Mode</th>
+                  <th class="py-3 px-4 font-bold">Collecting Sahayak</th>
+                  <th class="py-3 px-4 font-bold text-center">Custody Status</th>
+                  <th class="py-3 px-4 font-bold text-center">Receipt</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <template x-for="tx in filteredTransactions" :key="tx.id">
+                  <tr class="hover:bg-slate-800/40 transition">
+                    <!-- Slip ID -->
+                    <td class="py-3 px-4">
+                      <div class="font-mono font-bold text-amber-300 text-xs" x-text="tx.receipt_slip_id"></div>
+                      <div class="text-[10px] text-slate-500 font-mono" x-text="tx.id.substring(0, 10)"></div>
+                    </td>
+
+                    <!-- Date & Time -->
+                    <td class="py-3 px-4 text-slate-300 whitespace-nowrap">
+                      <div class="font-medium" x-text="new Date(tx.collected_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })"></div>
+                      <div class="text-[10px] text-slate-500" x-text="new Date(tx.collected_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })"></div>
+                    </td>
+
+                    <!-- Devotee & Booking -->
+                    <td class="py-3 px-4">
+                      <div class="font-bold text-white" x-text="tx.customer_name"></div>
+                      <div class="text-[11px] text-slate-400 font-mono" x-text="tx.booking_code + ' • ' + (tx.customer_phone || '')"></div>
+                    </td>
+
+                    <!-- Package & Installment -->
+                    <td class="py-3 px-4">
+                      <div class="font-semibold text-slate-200 line-clamp-1" x-text="tx.package_title"></div>
+                      <div class="text-[10px] text-amber-400 font-bold uppercase" x-text="'EMI #' + tx.installment_no"></div>
+                    </td>
+
+                    <!-- Amount -->
+                    <td class="py-3 px-4 text-right font-black text-sm text-emerald-400">
+                      ₹<span x-text="tx.amount.toLocaleString('en-IN')"></span>
+                    </td>
+
+                    <!-- Payment Mode -->
+                    <td class="py-3 px-4 text-center">
+                      <span 
+                        class="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase border"
+                        :class="tx.payment_mode === 'cash' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' : 'bg-blue-500/10 text-blue-300 border-blue-500/30'"
+                        x-text="tx.payment_mode || 'Cash'">
+                      </span>
+                    </td>
+
+                    <!-- Collecting Sahayak -->
+                    <td class="py-3 px-4">
+                      <div class="font-medium text-slate-200" x-text="tx.agent_name"></div>
+                      <div class="text-[10px] text-slate-500 font-mono" x-text="tx.agent_phone"></div>
+                    </td>
+
+                    <!-- Custody Status -->
+                    <td class="py-3 px-4 text-center whitespace-nowrap">
+                      <span 
+                        class="rounded-full px-2.5 py-0.5 text-[10px] font-bold border inline-flex items-center gap-1"
+                        :class="tx.handover_status === 'distributor_confirmed' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'">
+                        <span class="h-1.5 w-1.5 rounded-full" :class="tx.handover_status === 'distributor_confirmed' ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'"></span>
+                        <span x-text="tx.handover_status === 'distributor_confirmed' ? 'In Safe' : 'In Transit'"></span>
+                      </span>
+                    </td>
+
+                    <!-- Receipt Slip Modal Action -->
+                    <td class="py-3 px-4 text-center">
+                      <button 
+                        @click="openTransactionModal(tx)" 
+                        title="View Full Thermal Receipt Slip"
+                        class="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1 text-[11px] font-bold text-amber-300 hover:bg-slate-700 transition">
+                        View Slip
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+
+                <tr x-show="filteredTransactions.length === 0">
+                  <td colspan="9" class="py-12 text-center text-slate-500 text-xs">
+                    No collection transactions found matching your criteria.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: SETTLEMENT HISTORY (VERIFIED HANDOVERS) -->
+      <!-- ========================================== -->
+      <div x-show="activeTab === 'settlements'" class="space-y-4">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
+          <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+            <div>
+              <h3 class="text-base font-black text-white flex items-center gap-2">
+                <span>Verified Handover Settlement Ledger</span>
+                <span class="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300 border border-emerald-500/30" x-text="handoverHistory.length + ' Reconciled'"></span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Audit log of physical cash handovers successfully verified via Sahayak Passcode and accepted into hub custody.</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+              <button 
+                @click="activeTab = 'transactions'" 
+                class="rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition">
+                View All Transactions &rarr;
+              </button>
+              <div class="text-right">
+                <div class="text-xs font-bold text-slate-400 uppercase">Total Settled</div>
+                <div class="text-lg font-black text-emerald-400">₹<span x-text="metrics.total_settled_amount.toLocaleString('en-IN')">0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- History Table -->
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="border-b border-slate-800 bg-slate-950/50 text-slate-400 uppercase text-[10px] tracking-wider">
+                <tr>
+                  <th class="py-3 px-4 font-bold">Settlement ID</th>
+                  <th class="py-3 px-4 font-bold">Verified Date & Time</th>
+                  <th class="py-3 px-4 font-bold">Sahayak Name & Contact</th>
+                  <th class="py-3 px-4 font-bold text-right">Amount Settled</th>
+                  <th class="py-3 px-4 font-bold text-center">EMIs Covered</th>
+                  <th class="py-3 px-4 font-bold text-center">OTP Ref</th>
+                  <th class="py-3 px-4 font-bold text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <template x-for="item in handoverHistory" :key="item.id">
+                  <tr class="hover:bg-slate-800/30 transition">
+                    <td class="py-3 px-4 font-mono font-bold text-slate-300" x-text="item.id"></td>
+                    <td class="py-3 px-4 text-slate-300" x-text="item.verified_at ? new Date(item.verified_at).toLocaleString('en-IN') : new Date(item.created).toLocaleString('en-IN')"></td>
+                    <td class="py-3 px-4">
+                      <div class="font-bold text-white" x-text="item.agent_name"></div>
+                      <div class="text-[11px] text-slate-400 font-mono" x-text="item.agent_phone"></div>
+                    </td>
+                    <td class="py-3 px-4 text-right font-black text-emerald-400 text-sm">
+                      ₹<span x-text="item.total_amount.toLocaleString('en-IN')"></span>
+                    </td>
+                    <td class="py-3 px-4 text-center font-bold text-slate-300" x-text="item.installments_count"></td>
+                    <td class="py-3 px-4 text-center font-mono font-bold text-amber-300" x-text="item.otp_code"></td>
+                    <td class="py-3 px-4 text-center">
+                      <span class="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-bold">
+                        ✓ Settled
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+
+                <tr x-show="handoverHistory.length === 0">
+                  <td colspan="7" class="py-8 text-center text-slate-500 text-xs">
+                    No verified settlements recorded yet.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: DELINQUENT ACCOUNTS WATCHLIST (DIST-04) -->
+      <!-- ========================================== -->
       <div x-show="activeTab === 'delinquents'" class="space-y-4">
         <div class="rounded-3xl border border-rose-500/30 bg-slate-900/80 p-6 shadow-xl">
           <div class="flex items-center justify-between pb-4 border-b border-rose-500/20">
@@ -368,6 +962,463 @@
       </div>
 
     </main>
+
+    <!-- ======================================================== -->
+    <!-- PRINTABLE EOD TERRITORY SETTLEMENT SHEET (AUDIT REPORT) -->
+    <!-- ======================================================== -->
+    <div class="print-only print-sheet p-8 font-sans bg-white text-black">
+      <div style="border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 16px;">
+        <h1 style="font-size: 20px; font-weight: 900; margin: 0;">ADITYA TOUR & TRAVELS • BHARATYATRA</h1>
+        <h2 style="font-size: 14px; font-weight: bold; margin: 4px 0 0 0; color: #444;">EOD Territory Cash Settlement & Field Audit Sheet</h2>
+        <div style="font-size: 11px; margin-top: 6px;">
+          <span><strong>Territory Hub:</strong> <span x-text="distributor ? distributor.name : ''"></span></span> | 
+          <span><strong>Hub Contact:</strong> <span x-text="distributor ? distributor.phone : ''"></span></span> | 
+          <span><strong>Generated:</strong> <span x-text="new Date().toLocaleString('en-IN')"></span></span>
+        </div>
+      </div>
+
+      <!-- Financial Reconciliation Summary -->
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
+        <thead>
+          <tr style="background: #f0f0f0;">
+            <th style="border: 1px solid #000; padding: 6px; text-align: left;">Cash in Custody (Safe)</th>
+            <th style="border: 1px solid #000; padding: 6px; text-align: left;">Cash in Transit (Float)</th>
+            <th style="border: 1px solid #000; padding: 6px; text-align: left;">Today's Inflow</th>
+            <th style="border: 1px solid #000; padding: 6px; text-align: left;">Lifetime Settled</th>
+            <th style="border: 1px solid #000; padding: 6px; text-align: left;">Active Devotees</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">₹<span x-text="metrics.total_cash_in_custody.toLocaleString('en-IN')">0</span></td>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">₹<span x-text="metrics.cash_in_agents_custody.toLocaleString('en-IN')">0</span></td>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">₹<span x-text="metrics.collected_today.toLocaleString('en-IN')">0</span></td>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">₹<span x-text="metrics.total_settled_amount.toLocaleString('en-IN')">0</span></td>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;" x-text="metrics.devotees_count">0</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Sahayaks Field Float Table -->
+      <h3 style="font-size: 13px; font-weight: bold; margin-bottom: 6px;">Field Sahayak Float Reconciliation</h3>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 11px;">
+        <thead>
+          <tr style="background: #f0f0f0;">
+            <th style="border: 1px solid #000; padding: 5px; text-align: left;">Sahayak Name</th>
+            <th style="border: 1px solid #000; padding: 5px; text-align: left;">Mobile</th>
+            <th style="border: 1px solid #000; padding: 5px; text-align: center;">Devotees Assigned</th>
+            <th style="border: 1px solid #000; padding: 5px; text-align: right;">Cash Float (In Hand)</th>
+            <th style="border: 1px solid #000; padding: 5px; text-align: right;">Total Recovered</th>
+            <th style="border: 1px solid #000; padding: 5px; text-align: center;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="a in agents" :key="a.id">
+            <tr>
+              <td style="border: 1px solid #000; padding: 5px;" x-text="a.name"></td>
+              <td style="border: 1px solid #000; padding: 5px;" x-text="a.phone"></td>
+              <td style="border: 1px solid #000; padding: 5px; text-align: center;" x-text="a.subscriptions_count"></td>
+              <td style="border: 1px solid #000; padding: 5px; text-align: right;">₹<span x-text="a.cash_in_custody.toLocaleString('en-IN')"></span></td>
+              <td style="border: 1px solid #000; padding: 5px; text-align: right;">₹<span x-text="a.total_collected.toLocaleString('en-IN')"></span></td>
+              <td style="border: 1px solid #000; padding: 5px; text-align: center;" x-text="a.is_active ? 'ACTIVE' : 'BLOCKED'"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+
+      <!-- Signatures Footer -->
+      <div style="margin-top: 50px; display: flex; justify-content: space-between; font-size: 11px;">
+        <div style="border-top: 1px solid #000; width: 220px; text-align: center; padding-top: 4px;">
+          <strong>Distributor Hub Custodian Signature</strong><br>
+          <span x-text="distributor ? distributor.name : ''"></span>
+        </div>
+        <div style="border-top: 1px solid #000; width: 220px; text-align: center; padding-top: 4px;">
+          <strong>Regional Operations Head</strong><br>
+          Aditya Tour and Travels
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 1: REGISTER / EDIT SAHAYAK -->
+  <!-- ========================================== -->
+  <div 
+    x-show="showSahayakModal" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm no-print">
+    <div 
+      @click.away="showSahayakModal = false" 
+      class="w-full max-w-md rounded-3xl border border-amber-500/40 bg-slate-900 p-6 shadow-2xl space-y-4">
+      
+      <div>
+        <h3 class="text-base font-black text-white" x-text="isEditingSahayak ? 'Edit Field Sahayak' : 'Register New Field Sahayak'"></h3>
+        <p class="text-xs text-slate-400 mt-0.5">
+          <span x-show="!isEditingSahayak">Assigns field collection credentials directly under your territory hub.</span>
+          <span x-show="isEditingSahayak">Update profile contact and operational status for this Sahayak.</span>
+        </p>
+      </div>
+
+      <!-- Error Box -->
+      <div x-show="sahayakFormError" x-cloak class="rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-300 font-medium" x-text="sahayakFormError"></div>
+
+      <form @submit.prevent="saveSahayak()" class="space-y-3.5">
+        <!-- Name -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-300 uppercase">Full Name</label>
+          <input 
+            type="text" 
+            x-model="sahayakForm.name" 
+            required 
+            placeholder="e.g. Ramesh Nayak"
+            class="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <label class="block text-[11px] font-bold text-slate-300 uppercase">Mobile Number (10 Digits)</label>
+          <input 
+            type="tel" 
+            x-model="sahayakForm.phone" 
+            required 
+            placeholder="9876543210"
+            class="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+        </div>
+
+        <!-- Email (Create only) -->
+        <div x-show="!isEditingSahayak">
+          <label class="block text-[11px] font-bold text-slate-300 uppercase">Login Email</label>
+          <input 
+            type="email" 
+            x-model="sahayakForm.email" 
+            :required="!isEditingSahayak"
+            placeholder="sahayak@bharatyatra.local"
+            class="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+        </div>
+
+        <!-- Initial Password (Create only) -->
+        <div x-show="!isEditingSahayak">
+          <label class="block text-[11px] font-bold text-slate-300 uppercase">Initial Password (min 8 chars)</label>
+          <input 
+            type="password" 
+            x-model="sahayakForm.password" 
+            :required="!isEditingSahayak"
+            placeholder="••••••••"
+            class="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+        </div>
+
+        <!-- Active Toggle (Edit only) -->
+        <div x-show="isEditingSahayak" class="flex items-center gap-2 pt-1">
+          <input 
+            type="checkbox" 
+            id="sahayakActiveCheck" 
+            x-model="sahayakForm.is_active"
+            class="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-400">
+          <label for="sahayakActiveCheck" class="text-xs font-bold text-slate-300">Active (Authorized to collect EMIs)</label>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+          <button 
+            type="button" 
+            @click="showSahayakModal = false" 
+            class="rounded-xl border border-slate-700 px-4 py-2 text-xs font-bold text-slate-400 hover:text-white">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            :disabled="loading"
+            class="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-2 text-xs font-black text-black hover:brightness-110 active:scale-95 disabled:opacity-50">
+            <span x-text="isEditingSahayak ? 'Save Changes' : 'Register Sahayak'"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 2: RESET SAHAYAK PASSWORD -->
+  <!-- ========================================== -->
+  <div 
+    x-show="showPasswordModal" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm no-print">
+    <div 
+      @click.away="showPasswordModal = false" 
+      class="w-full max-w-sm rounded-3xl border border-amber-500/40 bg-slate-900 p-6 shadow-2xl space-y-4">
+      
+      <div>
+        <h3 class="text-base font-black text-white">Reset Sahayak Password</h3>
+        <p class="text-xs text-slate-400 mt-0.5">
+          Set a new login password for <span class="text-amber-300 font-bold" x-text="passwordTarget ? passwordTarget.name : ''"></span>.
+        </p>
+      </div>
+
+      <div x-show="passwordError" x-cloak class="rounded-xl border border-red-500/40 bg-red-950/40 p-3 text-xs text-red-300 font-medium" x-text="passwordError"></div>
+
+      <form @submit.prevent="savePassword()" class="space-y-3.5">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-300 uppercase">New Password (min 8 chars)</label>
+          <input 
+            type="password" 
+            x-model="newPassword" 
+            required 
+            placeholder="••••••••"
+            class="mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+          <button 
+            type="button" 
+            @click="showPasswordModal = false" 
+            class="rounded-xl border border-slate-700 px-4 py-2 text-xs font-bold text-slate-400 hover:text-white">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            :disabled="loading"
+            class="rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-5 py-2 text-xs font-black text-black hover:brightness-110 active:scale-95 disabled:opacity-50">
+            Update Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 3: SAHAYAK ANALYTICS DRILLDOWN -->
+  <!-- ========================================== -->
+  <div 
+    x-show="showDrilldownModal" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm no-print">
+    <div 
+      @click.away="showDrilldownModal = false" 
+      class="w-full max-w-2xl rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 class="text-base font-black text-white flex items-center gap-2">
+            <span x-text="drilldownData ? drilldownData.sahayak.name : 'Loading Sahayak...'"></span>
+            <span 
+              x-show="drilldownData" 
+              class="rounded-full px-2 py-0.5 text-[10px] font-bold border"
+              :class="drilldownData && drilldownData.sahayak.is_active ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-red-500/20 text-red-300 border-red-500/40'"
+              x-text="drilldownData && drilldownData.sahayak.is_active ? 'Active' : 'Blocked'">
+            </span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5" x-text="drilldownData ? drilldownData.sahayak.phone + ' • ' + drilldownData.sahayak.email : ''"></p>
+        </div>
+
+        <button 
+          @click="showDrilldownModal = false" 
+          class="rounded-xl border border-slate-700 p-1.5 text-slate-400 hover:text-white">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div x-show="drilldownLoading" class="py-12 text-center text-xs text-slate-400">
+        <svg class="mx-auto h-6 w-6 animate-spin text-amber-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Fetching Sahayak performance metrics...
+      </div>
+
+      <!-- Content -->
+      <div x-show="!drilldownLoading && drilldownData" class="space-y-4">
+        <!-- 3-KPI Row -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="rounded-2xl border border-amber-500/30 bg-amber-950/20 p-3 text-center">
+            <div class="text-[10px] text-amber-400 font-bold uppercase">Cash Float in Hand</div>
+            <div class="text-xl font-black text-amber-200 mt-1">₹<span x-text="drilldownData ? drilldownData.summary.cash_float.toLocaleString('en-IN') : 0"></span></div>
+          </div>
+
+          <div class="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-3 text-center">
+            <div class="text-[10px] text-emerald-400 font-bold uppercase">Total Lifetime Recovered</div>
+            <div class="text-xl font-black text-emerald-300 mt-1">₹<span x-text="drilldownData ? drilldownData.summary.total_collected.toLocaleString('en-IN') : 0"></span></div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-center">
+            <div class="text-[10px] text-slate-400 font-bold uppercase">Devotees Assigned</div>
+            <div class="text-xl font-black text-white mt-1" x-text="drilldownData ? drilldownData.devotees.length : 0"></div>
+          </div>
+        </div>
+
+        <!-- Devotees List for this Sahayak -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+          <div class="text-xs font-bold text-slate-300 mb-2">Assigned Devotees & Progress</div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="border-b border-slate-800 text-slate-500 uppercase text-[9px]">
+                <tr>
+                  <th class="py-2 px-3">Booking Code</th>
+                  <th class="py-2 px-3">Devotee Name</th>
+                  <th class="py-2 px-3 text-center">EMIs Paid</th>
+                  <th class="py-2 px-3 text-right">Amount Paid</th>
+                  <th class="py-2 px-3 text-center">Travel Pass</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/40 text-[11px]">
+                <template x-for="dev in (drilldownData ? drilldownData.devotees : [])" :key="dev.id">
+                  <tr>
+                    <td class="py-2 px-3 font-mono font-bold text-amber-300" x-text="dev.booking_code"></td>
+                    <td class="py-2 px-3">
+                      <div class="font-bold text-white" x-text="dev.customer_name"></div>
+                      <div class="text-[10px] text-slate-500" x-text="dev.customer_phone"></div>
+                    </td>
+                    <td class="py-2 px-3 text-center font-mono font-bold text-slate-300" x-text="dev.paid_emis_count + '/' + dev.total_emis"></td>
+                    <td class="py-2 px-3 text-right font-bold text-emerald-400">₹<span x-text="dev.amount_paid.toLocaleString('en-IN')"></span></td>
+                    <td class="py-2 px-3 text-center">
+                      <span 
+                        class="rounded-full px-2 py-0.5 text-[9px] font-bold border"
+                        :class="dev.travel_status === 'unlocked' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-800 text-slate-400 border-slate-700'"
+                        x-text="dev.travel_status === 'unlocked' ? 'Eligible' : 'Locked'">
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+                <tr x-show="drilldownData && drilldownData.devotees.length === 0">
+                  <td colspan="5" class="py-4 text-center text-slate-500 text-xs">No devotees assigned yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 4: TRANSACTION & THERMAL RECEIPT SLIP -->
+  <!-- ========================================== -->
+  <div 
+    x-show="showTxModal" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm no-print">
+    <div 
+      @click.away="showTxModal = false" 
+      class="w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900 p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+            <h3 class="text-base font-black text-white">Collection Receipt & Audit Slip</h3>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Verified Devotee EMI Payment Transaction</p>
+        </div>
+
+        <button 
+          @click="showTxModal = false" 
+          class="rounded-xl border border-slate-700 p-1.5 text-slate-400 hover:text-white transition">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Thermal Receipt Style Card -->
+      <template x-if="selectedTx">
+        <div class="rounded-2xl border border-amber-500/30 bg-slate-950 p-5 font-mono text-xs space-y-4 relative overflow-hidden">
+          <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <!-- Header & Slip Number -->
+          <div class="text-center pb-3 border-b border-dashed border-slate-800">
+            <div class="font-sans font-black text-amber-400 text-sm tracking-wider uppercase">BHARATYATRA PILGRIMAGE</div>
+            <div class="text-[10px] text-slate-400 font-sans">Territory Micro-Collection System</div>
+            <div class="mt-2 text-xs font-bold text-white bg-slate-900 rounded-lg py-1 px-3 inline-block border border-slate-800" x-text="selectedTx.receipt_slip_id"></div>
+            <div class="text-[10px] text-slate-500 mt-1" x-text="new Date(selectedTx.collected_at).toLocaleString('en-IN')"></div>
+          </div>
+
+          <!-- Custody & Status Banner -->
+          <div class="flex items-center justify-between bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+            <div>
+              <div class="text-[9px] uppercase font-sans text-slate-400 font-bold">Custody Reconciled Status</div>
+              <div class="text-xs font-sans font-bold mt-0.5 flex items-center gap-1.5"
+                :class="selectedTx.handover_status === 'distributor_confirmed' ? 'text-emerald-300' : 'text-amber-300'">
+                <span class="h-2 w-2 rounded-full" :class="selectedTx.handover_status === 'distributor_confirmed' ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'"></span>
+                <span x-text="selectedTx.handover_status === 'distributor_confirmed' ? 'Reconciled in Hub Safe' : 'In Field Sahayak Custody'"></span>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-[9px] uppercase font-sans text-slate-400 font-bold">Payment Mode</div>
+              <span class="rounded px-2 py-0.5 text-[10px] font-sans font-black uppercase"
+                :class="selectedTx.payment_mode === 'cash' ? 'bg-amber-500/20 text-amber-300' : 'bg-blue-500/20 text-blue-300'"
+                x-text="selectedTx.payment_mode || 'Cash'"></span>
+            </div>
+          </div>
+
+          <!-- Devotee & Tour Details -->
+          <div class="space-y-1.5 text-[11px] text-slate-300 pb-3 border-b border-dashed border-slate-800 font-sans">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Devotee:</span>
+              <span class="font-bold text-white" x-text="selectedTx.customer_name"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Phone:</span>
+              <span class="font-mono text-slate-200" x-text="selectedTx.customer_phone"></span>
+            </div>
+            <div class="flex justify-between" x-show="selectedTx.customer_address">
+              <span class="text-slate-400">Address:</span>
+              <span class="text-slate-300 text-right text-[10px]" x-text="selectedTx.customer_address"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Booking Code:</span>
+              <span class="font-mono font-bold text-amber-300" x-text="selectedTx.booking_code"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Tour Package:</span>
+              <span class="font-bold text-slate-100 text-right" x-text="selectedTx.package_title"></span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Installment:</span>
+              <span class="font-bold text-amber-400" x-text="'EMI #' + selectedTx.installment_no"></span>
+            </div>
+          </div>
+
+          <!-- Amount Summary -->
+          <div class="flex items-center justify-between py-2 border-b border-dashed border-slate-800">
+            <span class="font-sans font-bold text-white text-xs uppercase">Amount Collected</span>
+            <span class="text-xl font-black text-emerald-400">₹<span x-text="selectedTx.amount.toLocaleString('en-IN')"></span></span>
+          </div>
+
+          <!-- Collector Info -->
+          <div class="text-[10px] text-slate-400 font-sans flex items-center justify-between pt-1">
+            <div>
+              <div>Collected By: <span class="font-bold text-slate-200" x-text="selectedTx.agent_name"></span></div>
+              <div class="font-mono text-slate-500" x-text="selectedTx.agent_phone"></div>
+            </div>
+            <div class="text-right">
+              <div>System TX ID:</div>
+              <div class="font-mono text-slate-500" x-text="selectedTx.id.substring(0, 10)"></div>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button 
+          @click="window.print()" 
+          class="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition flex items-center gap-1.5">
+          <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          Print Slip
+        </button>
+        <button 
+          @click="showTxModal = false" 
+          class="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-bold text-slate-300 hover:text-white transition">
+          Close
+        </button>
+      </div>
+
+    </div>
   </div>
 
 </body>

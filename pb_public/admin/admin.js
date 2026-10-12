@@ -3,8 +3,11 @@
 
 function adminApp() {
   return {
-    token: localStorage.getItem("pb_admin_token") || "",
+    token: sessionStorage.getItem("pb_admin_token") || localStorage.getItem("pb_admin_token") || "",
     admin: null,
+    isRealtimeConnected: false,
+    realtimeEventSource: null,
+    _realtimeTimer: null,
     metrics: {
       total_booked_value: 0,
       total_realized_cash: 0,
@@ -24,70 +27,110 @@ function adminApp() {
     loginError: "",
 
     async init() {
-      if (this.token) {
-        await this.loadAll();
+      if (!this.token) {
+        window.location.href = "/login.html?redirect=" + encodeURIComponent(window.location.pathname + window.location.search);
+        return;
+      }
+      try {
+        const storedUser = sessionStorage.getItem("pb_admin_user") || localStorage.getItem("pb_admin_user");
+        if (storedUser) this.admin = JSON.parse(storedUser);
+      } catch (e) {}
+
+      await this.loadAll();
+      this.connectRealtime();
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && this.token) {
+          this.silentRefresh();
+        }
+      });
+      window.addEventListener("focus", () => {
+        if (this.token) this.silentRefresh();
+      });
+    },
+
+    connectRealtime() {
+      if (this.realtimeEventSource) {
+        try { this.realtimeEventSource.close(); } catch(e) {}
+      }
+      if (!this.token) return;
+
+      try {
+        const es = new EventSource("/api/realtime");
+        this.realtimeEventSource = es;
+
+        es.addEventListener("PB_CONNECT", async (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            if (data.clientId) {
+              const subRes = await fetch("/api/realtime", {
+                method: "POST",
+                headers: this.getHeaders(),
+                body: JSON.stringify({
+                  clientId: data.clientId,
+                  subscriptions: ["installments/*", "handover_batches/*", "settlements/*", "subscriptions/*"]
+                })
+              });
+              if (subRes.ok || subRes.status === 204) {
+                this.isRealtimeConnected = true;
+              }
+            }
+          } catch (err) {
+            console.warn("Realtime subscription handshake error:", err);
+          }
+        });
+
+        const onRecordChange = () => {
+          if (this._realtimeTimer) clearTimeout(this._realtimeTimer);
+          this._realtimeTimer = setTimeout(() => {
+            this.silentRefresh();
+          }, 350);
+        };
+
+        es.addEventListener("installments", onRecordChange);
+        es.addEventListener("handover_batches", onRecordChange);
+        es.addEventListener("settlements", onRecordChange);
+        es.addEventListener("subscriptions", onRecordChange);
+        es.onmessage = onRecordChange;
+
+        es.onerror = () => {
+          this.isRealtimeConnected = false;
+          try { es.close(); } catch(e) {}
+          setTimeout(() => {
+            if (this.token) this.connectRealtime();
+          }, 5000);
+        };
+      } catch (err) {
+        console.warn("Admin SSE error:", err);
       }
     },
 
-    async login() {
-      this.loginError = "";
-      this.loading = true;
+    async silentRefresh() {
       try {
-        let token = "";
-        let record = null;
-
-        // 1) Try an app user with role = admin
-        const res = await fetch("/api/collections/users/auth-with-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            identity: this.loginEmail,
-            password: this.loginPassword
-          })
-        });
-        const data = await res.json();
-
-        if (res.ok && data.record) {
-          if (data.record.role !== "admin") {
-            throw new Error("Access denied: administrator role required (your role is " + data.record.role + ")");
-          }
-          token = data.token;
-          record = data.record;
-        } else {
-          // 2) Fallback: PocketBase superuser (no role field, full bypass)
-          const suRes = await fetch("/api/admins/auth-with-password", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              identity: this.loginEmail,
-              password: this.loginPassword
-            })
-          });
-          const suData = await suRes.json();
-          if (!suRes.ok) {
-            throw new Error(data.message || suData.message || "Invalid email or password");
-          }
-          token = suData.token;
-          record = { name: suData.admin.name || "Superuser", email: suData.admin.email, role: "superuser" };
-        }
-
-        this.token = token;
-        this.admin = record;
-        localStorage.setItem("pb_admin_token", this.token);
-        this.showToast(`Welcome, ${record.name}!`, "success");
-        await this.loadAll();
+        await Promise.allSettled([
+          this.fetchPortfolio(),
+          this.fetchWatchlist(),
+          this.fetchSubscriptions(),
+          this.fetchDistributors(),
+          this.fetchSahayaks(),
+          this.fetchFieldNetwork()
+        ]);
       } catch (err) {
-        this.loginError = err.message;
-      } finally {
-        this.loading = false;
+        console.warn("Silent refresh warning:", err);
       }
     },
 
     logout() {
+      if (this.realtimeEventSource) {
+        try { this.realtimeEventSource.close(); } catch(e) {}
+      }
       this.token = "";
       this.admin = null;
+      sessionStorage.removeItem("pb_admin_token");
+      sessionStorage.removeItem("pb_admin_user");
       localStorage.removeItem("pb_admin_token");
-      this.showToast("Signed out successfully", "info");
+      localStorage.removeItem("pb_admin_user");
+      window.location.href = "/login.html";
     },
 
     getHeaders() {
@@ -105,15 +148,13 @@ function adminApp() {
     async loadAll() {
       this.loading = true;
       try {
-        await Promise.all([
-          this.fetchPortfolio(),
-          this.fetchWatchlist(),
-          this.fetchPackages(),
-          this.fetchSubscriptions(),
-          this.fetchDistributors(),
-          this.fetchSahayaks(),
-          this.fetchFieldNetwork()
-        ]);
+        await this.fetchPortfolio();
+        await this.fetchWatchlist();
+        await this.fetchPackages();
+        await this.fetchSubscriptions();
+        await this.fetchDistributors();
+        await this.fetchSahayaks();
+        await this.fetchFieldNetwork();
       } catch (err) {
         console.error("Error loading admin dashboard data:", err);
         if (err && err.status === 401) {
@@ -239,7 +280,6 @@ function adminApp() {
       email: "",
       phone: "",
       password: "",
-      commission_percentage: 5,
       is_active: true
     },
     showDistPasswordModal: false,
@@ -288,7 +328,6 @@ function adminApp() {
         email: "",
         phone: "",
         password: "",
-        commission_percentage: 5,
         is_active: true
       };
       this.showDistributorModal = true;
@@ -303,7 +342,6 @@ function adminApp() {
         email: dist.email,
         phone: dist.phone,
         password: "",
-        commission_percentage: dist.commission_percentage || 5,
         is_active: dist.is_active
       };
       this.showDistributorModal = true;
@@ -320,7 +358,6 @@ function adminApp() {
         const payload = {
           name: this.distributorForm.name,
           phone: this.distributorForm.phone,
-          commission_percentage: Number(this.distributorForm.commission_percentage) || 5,
           is_active: this.distributorForm.is_active
         };
 
@@ -471,7 +508,6 @@ function adminApp() {
       phone: "",
       password: "",
       distributor_id: "",
-      commission_percentage: 10,
       is_active: true
     },
     showSahayakPasswordModal: false,
@@ -524,7 +560,6 @@ function adminApp() {
         phone: "",
         password: "",
         distributor_id: this.distributors.length > 0 ? this.distributors[0].id : "",
-        commission_percentage: 10,
         is_active: true
       };
       this.showSahayakModal = true;
@@ -540,7 +575,6 @@ function adminApp() {
         phone: ag.phone,
         password: "",
         distributor_id: ag.distributor_id || "",
-        commission_percentage: ag.commission_percentage || 10,
         is_active: ag.is_active
       };
       this.showSahayakModal = true;
@@ -558,7 +592,6 @@ function adminApp() {
           name: this.sahayakForm.name,
           phone: this.sahayakForm.phone,
           distributor_id: this.sahayakForm.distributor_id,
-          commission_percentage: Number(this.sahayakForm.commission_percentage) || 10,
           is_active: this.sahayakForm.is_active
         };
 
@@ -835,9 +868,19 @@ function adminApp() {
     },
 
     async deletePackage(p) {
-      if (!confirm(`Delete "${p.title}"?\n\nPackages with existing bookings are deactivated instead of deleted.`)) return;
+      let force = false;
+      if (!p.is_active && p.subscriptions_count > 0) {
+        if (!confirm(`"${p.title}" is currently INACTIVE and has ${p.subscriptions_count} booking(s).\n\nDo you want to permanently force-delete this package along with its test bookings?`)) {
+          return;
+        }
+        force = true;
+      } else {
+        if (!confirm(`Delete "${p.title}"?\n\nActive packages with existing bookings will be deactivated instead of deleted.`)) return;
+      }
+
       try {
-        const res = await fetch(`/api/admin/packages/${p.id}`, {
+        const url = `/api/admin/packages/${p.id}` + (force ? "?force=true" : "");
+        const res = await fetch(url, {
           method: "DELETE",
           headers: this.getHeaders()
         });
@@ -846,7 +889,7 @@ function adminApp() {
         this.showToast(
           data.soft_deactivated
             ? `"${p.title}" has active bookings — it was deactivated instead of deleted`
-            : `"${p.title}" deleted`,
+            : `"${p.title}" permanently deleted`,
           data.soft_deactivated ? "info" : "success"
         );
         await this.fetchPackages();

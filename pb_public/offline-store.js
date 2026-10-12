@@ -126,17 +126,27 @@ async function getCashInHandTotal() {
   return cashPaid.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
 }
 
-// 6. Get Daily Recovery List (Joined view of subscriptions and pending installments)
+// 6. Get Daily Recovery List (Joined view of subscriptions and immediate upcoming dues only)
 async function getDailyRecoveryList() {
   const db = getDB();
   if (!db) return [];
 
-  const installments = await db.installments
+  // Group pending/overdue installments by subscription
+  const unpaidInstallments = await db.installments
     .filter((i) => i.status === "pending" || i.status === "overdue")
     .toArray();
 
+  // Find only the IMMEDIATE upcoming due (lowest installment_no) for each subscription
+  const lowestPerSub = new Map();
+  for (const inst of unpaidInstallments) {
+    const existing = lowestPerSub.get(inst.subscription_id);
+    if (!existing || inst.installment_no < existing.installment_no) {
+      lowestPerSub.set(inst.subscription_id, inst);
+    }
+  }
+
   const recoveryList = [];
-  for (const inst of installments) {
+  for (const inst of lowestPerSub.values()) {
     const sub = await db.subscriptions.get(inst.subscription_id);
     const pkg = sub ? await db.packages.get(sub.package_id) : null;
     recoveryList.push({
@@ -146,7 +156,83 @@ async function getDailyRecoveryList() {
     });
   }
 
+  // Sort overdue first, then by due date
+  recoveryList.sort((a, b) => {
+    if (a.installment.status === "overdue" && b.installment.status !== "overdue") return -1;
+    if (b.installment.status === "overdue" && a.installment.status !== "overdue") return 1;
+    return new Date(a.installment.due_date || 0) - new Date(b.installment.due_date || 0);
+  });
+
   return recoveryList;
+}
+
+// 7. Get Collections History (All paid installments with devotee details)
+async function getAgentCollectionsHistory() {
+  const db = getDB();
+  if (!db) return [];
+
+  const paidInsts = await db.installments
+    .filter((i) => i.status === "paid")
+    .toArray();
+
+  const history = [];
+  for (const inst of paidInsts) {
+    const sub = await db.subscriptions.get(inst.subscription_id);
+    const pkg = sub ? await db.packages.get(sub.package_id) : null;
+    history.push({
+      installment: inst,
+      subscription: sub || {},
+      package: pkg || {}
+    });
+  }
+
+  history.sort((a, b) => {
+    const timeA = new Date(a.installment.paid_at || 0).getTime();
+    const timeB = new Date(b.installment.paid_at || 0).getTime();
+    return timeB - timeA;
+  });
+
+  return history;
+}
+
+// 8. Get Devotees with Complete Pilgrimage Progress
+async function getDevoteesWithProgress() {
+  const db = getDB();
+  if (!db) return [];
+
+  const subscriptions = await db.subscriptions.toArray();
+  const list = [];
+
+  for (const sub of subscriptions) {
+    const pkg = await db.packages.get(sub.package_id);
+    const insts = await db.installments.where("subscription_id").equals(sub.id).toArray();
+    insts.sort((a, b) => a.installment_no - b.installment_no);
+
+    const paidInsts = insts.filter((i) => i.status === "paid");
+    const pendingInsts = insts.filter((i) => i.status === "pending" || i.status === "overdue");
+    const overdueInsts = insts.filter((i) => i.status === "overdue");
+
+    const amountPaid = paidInsts.reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
+    const minToTravel = pkg ? (pkg.min_emis_to_travel || 3) : 3;
+    const isEligible = paidInsts.length >= minToTravel;
+
+    list.push({
+      subscription: sub,
+      package: pkg || {},
+      installments: insts,
+      total_emis: sub.tenure_months || insts.length || 6,
+      paid_emis_count: paidInsts.length,
+      amount_paid: amountPaid,
+      total_amount: sub.total_amount || (pkg ? pkg.total_price : 0),
+      min_emis_to_travel: minToTravel,
+      is_eligible: isEligible,
+      next_due_installment: pendingInsts.length > 0 ? pendingInsts[0] : null,
+      has_overdue: overdueInsts.length > 0
+    });
+  }
+
+  list.sort((a, b) => (b.subscription.id || "").localeCompare(a.subscription.id || ""));
+  return list;
 }
 
 // Export functions to global scope for Alpine.js & scripts
@@ -158,6 +244,8 @@ if (typeof window !== "undefined") {
     getPendingOutbox,
     markOutboxSynced,
     getCashInHandTotal,
-    getDailyRecoveryList
+    getDailyRecoveryList,
+    getAgentCollectionsHistory,
+    getDevoteesWithProgress
   };
 }

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Portal Login — BharatYatra & Aditya Travels</title>
+  <meta name="description" content="Unified single sign-in portal for Aditya Tour & Travels administrators, regional territory distributors, and field sahayaks.">
+
+  <!-- Standalone Vendor CSS & PWA Manifest -->
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#D97706">
+
+  <script defer src="/js/alpine.min.js"></script>
+</head>
+<body class="flex min-h-full flex-col font-sans justify-center items-center p-4 bg-gradient-to-b from-slate-950 via-slate-900 to-black" x-data="unifiedLoginApp()" x-init="init()">
+
+  <!-- Toast Notification -->
+  <div 
+    x-show="toastMessage" 
+    x-cloak 
+    x-transition:enter="transition ease-out duration-300 transform"
+    x-transition:enter-start="opacity-0 translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-200 transform"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 translate-y-4"
+    class="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl border px-4 py-3 shadow-2xl backdrop-blur-xl text-xs font-bold"
+    :class="{
+      'border-emerald-500/50 bg-emerald-950/90 text-emerald-200 shadow-emerald-500/20': toastType === 'success',
+      'border-red-500/50 bg-red-950/90 text-red-200 shadow-red-500/20': toastType === 'error',
+      'border-amber-500/50 bg-amber-950/90 text-amber-200 shadow-amber-500/20': toastType === 'info'
+    }">
+    <span x-text="toastMessage"></span>
+  </div>
+
+  <div class="w-full max-w-md">
+    <!-- Card Container -->
+    <div class="rounded-3xl border border-amber-500/30 bg-slate-900/90 p-8 shadow-2xl shadow-amber-500/10 backdrop-blur-xl relative overflow-hidden">
+      <!-- Glow ambient light -->
+      <div class="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Header & Brand -->
+      <div class="text-center relative">
+        <a href="/" class="inline-block transition hover:scale-105">
+          <img src="/images/logo.png" alt="Aditya Logo" class="h-16 w-auto mx-auto object-contain filter drop-shadow rounded-2xl p-1.5 bg-white/10" />
+        </a>
+        <h1 class="mt-4 text-2xl font-black tracking-tight text-white">Unified Staff Portal</h1>
+        <p class="mt-1 text-xs text-slate-400">
+          Aditya Tour and Travels • BharatYatra Operations<br>
+          <span class="text-amber-400/90 font-medium">Single Sign-In for Admin, Distributors & Sahayaks</span>
+        </p>
+      </div>
+
+      <!-- Error Alert -->
+      <div 
+        x-show="loginError" 
+        x-cloak 
+        class="mt-5 rounded-2xl border border-red-500/40 bg-red-950/40 p-3.5 text-xs text-red-300 font-medium text-center flex items-center justify-center gap-2">
+        <svg class="h-4 w-4 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <span x-text="loginError"></span>
+      </div>
+
+      <!-- Role-Routed Status (if auto-forwarding) -->
+      <div 
+        x-show="redirecting" 
+        x-cloak 
+        class="mt-5 rounded-2xl border border-emerald-500/40 bg-emerald-950/40 p-3.5 text-xs text-emerald-300 font-bold text-center flex items-center justify-center gap-2">
+        <svg class="h-4 w-4 text-emerald-400 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span x-text="redirectMessage"></span>
+      </div>
+
+      <!-- Unified Login Form -->
+      <form class="mt-6 space-y-4" @submit.prevent="submitLogin()">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Email or Username</label>
+          <div class="relative mt-1.5">
+            <input 
+              type="text" 
+              x-model="identity" 
+              required 
+              autofocus
+              placeholder="user@bharatyatra.local"
+              class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Password</label>
+          <div class="relative mt-1.5">
+            <input 
+              type="password" 
+              x-model="password" 
+              required 
+              placeholder="••••••••"
+              class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400">
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          :disabled="loading || redirecting"
+          class="w-full rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 py-3 text-xs font-black text-black shadow-lg shadow-amber-500/20 hover:brightness-110 active:scale-95 disabled:opacity-50 transition cursor-pointer flex items-center justify-center gap-2">
+          <span x-show="!loading && !redirecting">Sign In to Portal →</span>
+          <span x-show="loading">Verifying credentials...</span>
+          <span x-show="redirecting">Redirecting to Dashboard...</span>
+        </button>
+      </form>
+
+      <!-- Active Concurrent Sessions Quick Launcher (if already logged in) -->
+      <div x-show="hasActiveSessions" class="mb-5 p-3.5 bg-slate-900/90 border border-emerald-500/40 rounded-2xl shadow-lg">
+        <div class="text-[11px] font-bold text-emerald-400 mb-2 flex items-center justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Active Browser Sessions (Ready)</span>
+          </div>
+          <span class="text-[9px] text-slate-400">Click to jump in</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <template x-if="hasAdminSession">
+            <a href="/admin/index.html" class="px-2.5 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[11px] font-bold rounded-xl flex items-center justify-between transition">
+              <span>👑 Admin</span>
+              <span class="text-xs">→</span>
+            </a>
+          </template>
+          <template x-if="hasDistributorSession">
+            <a href="/distributor/index.html" class="px-2.5 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/40 text-blue-300 text-[11px] font-bold rounded-xl flex items-center justify-between transition">
+              <span>🏢 Distributor</span>
+              <span class="text-xs">→</span>
+            </a>
+          </template>
+          <template x-if="hasAgentSession">
+            <a href="/agent/index.html" class="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold rounded-xl flex items-center justify-between transition">
+              <span>📱 Sahayak</span>
+              <span class="text-xs">→</span>
+            </a>
+          </template>
+        </div>
+      </div>
+
+      <!-- Quick Role Selection / Test Credentials Pills -->
+      <div class="mt-6 pt-5 border-t border-slate-800 text-center">
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Instant One-Click Demo Sign-In</div>
+        <div class="grid grid-cols-3 gap-2">
+          <!-- Admin -->
+          <button 
+            type="button" 
+            :disabled="loading || redirecting"
+            @click="quickFill('admin@bharatyatra.local', 'password123456')" 
+            class="group rounded-xl border border-slate-800 bg-slate-950/80 px-2 py-2.5 text-[11px] font-bold text-slate-300 hover:border-amber-500/60 hover:text-amber-300 hover:bg-slate-900 transition flex flex-col items-center cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95 disabled:opacity-50">
+            <span class="text-base mb-0.5 group-hover:scale-110 transition">👑</span>
+            <span class="font-extrabold text-white group-hover:text-amber-300">Admin</span>
+            <span class="text-[9px] text-slate-500 font-normal mt-0.5">Control Center</span>
+          </button>
+
+          <!-- Distributor -->
+          <button 
+            type="button" 
+            :disabled="loading || redirecting"
+            @click="quickFill('tarini_hub@bharatyatra.local', 'password123456')" 
+            class="group rounded-xl border border-slate-800 bg-slate-950/80 px-2 py-2.5 text-[11px] font-bold text-slate-300 hover:border-amber-500/60 hover:text-amber-300 hover:bg-slate-900 transition flex flex-col items-center cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95 disabled:opacity-50">
+            <span class="text-base mb-0.5 group-hover:scale-110 transition">🏢</span>
+            <span class="font-extrabold text-white group-hover:text-amber-300">Distributor</span>
+            <span class="text-[9px] text-slate-500 font-normal mt-0.5">Maa Tarini Hub</span>
+          </button>
+
+          <!-- Field Sahayak -->
+          <button 
+            type="button" 
+            :disabled="loading || redirecting"
+            @click="quickFill('balaram_puri@bharatyatra.local', 'password123456')" 
+            class="group rounded-xl border border-slate-800 bg-slate-950/80 px-2 py-2.5 text-[11px] font-bold text-slate-300 hover:border-amber-500/60 hover:text-amber-300 hover:bg-slate-900 transition flex flex-col items-center cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95 disabled:opacity-50">
+            <span class="text-base mb-0.5 group-hover:scale-110 transition">📱</span>
+            <span class="font-extrabold text-white group-hover:text-amber-300">Sahayak</span>
+            <span class="text-[9px] text-slate-500 font-normal mt-0.5">Puri Field Agent</span>
+          </button>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2">
+          Demo Password: <span class="font-mono text-slate-400">password123456</span>
+        </p>
+      </div>
+
+      <!-- Back Link -->
+      <div class="mt-5 text-center text-xs text-slate-500">
+        <a href="/" class="text-amber-400 hover:underline">← Back to Public Website</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function unifiedLoginApp() {
+      return {
+        identity: "",
+        password: "",
+        loading: false,
+        redirecting: false,
+        redirectMessage: "",
+        loginError: "",
+        toastMessage: "",
+        hasAdminSession: false,
+        hasDistributorSession: false,
+        hasAgentSession: false,
+        hasActiveSessions: false,
+
+        init() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirectParam = urlParams.get("redirect") || "";
+          const reason = urlParams.get("reason") || "";
+
+          if (reason === "session_expired") {
+            this.loginError = "Your session expired. Please sign in again.";
+          } else if (reason === "agent_required") {
+            this.loginError = "Sahayak terminal access requires a Sahayak (Field Agent) account. Please sign in below.";
+          }
+
+          // Check active sessions in browser
+          const adminToken = sessionStorage.getItem("pb_admin_token") || localStorage.getItem("pb_admin_token");
+          const distToken = sessionStorage.getItem("pb_distributor_token") || localStorage.getItem("pb_distributor_token");
+          const agentToken = sessionStorage.getItem("pb_agent_token") || localStorage.getItem("pb_agent_token");
+
+          this.hasAdminSession = !!adminToken;
+          this.hasDistributorSession = !!distToken;
+          this.hasAgentSession = !!agentToken;
+          this.hasActiveSessions = this.hasAdminSession || this.hasDistributorSession || this.hasAgentSession;
+
+          // If explicitly redirected to a portal and that portal is already authenticated, jump to it
+          if (redirectParam) {
+            if (redirectParam.includes("/admin") && adminToken) {
+              window.location.href = redirectParam;
+              return;
+            }
+            if (redirectParam.includes("/distributor") && distToken) {
+              window.location.href = redirectParam;
+              return;
+            }
+            if (redirectParam.includes("/agent") && agentToken) {
+              window.location.href = redirectParam;
+              return;
+            }
+          }
+        },
+
+        quickFill(email, pwd) {
+          this.identity = email;
+          this.password = pwd;
+          this.loginError = "";
+          // Instant one-click login
+          this.submitLogin();
+        },
+
+        async submitLogin() {
+          this.loginError = "";
+          this.loading = true;
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirectParam = urlParams.get("redirect") || "";
+
+          const trimmedIdentity = (this.identity || "").trim();
+          const trimmedPassword = (this.password || "").trim();
+
+          if (!trimmedIdentity || !trimmedPassword) {
+            this.loginError = "Please enter both email/username and password.";
+            this.loading = false;
+            return;
+          }
+
+          try {
+            let token = "";
+            let record = null;
+            let role = "";
+
+            // 1. Authenticate against standard users collection (distributors, agents, portal admins)
+            let res = null;
+            let data = null;
+            try {
+              res = await fetch("/api/collections/users/auth-with-password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  identity: trimmedIdentity,
+                  password: trimmedPassword
+                })
+              });
+              data = await res.json().catch(() => null);
+            } catch (netErr) {
+              console.warn("User auth network error:", netErr);
+            }
+
+            if (res && res.status >= 500) {
+              throw new Error("Server is temporarily starting up or busy. Please retry in a few seconds.");
+            }
+
+            if (res && res.ok && data && data.record) {
+              token = data.token;
+              record = data.record;
+              role = record.role;
+
+              // Check account active status
+              if (!record.is_active && role !== "admin") {
+                throw new Error("Access Denied: Your account is currently deactivated. Please contact administrator.");
+              }
+            } else {
+              // 2. Fallback check for PocketBase superuser (admin collection)
+              let suRes = null;
+              let suData = null;
+              try {
+                suRes = await fetch("/api/admins/auth-with-password", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    identity: trimmedIdentity,
+                    password: trimmedPassword
+                  })
+                });
+                suData = await suRes.json().catch(() => null);
+              } catch (suNetErr) {
+                console.warn("Admin auth network error:", suNetErr);
+              }
+
+              if (suRes && suRes.status >= 500) {
+                throw new Error("Server is temporarily starting up or busy. Please retry in a few seconds.");
+              }
+
+              if (suRes && suRes.ok && suData && suData.admin) {
+                token = suData.token;
+                record = { name: suData.admin.name || "Super Administrator", email: suData.admin.email, role: "admin" };
+                role = "admin";
+              } else {
+                const errMsg = (data && data.message) || (suData && suData.message) || "Invalid email or password. Please verify credentials.";
+                throw new Error(errMsg);
+              }
+            }
+
+            this.redirecting = true;
+
+            // Route based on role with isolated storage per portal
+            if (role === "admin") {
+              sessionStorage.setItem("pb_admin_token", token);
+              localStorage.setItem("pb_admin_token", token);
+              sessionStorage.setItem("pb_admin_user", JSON.stringify(record));
+              localStorage.setItem("pb_admin_user", JSON.stringify(record));
+              this.redirectMessage = `Welcome, Administrator ${record.name || ''}! Loading Control Center...`;
+              setTimeout(() => {
+                window.location.href = redirectParam && redirectParam.includes("/admin") ? redirectParam : "/admin/index.html";
+              }, 400);
+            } else if (role === "distributor") {
+              sessionStorage.setItem("pb_distributor_token", token);
+              localStorage.setItem("pb_distributor_token", token);
+              sessionStorage.setItem("pb_distributor_user", JSON.stringify(record));
+              localStorage.setItem("pb_distributor_user", JSON.stringify(record));
+              this.redirectMessage = `Welcome, ${record.name || 'Distributor'}! Loading Distributor Portal...`;
+              setTimeout(() => {
+                window.location.href = redirectParam && redirectParam.includes("/distributor") ? redirectParam : "/distributor/index.html";
+              }, 400);
+            } else if (role === "agent") {
+              sessionStorage.setItem("pb_agent_token", token);
+              localStorage.setItem("pb_agent_token", token);
+              sessionStorage.setItem("pb_agent_user", JSON.stringify(record));
+              localStorage.setItem("pb_agent_user", JSON.stringify(record));
+              this.redirectMessage = `Welcome, Sahayak ${record.name || 'Field Agent'}! Loading Collection Terminal...`;
+              setTimeout(() => {
+                window.location.href = redirectParam && redirectParam.includes("/agent") ? redirectParam : "/agent/index.html";
+              }, 400);
+            } else {
+              throw new Error("Access restricted to staff members (Administrator, Distributor, Sahayak).");
+            }
+          } catch (err) {
+            this.loginError = err.message || "Authentication failed.";
+          } finally {
+            this.loading = false;
+          }
+        },
+
+        showToast(msg, type = "info") {
+          this.toastMessage = msg;
+          this.toastType = type;
+          setTimeout(() => {
+            if (this.toastMessage === msg) this.toastMessage = "";
+          }, 4000);
+        }
+      };
+    }
+  </script>
+</body>
+</html>

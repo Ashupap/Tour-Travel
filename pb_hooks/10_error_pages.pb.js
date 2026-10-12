@@ -1,17 +1,28 @@
-// Branded 404 page for browser page requests.
-//
-// PocketBase's built-in pb_public static route owns the root wildcard (`/*`,
-// registered after the hook routes) and answers missing files by falling back
-// to /index.html with HTTP 200. A router middleware runs before the matched
-// handler, so we stat the requested file first and answer with the branded
-// 404 page when it does not exist.
-//
-// `c.pathParam("*")` is only set when the request actually fell through to
-// the static wildcard route, so paths served by explicit hook routes
-// (/agent/dashboard, /admin/dashboard, ...) and /api/* are left untouched.
+// pb_hooks/10_error_pages.pb.js
+// Branded 404 page for missing page navigation routes.
+
 $app.onBeforeServe().preAdd(function (e) {
-  let fsys = $os.dirFS("pb_public");
   let cached404 = "";
+  try {
+    let bytes = $os.readFile("pb_public/404.html");
+    let pct = "";
+    for (let i = 0; i < bytes.length; i++) {
+      let b = bytes[i];
+      pct += (b < 16 ? "%0" : "%") + b.toString(16).toUpperCase();
+    }
+    cached404 = decodeURIComponent(pct);
+  } catch (err) {
+    cached404 = "";
+  }
+
+  if (!cached404) {
+    cached404 = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>404 — BharatYatra</title></head>" +
+      "<body style=\"font-family:sans-serif;background:#0b0d12;color:#e2e8f0;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column\">" +
+      "<div style=\"color:#f59e0b;font-size:56px;font-weight:900\">404</div>" +
+      "<p>This road doesn't exist</p><p><a style=\"color:#f59e0b\" href=\"/\">Back to Home</a></p></body></html>";
+  }
+
+  let fsys = $os.dirFS("pb_public");
 
   e.router.use(function (next) {
     return function (c) {
@@ -23,61 +34,43 @@ $app.onBeforeServe().preAdd(function (e) {
           let p = "";
           try { p = c.pathParam("*") || ""; } catch (err) { p = ""; }
 
-          if (p.length > 1 && p.charCodeAt(p.length - 1) === 47) p = p.slice(0, -1);
+          // Strip query strings and hash fragments
+          let qIdx = p.indexOf("?");
+          if (qIdx !== -1) p = p.slice(0, qIdx);
+          let hIdx = p.indexOf("#");
+          if (hIdx !== -1) p = p.slice(0, hIdx);
 
-          let skip = false;
-          if (!p || p === "index.html") skip = true;
-          else if (p.indexOf("_") === 0 || p.indexOf("api") === 0) skip = true;
-          else if (p.indexOf("..") !== -1) skip = true;
+          while (p.length > 0 && p.charCodeAt(0) === 47) p = p.slice(1);
+          while (p.length > 0 && p.charCodeAt(p.length - 1) === 47) p = p.slice(0, -1);
 
-          if (!skip) {
-            let exists = true;
-            try { fsys.stat(p); } catch (err) { exists = false; }
-            if (!exists) {
-              try { fsys.stat(p + "/index.html"); exists = true; } catch (err) {}
-            }
-            if (!exists) {
-              let accept = "";
-              try {
-                let h = c.request().header;
-                try { accept = String(h.get("accept") || ""); } catch (e1) {
-                  try { accept = String(h["Accept"] || ""); } catch (e2) {}
-                }
-              } catch (err) {}
+          // Fast path: skip root, pb_public root index, api, admin, or empty
+          if (!p || p === "index.html" || p.indexOf("_") === 0 || p.indexOf("api") === 0 || p.indexOf("..") !== -1) {
+            return next(c);
+          }
 
-              let lastSeg = p.slice(p.lastIndexOf("/") + 1);
-              let isAsset = lastSeg.indexOf(".") !== -1;
-              let isHtmlNav = accept.indexOf("text/html") !== -1;
+          // Any static file with an extension (.js, .css, .html, .png, .jpg, .svg, .json, .ico, etc.)
+          // must be served directly by PocketBase's native static file server without Goja interference.
+          let lastSlash = p.lastIndexOf("/");
+          let lastSeg = lastSlash === -1 ? p : p.slice(lastSlash + 1);
+          if (lastSeg.indexOf(".") !== -1) {
+            return next(c);
+          }
 
-              if (isAsset && !isHtmlNav) {
-                return c.json(404, { code: 404, message: "The requested resource wasn't found." });
-              }
+          // Path has no extension (e.g. /definitely-missing, /admin, /agent, /foo/bar).
+          // Check if an index.html directory exists for this path (e.g. agent -> agent/index.html)
+          let dirExists = false;
+          try {
+            fsys.stat(p + "/index.html");
+            dirExists = true;
+          } catch (err) {}
 
-              if (!cached404) {
-                // $os.readFile returns a byte Array; decode UTF-8 via
-                // decodeURIComponent since goja has no TextDecoder.
-                try {
-                  let bytes = $os.readFile("pb_public/404.html");
-                  let pct = "";
-                  for (let i = 0; i < bytes.length; i++) {
-                    let b = bytes[i];
-                    pct += (b < 16 ? "%0" : "%") + b.toString(16).toUpperCase();
-                  }
-                  cached404 = decodeURIComponent(pct);
-                } catch (err) { cached404 = ""; }
-              }
-              let html = cached404;
-              if (!html) {
-                html = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>404 — BharatYatra</title></head>" +
-                  "<body style=\"font-family:sans-serif;background:#0b0d12;color:#e2e8f0;display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column\">" +
-                  "<div style=\"color:#f59e0b;font-size:56px;font-weight:900\">404</div>" +
-                  "<p>This road doesn't exist</p><p><a style=\"color:#f59e0b\" href=\"/\">Back to Home</a></p></body></html>";
-              }
-              return c.html(404, html);
-            }
+          if (!dirExists) {
+            // No matching directory with index.html -> return branded 404 page
+            return c.html(404, cached404);
           }
         }
       } catch (err) {}
+
       return next(c);
     };
   });

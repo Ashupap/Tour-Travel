@@ -250,3 +250,9 @@ routerAdd("GET", "/api/public/booking-status", (c) => {
     return c.json(500, { error: String(err) });
   }
 });
+
+// 2. GET /login -> Redirect to /login.html
+routerAdd("GET", "/login", (c) => {
+  return c.redirect(302, "/login.html");
+});
+

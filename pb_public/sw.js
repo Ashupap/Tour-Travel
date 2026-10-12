@@ -1,23 +1,29 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "aditya-travels-v11-bharatyatra-cache-v3-rev5";
+const CACHE_NAME = "aditya-travels-v27-bharatyatra-cache-v3-v6";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
+  "/login.html",
   "/manifest.json",
   "/favicon.png",
   "/css/tailwind.css",
   "/js/dexie.min.js",
   "/js/alpine.min.js",
   "/js/htmx.min.js",
+  "/js/jspdf.umd.min.js",
   "/js/vanilla-tilt.min.js",
   "/js/landing.js",
   "/js/reveal.js",
   "/offline-store.js",
+  "/agent/index.html",
   "/agent/receipt.js",
+  "/agent/pdf-generator.js",
   "/admin/index.html",
   "/admin/admin.js",
+  "/distributor/index.html",
+  "/distributor/distributor.js",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-192.svg",
@@ -80,8 +86,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // For admin routes & scripts: Network-first to always serve latest admin features
-  if (url.pathname.startsWith("/admin/")) {
+  // For admin, distributor, & agent routes & scripts: Network-first to always serve latest portal features
+  if (url.pathname.startsWith("/admin/") || url.pathname.startsWith("/distributor/") || url.pathname.startsWith("/agent/")) {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
@@ -121,36 +127,56 @@ self.addEventListener("fetch", (event) => {
   // For JS, CSS, images, fonts: Cache-First with network fallback and background revalidation
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      const isJs = url.pathname.endsWith(".js");
+
       if (cachedResponse) {
-        // Fetch fresh copy in background to revalidate cache
-        fetch(event.request)
-          .then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              const clone = networkResponse.clone();
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(event.request, clone);
-              });
-            }
-          })
-          .catch(() => {});
-        return cachedResponse;
+        const ct = cachedResponse.headers.get("content-type") || "";
+        // If an old corrupted response cached JSON for a JS file, purge it immediately
+        if (isJs && ct.includes("application/json")) {
+          console.warn("[SW] Purging corrupted JSON cache for JS script:", url.pathname);
+          caches.open(CACHE_NAME).then((cache) => cache.delete(event.request));
+        } else {
+          // Fetch fresh copy in background to revalidate cache
+          fetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                const netCt = networkResponse.headers.get("content-type") || "";
+                if (!isJs || !netCt.includes("application/json")) {
+                  const clone = networkResponse.clone();
+                  caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, clone);
+                  });
+                }
+              }
+            })
+            .catch(() => {});
+          return cachedResponse;
+        }
       }
 
-      // Not in cache: fetch from network
+      // Not in cache or corrupted cache purged: fetch from network
       return fetch(event.request)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
+            const netCt = networkResponse.headers.get("content-type") || "";
+            if (!isJs || !netCt.includes("application/json")) {
+              const responseToCache = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+            }
           }
           return networkResponse;
         })
         .catch(async () => {
           // Network failed and not in exact cache: try matching pathname without query params
           const pathnameMatch = await caches.match(url.pathname, { ignoreSearch: true });
-          if (pathnameMatch) return pathnameMatch;
+          if (pathnameMatch) {
+            const ct = pathnameMatch.headers.get("content-type") || "";
+            if (!isJs || !ct.includes("application/json")) {
+              return pathnameMatch;
+            }
+          }
           return new Response("", { status: 408, statusText: "Offline Network Timeout" });
         });
     })

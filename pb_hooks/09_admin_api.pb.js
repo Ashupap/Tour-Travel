@@ -624,12 +624,32 @@ routerAdd("DELETE", "/api/admin/packages/:id", (c) => {
   if (!rec) return adminError(404, "Package not found");
 
   try {
+    const force = c.queryParam("force") === "true";
     const subs = $app.dao().findRecordsByExpr("subscriptions", $dbx.exp("package_id = {:pid}", { pid: id })) || [];
-    if (subs.length > 0) {
+    if (subs.length > 0 && !force) {
       rec.set("is_active", false);
       $app.dao().saveRecord(rec);
       return c.json(200, { soft_deactivated: true, subscriptions_count: subs.length, id: id });
     }
+
+    if (subs.length > 0 && force) {
+      for (const s of subs) {
+        try {
+          const insts = $app.dao().findRecordsByExpr("installments", $dbx.exp("subscription_id = {:sid}", { sid: s.id })) || [];
+          for (const inst of insts) {
+            try {
+              const handovers = $app.dao().findRecordsByExpr("cash_handovers", $dbx.exp("installments_covered LIKE {:iid}", { iid: "%" + inst.id + "%" })) || [];
+              for (const h of handovers) {
+                try { $app.dao().deleteRecord(h); } catch (eH1) {}
+              }
+            } catch (eH) {}
+            try { $app.dao().deleteRecord(inst); } catch (eI) {}
+          }
+          $app.dao().deleteRecord(s);
+        } catch (eS) {}
+      }
+    }
+
     $app.dao().deleteRecord(rec);
     return c.json(200, { deleted: true, id: id });
   } catch (err) {
@@ -1394,7 +1414,7 @@ routerAdd("GET", "/api/admin/distributors", (c) => {
       name: name,
       email: email,
       phone: phone,
-      commission_percentage: d.getFloat("commission_percentage") || 5,
+      commission_percentage: d.getFloat("commission_percentage") || 0,
       is_active: isActive,
       sahayaks_count: sahayaks.length,
       total_subscribers: totalSubscribers,
@@ -1802,7 +1822,7 @@ routerAdd("GET", "/api/admin/distributors/:id/analytics", (c) => {
       name: dist.getString("name"),
       email: dist.getString("email"),
       phone: dist.getString("phone"),
-      commission_percentage: dist.getFloat("commission_percentage") || 5,
+      commission_percentage: dist.getFloat("commission_percentage") || 0,
       is_active: dist.getBool("is_active"),
       created: dist.getString("created")
     },
@@ -1936,7 +1956,7 @@ routerAdd("GET", "/api/admin/sahayaks", (c) => {
       phone: phone,
       distributor_id: distId,
       distributor_name: distName || "Independent",
-      commission_percentage: ag.getFloat("commission_percentage") || 10,
+      commission_percentage: ag.getFloat("commission_percentage") || 0,
       is_active: isActive,
       subscribers_count: totalSubscribers,
       overdue_subscribers_count: overdueSubscribers,
@@ -1996,7 +2016,7 @@ routerAdd("POST", "/api/admin/sahayaks", (c) => {
   const phone = String(body.phone || "").trim();
   const password = String(body.password || "").trim();
   const distributorId = String(body.distributor_id || "").trim();
-  const commission = Number(body.commission_percentage) || 10;
+  const commission = Number(body.commission_percentage) || 0;
 
   if (name.length < 2) return adminError(400, "Name must be at least 2 characters.");
   if (!email || !email.includes("@")) return adminError(400, "Valid email address is required.");
@@ -2329,11 +2349,12 @@ routerAdd("GET", "/api/admin/sahayaks/:id/analytics", (c) => {
     } catch (e) {}
 
     const paidCount = s.getInt("paid_emis_count");
+    const travelStatus = s.getString("travel_status") || "locked";
     let badge = "saving";
     if (sOverdue > 0) {
       badge = "overdue";
       overdueCount++;
-    } else if (paidCount >= minEmis) {
+    } else if (travelStatus === "eligible" || travelStatus === "scheduled" || travelStatus === "completed" || paidCount >= minEmis) {
       badge = "eligible";
     }
 
@@ -2396,7 +2417,7 @@ routerAdd("GET", "/api/admin/sahayaks/:id/analytics", (c) => {
       phone: ag.getString("phone"),
       distributor_id: ag.getString("distributor_id"),
       distributor_name: distName || "Independent",
-      commission_percentage: ag.getFloat("commission_percentage") || 10,
+      commission_percentage: ag.getFloat("commission_percentage") || 0,
       is_active: ag.getBool("is_active"),
       created: ag.getString("created")
     },

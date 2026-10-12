@@ -427,7 +427,7 @@ function landingApp() {
             if (sp.id && sp.id === base.id) return true;
             const spTitle = (sp.title || "").toLowerCase().trim();
             const baseTitle = (base.title || "").toLowerCase().trim();
-            return spTitle.length > 5 && (spTitle.includes(baseTitle.substring(0, 10)) || baseTitle.includes(spTitle.substring(0, 10)));
+            return spTitle === baseTitle || (spTitle.length > 5 && baseTitle.length > 5 && (spTitle.startsWith(baseTitle) || baseTitle.startsWith(spTitle)));
           });
           if (!matching) return base;
           const tenures = Array.isArray(matching.allowed_tenures) && matching.allowed_tenures.length
@@ -435,6 +435,7 @@ function landingApp() {
             : base.allowed_tenures;
           return {
             ...base,
+            id: matching.id || base.id,
             total_price: Number(matching.total_price) || base.total_price,
             duration_days: Number(matching.duration_days) || base.duration_days,
             allowed_tenures: tenures && tenures.length ? tenures : base.allowed_tenures,

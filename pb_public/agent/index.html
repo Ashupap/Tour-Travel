@@ -1,293 +1,1021 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-900 text-slate-100">
+<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-black">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BharatYatra — Agent Dashboard</title>
+  <title>Sahayak Field Portal — Aditya Travels</title>
+  <meta name="description" content="BharatYatra Sahayak Field Mobile Portal. Door-to-door micro-collection, offline sync, new pilgrimage bookings, receipt printing, and hub passcode handovers.">
   <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.svg" type="image/svg+xml">
   <meta name="theme-color" content="#D97706">
   <link rel="stylesheet" href="/css/tailwind.css">
 
   <style>
     [x-cloak] { display: none !important; }
     @media print {
-      body * { visibility: hidden; }
-      #printable-receipt, #printable-receipt * { visibility: visible; }
-      #printable-receipt {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 58mm;
-        margin: 0;
-        padding: 5px;
+      body * { visibility: hidden !important; }
+      #printable-slip, #printable-slip * { visibility: visible !important; }
+      #printable-slip {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 80mm !important;
+        margin: 0 !important;
+        padding: 8px !important;
+        background: #ffffff !important;
+        color: #000000 !important;
       }
+    }
+
+    /* Sleek Custom Scrollbar & Smooth Scrolling */
+    .smooth-scroll {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    .touch-pan-y {
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(245, 158, 11, 0.35);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(245, 158, 11, 0.65);
+    }
+    /* Bottom Navigation Styling & Fixed Pinning */
+    .mobile-bottom-nav {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      z-index: 50 !important;
+      box-sizing: border-box !important;
+      background: #0f172a !important;
+      background-color: #0f172a !important;
+      border-top: 1px solid #1e293b !important;
+      box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.85) !important;
+      padding-top: 0.5rem !important;
+      padding-bottom: max(0.6rem, env(safe-area-inset-bottom)) !important;
+    }
+    .mobile-bottom-grid {
+      display: grid !important;
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+      align-items: center !important;
+      justify-content: space-around !important;
+      width: 100% !important;
+      margin: 0 auto !important;
     }
   </style>
 
-  <!-- Offline Libraries -->
+  <!-- Offline Libraries & Helpers -->
   <script src="/js/dexie.min.js"></script>
-  <script src="/offline-store.js"></script>
-  <script src="/agent/receipt.js"></script>
+  <script src="/offline-store.js?v=4"></script>
+  <script src="/js/jspdf.umd.min.js?v=2.5.1"></script>
+  <script src="/agent/pdf-generator.js?v=3"></script>
+  <script src="/agent/receipt.js?v=3"></script>
   <script src="/js/htmx.min.js"></script>
   <script defer src="/js/alpine.min.js"></script>
 </head>
-<body class="min-h-full flex flex-col font-sans antialiased pb-20 select-none" x-data="agentApp()" x-init="initApp()" x-cloak>
+<body class="min-h-full flex flex-col font-sans antialiased pb-24 bg-slate-950 text-slate-100" 
+      style="padding-bottom: 5.5rem !important;"
+      x-data="agentApp()" 
+      x-init="initApp()" 
+      @keydown.escape.window="closeAllModals()" 
+      x-cloak>
 
-  <!-- Top App Bar -->
-  <header class="sticky top-0 z-30 bg-slate-800/95 backdrop-blur border-b border-slate-700 px-4 py-3 shadow-md">
+  <!-- ========================================== -->
+  <!-- TOP APP BAR -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-30 bg-slate-900 border-b border-slate-800 px-3 sm:px-4 py-2.5 shadow-md">
     <div class="max-w-md mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <a href="/" class="flex items-center">
-          <img src="/images/logo.png" alt="Aditya Logo" class="h-9 w-auto object-contain filter drop-shadow rounded-lg p-0.5 bg-white/10" />
+      <!-- Left Brand & Agent Info -->
+      <div class="flex items-center space-x-2 min-w-0 flex-1 mr-2">
+        <a href="/" class="shrink-0 flex items-center">
+          <img src="/images/logo.png" alt="Aditya Logo" class="h-8 w-auto object-contain filter drop-shadow rounded-lg p-0.5 bg-white/10" />
         </a>
-        <div>
-          <h1 class="text-sm font-bold tracking-tight text-white leading-tight">Aditya Travels</h1>
-          <p class="text-[11px] text-amber-300/80" x-text="agentName || 'Field Sahayak'"></p>
+        <div class="min-w-0 truncate">
+          <div class="flex items-center gap-1.5 truncate">
+            <h1 class="text-xs sm:text-sm font-black tracking-tight text-white leading-tight truncate">Aditya Travels</h1>
+            <span class="rounded bg-amber-500/20 px-1 py-0.2 text-[8px] sm:text-[9px] font-bold text-amber-300 border border-amber-500/30 uppercase shrink-0">Sahayak</span>
+          </div>
+          <p class="text-[10px] text-amber-300/80 font-medium truncate" x-text="agentName || 'Field Route Sahayak'"></p>
         </div>
       </div>
 
-      <!-- Sync Status & Action -->
-      <div class="flex items-center space-x-2">
-        <!-- Online/Offline Badge (AGNT-03) -->
-        <div class="flex items-center px-2 py-1 rounded-full text-[11px] font-medium border"
-             :class="isOnline ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/50' : 'bg-amber-950/80 text-amber-400 border-amber-700/50'">
-          <span class="w-2 h-2 rounded-full mr-1.5" :class="isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'"></span>
-          <span x-text="isOnline ? 'Online' : 'Offline'"></span>
-        </div>
-
-        <!-- Outbox Pill -->
+      <!-- Quick Actions (Clean & Compact on Mobile) -->
+      <div class="flex items-center space-x-1.5 shrink-0">
+        <!-- Outbox Sync Pill -->
         <template x-if="pendingSyncCount > 0">
-          <span class="px-2 py-0.5 rounded-full text-[11px] bg-red-600 text-white font-bold" x-text="pendingSyncCount"></span>
+          <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-red-600 text-white font-black" x-text="pendingSyncCount + ' unsynced'"></span>
         </template>
 
         <!-- Sync Button -->
-        <button @click="syncData()" :disabled="isSyncing" class="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-200 transition active:scale-95">
-          <svg class="w-4 h-4" :class="isSyncing ? 'animate-spin text-amber-400' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button @click="syncData()" :disabled="isSyncing" title="Sync Route Data" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-200 transition active:scale-95">
+          <svg class="w-4 h-4" :class="isSyncing ? 'animate-spin text-amber-400' : 'text-slate-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+        </button>
+
+        <!-- Hub Desk Info Trigger -->
+        <button @click="showHubModal = true" title="Territory Hub Desk Info" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-amber-400 transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </button>
+
+        <!-- Change Password Trigger -->
+        <button @click="openChangePasswordModal()" title="Change Portal Password" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-amber-300 transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+        </button>
+
+        <!-- Logout Button -->
+        <button @click="logout()" title="Sign Out" class="p-1.5 bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg text-red-300 transition active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
           </svg>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-md mx-auto w-full px-4 pt-4 flex-1">
+  <!-- ========================================== -->
+  <!-- MAIN CONTAINER -->
+  <!-- ========================================== -->
+  <main class="max-w-md mx-auto w-full px-4 pt-4 flex-1 space-y-4">
 
-    <!-- Cash in Hand KPI Card (AGNT-05) -->
-    <section class="bg-gradient-to-br from-amber-600 to-amber-700 rounded-2xl p-4 text-white shadow-lg mb-4">
-      <div class="flex justify-between items-start">
-        <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-amber-100">Total Cash In Hand</span>
-          <h2 class="text-3xl font-extrabold tracking-tight mt-1" x-text="'₹ ' + Number(cashInHand).toLocaleString('en-IN')"></h2>
-          <p class="text-xs text-amber-100/90 mt-1" x-text="cashCollectionsCount + ' cash payment(s) awaiting handover'"></p>
+    <!-- Active Handover Passcode Banner (If one is pending verification and unexpired) -->
+    <template x-if="activeHandover && !activeHandover.expired && passcodeRemainingSeconds > 0">
+      <div class="rounded-2xl border-2 border-amber-500 bg-gradient-to-r from-amber-950/90 to-slate-900 p-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-amber-400 animate-ping"></span>
+            <span class="text-[10px] uppercase font-black text-amber-300 tracking-wider">Active Settlement Passcode</span>
+          </div>
+          <span class="rounded bg-amber-500/30 px-2 py-0.5 text-[9px] font-bold text-amber-200">Pending Hub Verification</span>
         </div>
-        <div class="p-2 bg-amber-500/30 rounded-xl">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-          </svg>
+        <div class="mt-2 flex items-center justify-between">
+          <div>
+            <div class="text-3xl font-black font-mono tracking-widest text-amber-300" x-text="activeHandover.passcode"></div>
+            <p class="text-[10px] text-slate-400 mt-0.5">Show this 6-digit code to the hub distributor</p>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-bold text-slate-300">Amount</div>
+            <div class="text-lg font-black text-emerald-400">₹<span x-text="Number(activeHandover.total_amount).toLocaleString('en-IN')"></span></div>
+          </div>
         </div>
-      </div>
-
-      <button @click="openHandoverModal()" :disabled="cashInHand <= 0"
-              class="w-full mt-3.5 py-2.5 bg-slate-900/90 hover:bg-slate-900 disabled:opacity-50 text-amber-300 font-semibold text-xs rounded-xl shadow flex items-center justify-center space-x-2 transition active:scale-98">
-        <span>Handover to Distributor</span>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-        </svg>
-      </button>
-    </section>
-
-    <!-- Daily Recovery List Header (AGNT-01) -->
-    <div class="flex items-center justify-between mb-3">
-      <div>
-        <h3 class="font-bold text-base text-white">Daily Recovery Route</h3>
-        <p class="text-xs text-slate-400" x-text="recoveryList.length + ' customer(s) due'"></p>
-      </div>
-
-      <!-- Quick Search Filter -->
-      <div class="relative w-36">
-        <input type="text" x-model="searchQuery" placeholder="Search..."
-               class="w-full text-xs bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
-      </div>
-    </div>
-
-    <!-- Empty State -->
-    <template x-if="filteredList.length === 0">
-      <div class="bg-slate-800/60 rounded-2xl p-8 text-center border border-slate-700/60 mt-4">
-        <div class="w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto text-slate-400 mb-2">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
+        <!-- Expiry Countdown Display -->
+        <div class="mt-3 pt-2.5 border-t border-amber-500/30 flex items-center justify-between">
+          <div class="flex items-center gap-1.5 text-amber-200">
+            <svg class="w-4 h-4 text-amber-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Expires In:</span>
+            <span class="font-mono font-black text-amber-300 text-xs px-2 py-0.5 bg-amber-950/80 rounded-md border border-amber-500/40" x-text="formatCountdown(passcodeRemainingSeconds)">15:00</span>
+          </div>
+          <span class="text-[10px] text-slate-400">Valid for 15 minutes</span>
         </div>
-        <p class="text-sm font-semibold text-slate-300">All Collections Cleared</p>
-        <p class="text-xs text-slate-500 mt-1">Tap the sync button above to fetch new assignments.</p>
       </div>
     </template>
 
-    <!-- Recovery Cards Loop (AGNT-01) -->
-    <div class="space-y-3">
-      <template x-for="item in filteredList" :key="item.installment.id">
-        <div class="bg-slate-800 border border-slate-700/70 rounded-2xl p-4 shadow-sm relative overflow-hidden transition hover:border-slate-600">
-          
-          <!-- Overdue Warning Badge -->
-          <template x-if="item.installment.status === 'overdue'">
-            <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-lg">
-              OVERDUE
+    <!-- Expired Passcode Notice -->
+    <template x-if="activeHandover && (activeHandover.expired || passcodeRemainingSeconds <= 0)">
+      <div class="rounded-2xl border border-red-500/50 bg-gradient-to-r from-red-950/80 to-slate-900 p-3.5 shadow-xl flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="p-2 bg-red-500/20 rounded-xl text-red-400 border border-red-500/30 shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          </div>
+          <div>
+            <div class="text-xs font-black text-red-200">Settlement Passcode Expired</div>
+            <p class="text-[10px] text-slate-400">Previous passcode expired after 15 mins. Generate a fresh code to settle.</p>
+          </div>
+        </div>
+        <button @click="activeTab = 'handover'" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] uppercase tracking-wider rounded-lg transition active:scale-95 shrink-0">
+          Renew
+        </button>
+      </div>
+    </template>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: 📋 DAILY RECOVERY ROUTE -->
+    <!-- ========================================== -->
+    <div x-show="activeTab === 'route'" class="space-y-4">
+      
+      <!-- Float & Recovery KPI Card -->
+      <section class="bg-gradient-to-br from-amber-600 via-amber-700 to-slate-900 rounded-2xl p-4 text-white shadow-xl relative overflow-hidden">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-black uppercase tracking-wider text-amber-200">Total Cash In Hand</span>
+            <h2 class="text-3xl font-black tracking-tight mt-0.5" x-text="'₹ ' + Number(cashInHand).toLocaleString('en-IN')">₹ 0</h2>
+            <p class="text-[11px] text-amber-100/90 mt-1" x-text="cashCollectionsCount + ' cash payment(s) in field float'"></p>
+          </div>
+          <div class="p-2.5 bg-amber-500/30 rounded-2xl border border-amber-300/30">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-3.5 pt-3 border-t border-amber-500/40">
+          <button @click="activeTab = 'handover'" :disabled="cashInHand <= 0"
+                  class="py-2 bg-slate-900/90 hover:bg-slate-900 disabled:opacity-50 text-amber-300 font-bold text-xs rounded-xl shadow flex items-center justify-center space-x-1.5 transition active:scale-95">
+            <span>Handover Cash</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </button>
+          <button @click="activeTab = 'new_booking'"
+                  class="py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow flex items-center justify-center space-x-1.5 transition active:scale-95">
+            <span>+ New Booking</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Recovery Queue Header & Filters -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-black text-sm text-white flex items-center gap-1.5">
+              <span>Daily Recovery Route</span>
+              <span class="rounded bg-slate-800 px-2 py-0.5 text-[10px] text-amber-300 font-bold" x-text="filteredRouteList.length + ' Due'"></span>
+            </h3>
+            <p class="text-[11px] text-slate-400">Door-to-door village collections queue</p>
+          </div>
+
+          <!-- Route Filter Pills -->
+          <div class="flex items-center gap-1">
+            <button @click="routeFilter = 'all'" :class="routeFilter === 'all' ? 'bg-amber-500 text-black font-bold' : 'bg-slate-800 text-slate-400'" class="px-2 py-1 rounded-lg text-[10px] transition">All</button>
+            <button @click="routeFilter = 'overdue'" :class="routeFilter === 'overdue' ? 'bg-red-500 text-white font-bold' : 'bg-slate-800 text-slate-400'" class="px-2 py-1 rounded-lg text-[10px] transition">Overdue</button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <input type="text" x-model="searchQuery" placeholder="Search devotee, village, phone, code..."
+               class="w-full text-xs bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
+      </div>
+
+      <!-- Empty State -->
+      <template x-if="filteredRouteList.length === 0">
+        <div class="bg-slate-900/60 rounded-2xl p-8 text-center border border-slate-800 mt-2">
+          <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto text-emerald-400 mb-2">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <p class="text-sm font-bold text-white">All Route Dues Cleared!</p>
+          <p class="text-xs text-slate-400 mt-1">Tap the sync button above to pull new assignments from the server.</p>
+        </div>
+      </template>
+
+      <!-- Recovery Queue Cards Loop -->
+      <div class="space-y-3 max-h-[calc(100vh-270px)] sm:max-h-[62vh] overflow-y-auto smooth-scroll custom-scrollbar touch-pan-y overscroll-contain pr-1 pb-6">
+        <template x-for="item in filteredRouteList" :key="item.installment.id">
+          <div class="bg-slate-900 border rounded-2xl p-4 shadow-sm relative overflow-hidden transition"
+               :class="item.installment.status === 'overdue' ? 'border-red-500/50 hover:border-red-500' : 'border-slate-800 hover:border-slate-700'">
+            
+            <!-- Overdue Banner -->
+            <template x-if="item.installment.status === 'overdue'">
+              <div class="absolute top-0 right-0 bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-bl-lg tracking-wider">
+                OVERDUE
+              </div>
+            </template>
+
+            <!-- Devotee & Tour Title -->
+            <div class="flex justify-between items-start" :class="item.installment.status === 'overdue' ? 'pr-14' : ''">
+              <div>
+                <h4 class="font-bold text-white text-sm" x-text="item.subscription.customer_name || 'Devotee'"></h4>
+                <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                  <span class="font-mono text-amber-300 font-bold" x-text="item.subscription.booking_code"></span>
+                  <span>•</span>
+                  <span class="text-slate-300" x-text="item.package.title || 'Pilgrimage Tour'"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Due Date & Address Info -->
+            <div class="mt-2.5 grid grid-cols-1 gap-1.5 text-xs">
+              <!-- Due Date Pill -->
+              <div class="flex items-center justify-between bg-slate-950/70 px-2.5 py-1.5 rounded-xl border border-slate-800">
+                <span class="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  Due Date:
+                </span>
+                <span class="font-bold text-xs"
+                      :class="item.installment.status === 'overdue' ? 'text-red-400' : 'text-amber-300'"
+                      x-text="formatDate(item.installment.due_date)"></span>
+              </div>
+
+              <!-- Village / Address Line -->
+              <div class="flex items-start gap-1.5 text-slate-300 bg-slate-950/70 p-2 rounded-xl border border-slate-800/80">
+                <svg class="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="text-[11px] leading-tight" x-text="item.subscription.customer_address || 'Village Address on Record'"></span>
+              </div>
+            </div>
+
+            <!-- Contact & Reminder Bar -->
+            <div class="flex items-center gap-2 mt-2.5">
+              <!-- Direct Call -->
+              <a :href="'tel:' + item.subscription.customer_phone" 
+                 class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs text-slate-300 flex items-center gap-1.5 transition active:scale-95">
+                <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                <span class="font-mono text-xs" x-text="item.subscription.customer_phone"></span>
+              </a>
+
+              <!-- WhatsApp Reminder Button -->
+              <a :href="getWhatsAppReminderUrl(item)" target="_blank"
+                 class="px-2.5 py-1 bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-700/50 rounded-lg text-[11px] text-emerald-300 flex items-center gap-1 transition active:scale-95">
+                <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <span>WhatsApp Reminder</span>
+              </a>
+            </div>
+
+            <!-- EMI Amount & Actions (Details + Collect) -->
+            <div class="mt-3 pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase font-bold" x-text="'EMI #' + item.installment.installment_no"></span>
+                <p class="text-lg font-black text-emerald-400" x-text="'₹ ' + Number(item.installment.amount).toLocaleString('en-IN')"></p>
+              </div>
+
+              <div class="flex items-center gap-1.5">
+                <!-- Details Button -->
+                <button @click="openEmiDetailsModal(item)"
+                        class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-xs rounded-xl shadow transition active:scale-95 flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>Details</span>
+                </button>
+
+                <!-- Collect Button -->
+                <button @click="openCollectModal(item)"
+                        class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow transition active:scale-95 flex items-center gap-1.5">
+                  <span>Collect EMI</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: ➕ NEW PACKAGE PURCHASE (ENROLLMENT) -->
+    <!-- ========================================== -->
+    <div x-show="activeTab === 'new_booking'" class="space-y-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-xl space-y-4">
+        <div>
+          <h3 class="text-sm font-black text-white flex items-center gap-1.5">
+            <span>New Pilgrimage Enrollment</span>
+            <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[9px] font-bold text-amber-300 border border-amber-500/30">Contract Booking</span>
+          </h3>
+          <p class="text-[11px] text-slate-400 mt-0.5">Register a new pilgrim, select EMI tenure, and generate official Enrollment & Terms Slip.</p>
+        </div>
+
+        <!-- Form Elements -->
+        <form @submit.prevent="submitNewBooking()" class="space-y-3.5">
+          <!-- Package Selector -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">Select Pilgrimage Tour Package</label>
+            <select x-model="bookingForm.package_id" @change="onPackageSelect()" required
+                    class="w-full text-xs bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-amber-400 focus:outline-none">
+              <option value="">-- Choose Sacred Package --</option>
+              <template x-for="pkg in packages" :key="pkg.id">
+                <option :value="pkg.id" x-text="pkg.title + ' (₹' + Number(pkg.total_price).toLocaleString('en-IN') + ' • ' + pkg.duration_days + 'd)'"></option>
+              </template>
+            </select>
+          </div>
+
+          <!-- Devotee KYC Particulars -->
+          <div class="space-y-2">
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Devotee Full Name</label>
+              <input type="text" x-model="bookingForm.customer_name" required placeholder="e.g. Ramesh Chandra Mahapatra"
+                     class="w-full text-xs bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Mobile Phone (WhatsApp)</label>
+              <input type="tel" x-model="bookingForm.customer_phone" required maxlength="10" placeholder="10-digit mobile number"
+                     class="w-full text-xs bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-300 mb-1">Village / Residential Address</label>
+              <textarea x-model="bookingForm.customer_address" required rows="2" placeholder="House / Village, Gram Panchayat, Post, District"
+                        class="w-full text-xs bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Tenure & Plan Calculator -->
+          <template x-if="selectedPackage">
+            <div class="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3.5 space-y-2.5">
+              <div class="flex justify-between items-baseline">
+                <span class="text-xs font-bold text-amber-200">Total Tour Price</span>
+                <span class="text-lg font-black text-amber-400">₹<span x-text="Number(selectedPackage.total_price).toLocaleString('en-IN')"></span></span>
+              </div>
+
+              <!-- Tenure Selection -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-300 mb-1">Select EMI Tenure (Months)</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <template x-for="t in getPackageTenures(selectedPackage)" :key="t">
+                    <button type="button" @click="bookingForm.tenure_months = t"
+                            :class="bookingForm.tenure_months === t ? 'bg-amber-500 text-black font-black border-amber-400' : 'bg-slate-800 text-slate-300 border-slate-700'"
+                            class="py-2 text-xs rounded-xl border text-center transition">
+                      <span x-text="t + ' Months'"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Computed Breakdown -->
+              <div class="pt-2 border-t border-amber-500/20 text-[11px] space-y-1">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Monthly Installment:</span>
+                  <span class="font-black text-white">₹<span x-text="computedMonthlyEmi.toLocaleString('en-IN')"></span> / mo</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Travel Pass Unlock:</span>
+                  <span class="font-bold text-emerald-300" x-text="selectedPackage.min_emis_to_travel + ' EMIs (₹' + (computedMonthlyEmi * selectedPackage.min_emis_to_travel).toLocaleString('en-IN') + ')'"></span>
+                </div>
+              </div>
             </div>
           </template>
 
-          <div class="flex justify-between items-start pr-12">
-            <div>
-              <h4 class="font-bold text-white text-sm" x-text="item.subscription.customer_name || 'Subscriber'"></h4>
-              <p class="text-xs text-slate-400 mt-0.5 flex items-center space-x-1">
-                <span class="font-mono text-amber-400" x-text="item.subscription.booking_code"></span>
+          <!-- 1st EMI Collection Option -->
+          <div class="rounded-xl border border-slate-800 bg-slate-950 p-3 space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" x-model="bookingForm.pay_initial_emi" class="rounded border-slate-700 text-amber-500 focus:ring-0">
+              <span class="text-xs font-bold text-white">Collect 1st EMI / Down Payment Now</span>
+            </label>
+
+            <template x-if="bookingForm.pay_initial_emi">
+              <div class="pt-2 border-t border-slate-800 grid grid-cols-2 gap-2">
+                <button type="button" @click="bookingForm.payment_mode = 'cash'"
+                        :class="bookingForm.payment_mode === 'cash' ? 'bg-amber-500 text-black font-black' : 'bg-slate-800 text-slate-300'"
+                        class="py-1.5 text-xs rounded-lg transition text-center">Cash</button>
+                <button type="button" @click="bookingForm.payment_mode = 'upi'"
+                        :class="bookingForm.payment_mode === 'upi' ? 'bg-blue-600 text-white font-black' : 'bg-slate-800 text-slate-300'"
+                        class="py-1.5 text-xs rounded-lg transition text-center">UPI / QR</button>
+              </div>
+            </template>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" :disabled="bookingLoading"
+                  class="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+            <span x-text="bookingLoading ? 'Processing Booking...' : 'Issue Booking & Enrollment Slip'"></span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: 🧾 COLLECTIONS HISTORY -->
+    <!-- ========================================== -->
+    <div x-show="activeTab === 'collections'" class="space-y-4">
+      
+      <!-- Summary Card -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="text-sm font-black text-white">Collections Ledger</h3>
+            <p class="text-[11px] text-slate-400" x-text="collectionsHistory.length + ' receipts recorded'"></p>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] text-slate-400 font-bold uppercase">Total Collected</div>
+            <div class="text-base font-black text-emerald-400">₹<span x-text="totalHistoryCollected.toLocaleString('en-IN')"></span></div>
+          </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="flex items-center gap-1.5 mt-3 overflow-x-auto pb-1">
+          <button @click="colFilter = 'all'" :class="colFilter === 'all' ? 'bg-amber-500 text-black font-bold' : 'bg-slate-800 text-slate-400'" class="px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap">All</button>
+          <button @click="colFilter = 'custody'" :class="colFilter === 'custody' ? 'bg-amber-500 text-black font-bold' : 'bg-slate-800 text-slate-400'" class="px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap">In Float (Unsettled)</button>
+          <button @click="colFilter = 'settled'" :class="colFilter === 'settled' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-800 text-slate-400'" class="px-2.5 py-1 rounded-lg text-[10px] whitespace-nowrap">In Hub Safe</button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <template x-if="filteredCollectionsHistory.length === 0">
+        <div class="bg-slate-900/60 rounded-2xl p-8 text-center border border-slate-800 mt-2">
+          <p class="text-sm font-bold text-slate-300">No Collection Receipts Found</p>
+          <p class="text-xs text-slate-500 mt-1">Receipts will appear here as soon as you record collections on your route.</p>
+        </div>
+      </template>
+
+      <!-- History List View -->
+      <div class="space-y-2 max-h-[calc(100vh-270px)] sm:max-h-[62vh] overflow-y-auto smooth-scroll custom-scrollbar touch-pan-y overscroll-contain pr-1 pb-6">
+        <template x-for="item in filteredCollectionsHistory" :key="item.installment.id">
+          <div @click="openLedgerDetailModal(item)"
+               role="button"
+               tabindex="0"
+               class="bg-slate-900 hover:bg-slate-800/90 border border-slate-800 rounded-xl p-3 shadow-sm transition active:scale-[0.99] cursor-pointer flex items-center justify-between gap-3 group">
+            
+            <!-- Left Info -->
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-xs font-bold text-white truncate" x-text="item.subscription.customer_name || 'Pilgrim'"></span>
+                <span class="rounded bg-slate-800 px-1.5 py-0.2 text-[9px] font-mono text-amber-300 border border-slate-700 font-semibold"
+                      x-text="'EMI #' + item.installment.installment_no"></span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1 flex items-center gap-1.5 truncate">
+                <span class="font-mono text-amber-400/90 font-medium" x-text="item.installment.receipt_slip_id || ('SLIP-' + item.installment.id.substring(0,8))"></span>
                 <span>•</span>
-                <span x-text="item.package.title || 'Bus Tour'"></span>
-              </p>
+                <span class="text-slate-400" x-text="formatDate(item.installment.paid_at || item.installment.updated || item.installment.created)"></span>
+              </div>
             </div>
-          </div>
 
-          <!-- Contact Action Buttons -->
-          <div class="flex items-center space-x-2 mt-2.5">
-            <a :href="'tel:' + item.subscription.customer_phone" class="px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs text-slate-300 flex items-center space-x-1">
-              <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+            <!-- Right Info & Amount & Chevron -->
+            <div class="flex items-center gap-2.5 shrink-0">
+              <div class="text-right">
+                <div class="text-xs sm:text-sm font-black text-emerald-400">₹<span x-text="Number(item.installment.amount).toLocaleString('en-IN')"></span></div>
+                <span class="rounded-full px-1.5 py-0.2 text-[8px] font-bold border inline-block mt-0.5"
+                      :class="item.installment.handover_status === 'distributor_confirmed' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'"
+                      x-text="item.installment.handover_status === 'distributor_confirmed' ? 'Hub Safe' : 'In Float'"></span>
+              </div>
+              <svg class="w-4 h-4 text-slate-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
-              <span x-text="item.subscription.customer_phone"></span>
-            </a>
-          </div>
+            </div>
 
-          <!-- Divider & Collection Bar -->
-          <div class="mt-3 pt-3 border-t border-slate-700 flex items-center justify-between">
+          </div>
+        </template>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: 👥 MY DEVOTEES & TRAVEL PASSES -->
+    <!-- ========================================== -->
+    <div x-show="activeTab === 'devotees'" class="space-y-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="text-sm font-black text-white">Assigned Pilgrims Roster</h3>
+            <p class="text-[11px] text-slate-400" x-text="devoteesList.length + ' registered pilgrims'"></p>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300 border border-emerald-500/30"
+                  x-text="devoteesList.filter(d => d.is_eligible).length + ' Eligible'"></span>
+          </div>
+        </div>
+
+        <input type="text" x-model="devoteeSearch" placeholder="Search pilgrim by name, booking code, phone..."
+               class="w-full mt-3 text-xs bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:border-amber-400 focus:outline-none">
+      </div>
+
+      <!-- Devotees List -->
+      <div class="space-y-3 max-h-[60vh] overflow-y-auto smooth-scroll custom-scrollbar pr-1 pb-4">
+        <template x-for="dev in filteredDevoteesList" :key="dev.subscription.id">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm space-y-3">
+            <div class="flex items-start justify-between">
+              <div>
+                <h4 class="font-bold text-white text-sm" x-text="dev.subscription.customer_name"></h4>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                  <span class="font-mono text-amber-300 font-bold" x-text="dev.subscription.booking_code"></span>
+                  <span>•</span>
+                  <span x-text="dev.package.title"></span>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-1" x-text="dev.subscription.customer_address"></div>
+              </div>
+
+              <!-- Eligibility Status Badge -->
+              <span class="rounded-full px-2.5 py-1 text-[10px] font-black border uppercase shrink-0 text-center"
+                    :class="dev.is_eligible ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-800 text-slate-400 border-slate-700'"
+                    x-text="dev.is_eligible ? 'Pass Ready' : (dev.min_emis_to_travel - dev.paid_emis_count) + ' to unlock'">
+              </span>
+            </div>
+
+            <!-- EMI Progress Bar -->
             <div>
-              <span class="text-[11px] text-slate-400">EMI <span x-text="'#' + item.installment.installment_no"></span></span>
-              <p class="text-lg font-extrabold text-white" x-text="'₹ ' + Number(item.installment.amount).toLocaleString('en-IN')"></p>
+              <div class="flex justify-between text-[11px] font-bold mb-1">
+                <span class="text-slate-400">Installments Paid:</span>
+                <span class="text-white" x-text="dev.paid_emis_count + ' / ' + dev.total_emis + ' EMIs (₹' + dev.amount_paid.toLocaleString('en-IN') + ')'"></span>
+              </div>
+              <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-amber-500 to-emerald-400 transition-all duration-500 rounded-full"
+                     :style="'width: ' + Math.min(100, Math.round((dev.paid_emis_count / dev.total_emis) * 100)) + '%'"></div>
+              </div>
             </div>
 
-            <!-- Collect Button (AGNT-01) -->
-            <button @click="openCollectModal(item)"
-                    class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow transition active:scale-95 flex items-center space-x-1.5">
-              <span>Collect EMI</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
+            <!-- Passbook Trigger Action -->
+            <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-[11px] font-mono text-slate-400" x-text="dev.subscription.customer_phone"></span>
+              <button @click="openDevoteePassbook(dev)"
+                      class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold rounded-lg transition flex items-center gap-1">
+                <span>View Schedule</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: 💼 HANDOVER & HUB SETTLEMENT -->
+    <!-- ========================================== -->
+    <div x-show="activeTab === 'handover'" class="space-y-4">
+      
+      <!-- Live Cash Float Card -->
+      <div class="rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-950/30 to-slate-900 p-4 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] uppercase font-bold text-amber-300 tracking-wider">Unsettled Cash In Hand</span>
+          <span class="rounded bg-amber-500/20 px-2 py-0.5 text-[9px] font-black text-amber-300 border border-amber-500/30">Field Float</span>
+        </div>
+        <div class="text-3xl font-black text-amber-300">₹<span x-text="Number(cashInHand).toLocaleString('en-IN')">0</span></div>
+        <p class="text-xs text-slate-300">When you visit your distributor hub desk, generate a 6-digit passcode to verify and deposit your collected cash.</p>
+
+        <!-- Active Settlement Passcode Lock Notice -->
+        <template x-if="activeHandover && !activeHandover.expired && passcodeRemainingSeconds > 0">
+          <div class="p-3.5 bg-amber-950/80 border border-amber-500/50 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] uppercase font-bold text-amber-300 flex items-center gap-1.5">
+                <span class="inline-flex h-2 w-2 rounded-full bg-amber-400 animate-ping"></span>
+                Active Passcode In Effect
+              </span>
+              <span class="font-mono text-xs font-black text-amber-300 px-2 py-0.5 bg-slate-900 rounded border border-amber-500/30" x-text="formatCountdown(passcodeRemainingSeconds)"></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="text-2xl font-black font-mono tracking-widest text-amber-300" x-text="activeHandover.passcode"></div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-400">Locked Float</span>
+                <div class="text-sm font-bold text-emerald-400">₹<span x-text="Number(activeHandover.total_amount).toLocaleString('en-IN')"></span></div>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-300">
+              New passcode generation is locked while this code is active. Share this code with your hub distributor before it expires.
+            </p>
+          </div>
+        </template>
+
+        <button @click="initiateHandover()" :disabled="cashInHand <= 0 || isHandingOver || (activeHandover && !activeHandover.expired && passcodeRemainingSeconds > 0)"
+                class="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+          <span x-text="isHandingOver ? 'Processing...' : (activeHandover && !activeHandover.expired && passcodeRemainingSeconds > 0 ? ('Passcode Active (' + formatCountdown(passcodeRemainingSeconds) + ')') : (activeHandover && (activeHandover.expired || passcodeRemainingSeconds <= 0) ? 'Generate Fresh Passcode' : 'Generate Settlement Passcode'))"></span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+        </button>
+      </div>
+
+      <!-- Distributor Hub Profile Card -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-lg space-y-2">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Territory Hub</div>
+        <div class="text-sm font-black text-white" x-text="distributorInfo.name"></div>
+        <div class="flex items-center gap-2 pt-1">
+          <a :href="'tel:' + distributorInfo.phone" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-amber-300 rounded-lg flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+            <span x-text="distributorInfo.phone"></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Past Handover History Log -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900 p-4 shadow-xl space-y-3">
+        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Verified Settlement History</h4>
+        <div class="space-y-2">
+          <template x-for="item in handoverHistory" :key="item.id">
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+              <div>
+                <div class="font-mono font-bold text-slate-200" x-text="item.id"></div>
+                <div class="text-[10px] text-slate-500 mt-0.5" x-text="new Date(item.verified_at || item.created).toLocaleString('en-IN')"></div>
+              </div>
+              <div class="text-right">
+                <div class="font-black text-emerald-400">₹<span x-text="Number(item.total_amount).toLocaleString('en-IN')"></span></div>
+                <span class="rounded bg-emerald-500/20 px-1.5 py-0.2 text-[9px] font-bold text-emerald-300 uppercase">Confirmed</span>
+              </div>
+            </div>
+          </template>
+
+          <div x-show="handoverHistory.length === 0" class="py-4 text-center text-xs text-slate-500">
+            No previous handovers completed yet.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- BOTTOM NAVIGATION BAR (THUMB FRIENDLY) -->
+  <!-- ========================================== -->
+  <nav class="mobile-bottom-nav fixed bottom-0 left-0 right-0 z-50 px-2 py-1.5 shadow-2xl"
+       style="position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 50 !important; background-color: #0f172a !important; border-top: 1px solid #1e293b !important;">
+    <div class="mobile-bottom-grid max-w-md mx-auto grid grid-cols-5 gap-1 text-center"
+         style="display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; width: 100% !important; margin: 0 auto !important;">
+      <!-- 1. Route -->
+      <button @click="activeTab = 'route'"
+              :class="activeTab === 'route' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
+              class="flex flex-col items-center py-1 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+        <span class="text-[10px] font-bold mt-0.5">Route</span>
+      </button>
+
+      <!-- 2. New Booking -->
+      <button @click="activeTab = 'new_booking'"
+              :class="activeTab === 'new_booking' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
+              class="flex flex-col items-center py-1 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span class="text-[10px] font-bold mt-0.5">Book</span>
+      </button>
+
+      <!-- 3. Collections -->
+      <button @click="activeTab = 'collections'"
+              :class="activeTab === 'collections' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
+              class="flex flex-col items-center py-1 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+        <span class="text-[10px] font-bold mt-0.5">Ledger</span>
+      </button>
+
+      <!-- 4. Devotees -->
+      <button @click="activeTab = 'devotees'"
+              :class="activeTab === 'devotees' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
+              class="flex flex-col items-center py-1 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+        <span class="text-[10px] font-bold mt-0.5">Pilgrims</span>
+      </button>
+
+      <!-- 5. Handover -->
+      <button @click="activeTab = 'handover'"
+              :class="activeTab === 'handover' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
+              class="flex flex-col items-center py-1 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <span class="text-[10px] font-bold mt-0.5">Handover</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- MODAL 1: RECORD COLLECTION MODAL -->
+  <!-- ========================================== -->
+  <div x-show="collectModalOpen" 
+       @click.self="collectModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-5 text-slate-100 shadow-2xl space-y-4 my-auto">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="font-bold text-base text-white">Record EMI Collection</h3>
+          <p class="text-xs text-slate-400" x-text="activeItem ? activeItem.subscription.customer_name : ''"></p>
+        </div>
+        <button @click="collectModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Amount & Due Date -->
+      <div class="bg-slate-950 rounded-2xl p-3 border border-slate-800 text-center">
+        <span class="text-[11px] text-slate-400 font-bold uppercase">Installment Due</span>
+        <p class="text-3xl font-black text-emerald-400 mt-0.5" x-text="activeItem ? '₹ ' + Number(activeItem.installment.amount).toLocaleString('en-IN') : ''"></p>
+        <div class="flex items-center justify-center gap-2 mt-1 text-[11px]">
+          <span class="text-amber-300 font-bold" x-text="activeItem ? activeItem.package.title + ' • EMI #' + activeItem.installment.installment_no : ''"></span>
+          <span class="text-slate-500">•</span>
+          <span class="text-slate-400" x-text="activeItem ? 'Due: ' + formatDate(activeItem.installment.due_date) : ''"></span>
+        </div>
+      </div>
+
+      <!-- Payment Mode Toggle -->
+      <div>
+        <label class="text-xs font-bold text-slate-300 mb-1.5 block">Payment Mode</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button @click="paymentMode = 'cash'" type="button"
+                  :class="paymentMode === 'cash' ? 'bg-amber-500 text-black font-black border-amber-400' : 'bg-slate-800 text-slate-300 border-slate-700'"
+                  class="py-2.5 rounded-xl text-xs border flex items-center justify-center gap-1.5 transition">
+            <span>Cash (Physical Slip)</span>
+          </button>
+          <button @click="paymentMode = 'upi'" type="button"
+                  :class="paymentMode === 'upi' ? 'bg-blue-600 text-white font-black border-blue-500' : 'bg-slate-800 text-slate-300 border-slate-700'"
+                  class="py-2.5 rounded-xl text-xs border flex items-center justify-center gap-1.5 transition">
+            <span>UPI / Dynamic QR</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic UPI QR Container (If UPI chosen) -->
+      <template x-if="paymentMode === 'upi'">
+        <div class="rounded-2xl border border-blue-500/40 bg-slate-950 p-4 text-center space-y-3">
+          <div class="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Scan with PhonePe / GPay / Paytm</div>
+          
+          <!-- Dynamic QR Image -->
+          <div class="inline-block p-2 bg-white rounded-2xl shadow-md">
+            <img :src="'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(getUpiUri())"
+                 alt="UPI QR Code" class="w-40 h-40 object-contain mx-auto" />
+          </div>
+
+          <div class="text-xs font-mono text-slate-300">UPI ID: <span class="font-bold text-amber-300">adityatravels@upi</span></div>
+
+          <!-- Direct App Pay Button -->
+          <a :href="getUpiUri()" class="inline-block px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition">
+            Open UPI App
+          </a>
+
+          <!-- Optional UTR Reference -->
+          <div class="pt-2 text-left">
+            <label class="block text-[10px] text-slate-400 font-bold mb-1">12-Digit UPI Reference Number (UTR)</label>
+            <input type="text" x-model="upiUtrNumber" maxlength="16" placeholder="e.g. 427189124012 (Optional)"
+                   class="w-full text-xs bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-white font-mono placeholder-slate-600 focus:border-blue-400 focus:outline-none">
           </div>
         </div>
       </template>
-    </div>
-  </main>
 
-  <!-- Modal 1: Collect EMI Modal (AGNT-02) -->
-  <div x-show="collectModalOpen" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-       x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-       x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-    <div @click.away="collectModalOpen = false" class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-5 text-slate-100 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-700">
-        <div>
-          <h3 class="font-bold text-base text-white">Record Collection</h3>
-          <p class="text-xs text-slate-400" x-text="activeItem ? activeItem.subscription.customer_name : ''"></p>
-        </div>
-        <button @click="collectModalOpen = false" class="text-slate-400 hover:text-white p-1">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-1">
+        <button @click="confirmCollection()" :disabled="isSaving"
+                class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+          <span x-text="isSaving ? 'Recording Payment...' : 'Confirm & Issue Receipt Slip'"></span>
+        </button>
+        <button type="button" @click="collectModalOpen = false" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+          Cancel
         </button>
       </div>
-
-      <div class="py-4 space-y-4">
-        <div class="bg-slate-900 rounded-xl p-3 border border-slate-700 text-center">
-          <span class="text-xs text-slate-400">Total Collection Amount</span>
-          <p class="text-2xl font-black text-amber-400 mt-0.5" x-text="activeItem ? '₹ ' + Number(activeItem.installment.amount).toLocaleString('en-IN') : ''"></p>
-        </div>
-
-        <!-- Payment Mode Select (AGNT-02) -->
-        <div>
-          <label class="text-xs font-semibold text-slate-300 mb-1.5 block">Payment Mode</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button @click="paymentMode = 'cash'" type="button"
-                    :class="paymentMode === 'cash' ? 'bg-amber-600 text-white font-bold border-amber-500' : 'bg-slate-700 text-slate-300 border-transparent'"
-                    class="py-2.5 rounded-xl text-xs border flex items-center justify-center space-x-1.5 transition">
-              <span>Cash</span>
-            </button>
-            <button @click="paymentMode = 'upi'" type="button"
-                    :class="paymentMode === 'upi' ? 'bg-amber-600 text-white font-bold border-amber-500' : 'bg-slate-700 text-slate-300 border-transparent'"
-                    class="py-2.5 rounded-xl text-xs border flex items-center justify-center space-x-1.5 transition">
-              <span>UPI / QR</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action -->
-      <button @click="confirmCollection()" :disabled="isSaving"
-              class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl shadow transition active:scale-98 flex items-center justify-center space-x-2">
-        <span x-text="isSaving ? 'Processing...' : 'Confirm & Generate Receipt'"></span>
-      </button>
     </div>
   </div>
 
-  <!-- Modal 2: Thermal Receipt Modal (AGNT-04) -->
-  <div x-show="receiptModalOpen" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-       x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
-    <div @click.away="receiptModalOpen = false" class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-5 text-slate-100 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-700 mb-3">
-        <h3 class="font-bold text-sm text-white">Payment Receipt</h3>
-        <button @click="receiptModalOpen = false" class="text-slate-400 hover:text-white p-1">
+  <!-- ========================================== -->
+  <!-- MODAL 2: THERMAL RECEIPT SLIP MODAL -->
+  <!-- ========================================== -->
+  <div x-show="receiptModalOpen" 
+       @click.self="receiptModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-2xl p-5 text-slate-100 shadow-2xl space-y-3 my-auto">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm text-white">Payment Receipt Issued</h3>
+          <p class="text-[10px] text-emerald-400 font-medium">Verified & Stored in Local Ledger</p>
+        </div>
+        <button @click="receiptModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
-      <!-- Printable Monospaced Receipt Preview (AGNT-04) -->
-      <div id="printable-receipt" class="bg-white text-black p-3.5 rounded-xl font-mono text-[11px] leading-relaxed shadow-inner overflow-x-auto select-text whitespace-pre">
+      <!-- Printable Monospaced Slip -->
+      <div id="printable-slip" class="bg-white text-black p-3.5 rounded-xl font-mono text-[10.5px] leading-tight shadow-inner overflow-x-auto select-text whitespace-pre border border-slate-300">
         <span x-text="receiptText"></span>
       </div>
 
-      <!-- Buttons -->
-      <div class="grid grid-cols-2 gap-2 mt-4">
-        <button @click="window.print()" class="py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-semibold text-xs rounded-xl transition flex items-center justify-center space-x-1">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-          <span>Print Slip</span>
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-1">
+        <div class="grid grid-cols-2 gap-2">
+          <button @click="downloadReceiptPdf()" class="py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Download PDF</span>
+          </button>
+          <button @click="shareReceiptPdfWhatsApp()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            <span>WhatsApp PDF</span>
+          </button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button @click="window.print()" class="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            <span>Thermal Slip</span>
+          </button>
+          <a :href="whatsAppUrl" target="_blank" class="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+            <span>WhatsApp Text</span>
+          </a>
+        </div>
+        <button @click="receiptModalOpen = false" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+          Close
         </button>
-        <a :href="whatsAppUrl" target="_blank" class="py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl transition flex items-center justify-center space-x-1">
-          <span>WhatsApp</span>
-        </a>
       </div>
     </div>
   </div>
 
-  <!-- Modal 3: Handover Initiation & OTP Modal (AGNT-05, API-03) -->
-  <div x-show="handoverModalOpen" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div @click.away="handoverModalOpen = false" class="bg-slate-800 border border-slate-700 w-full max-w-sm rounded-2xl p-5 text-slate-100 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-700 mb-3">
-        <h3 class="font-bold text-sm text-white">Distributor Cash Handover</h3>
-        <button @click="handoverModalOpen = false" class="text-slate-400 hover:text-white p-1">
+  <!-- ========================================== -->
+  <!-- MODAL 3: ENROLLMENT AGREEMENT & TERMS SLIP -->
+  <!-- ========================================== -->
+  <div x-show="enrollmentModalOpen" 
+       @click.self="enrollmentModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl p-5 text-slate-100 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto my-auto">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <div>
+          <h3 class="font-bold text-sm text-white">Enrollment Agreement Issued</h3>
+          <p class="text-[10px] text-amber-300 font-medium">Pilgrimage Contract & Terms Certificate</p>
+        </div>
+        <button @click="enrollmentModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
-      <template x-if="!handoverOtp">
-        <div class="space-y-4 py-2">
-          <p class="text-xs text-slate-300">You are about to transfer all cash currently in your custody to your assigned distributor.</p>
-          <div class="bg-slate-900 rounded-xl p-3.5 border border-slate-700 text-center">
-            <span class="text-xs text-slate-400">Total Physical Cash</span>
-            <p class="text-2xl font-black text-amber-400 mt-1" x-text="'₹ ' + Number(cashInHand).toLocaleString('en-IN')"></p>
-          </div>
-          <button @click="initiateHandover()" :disabled="isHandingOver"
-                  class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl shadow transition">
-            <span x-text="isHandingOver ? 'Generating OTP...' : 'Generate Handover OTP'"></span>
+      <!-- Printable Monospaced Slip -->
+      <div id="printable-slip" class="bg-white text-black p-4 rounded-xl font-mono text-[10px] leading-tight shadow-inner overflow-x-auto select-text whitespace-pre border border-slate-300">
+        <span x-text="enrollmentSlipText"></span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="space-y-2 pt-1">
+        <div class="grid grid-cols-2 gap-2">
+          <button @click="downloadEnrollmentPdf()" class="py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Download Agreement</span>
+          </button>
+          <button @click="shareEnrollmentPdfWhatsApp()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+            <span>WhatsApp Agreement</span>
           </button>
         </div>
-      </template>
+        <div class="grid grid-cols-2 gap-2">
+          <button @click="window.print()" class="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            <span>Print Slip</span>
+          </button>
+          <a :href="enrollmentWhatsAppUrl" target="_blank" class="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-emerald-400 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+            <span>WhatsApp Text</span>
+          </a>
+        </div>
+        <button @click="enrollmentModalOpen = false" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 
-      <!-- OTP Display Step (API-03) -->
-      <template x-if="handoverOtp">
-        <div class="space-y-4 py-2 text-center">
-          <p class="text-xs text-slate-300">Show this 4-digit verification OTP to your distributor:</p>
-          <div class="bg-amber-950/70 border border-amber-500/80 rounded-2xl p-4">
-            <span class="text-[11px] uppercase tracking-widest text-amber-300 font-bold">Verification OTP</span>
-            <p class="text-4xl font-black font-mono text-amber-400 tracking-widest mt-1" x-text="handoverOtp"></p>
+  <!-- ========================================== -->
+  <!-- MODAL 4: DEVOTEE PASSBOOK & SCHEDULE MODAL -->
+  <!-- ========================================== -->
+  <div x-show="passbookModalOpen" 
+       @click.self="passbookModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-2xl p-5 text-slate-100 shadow-2xl space-y-3 max-h-[90vh] overflow-y-auto my-auto">
+      <template x-if="selectedDevotee">
+        <div class="space-y-3">
+          <div class="flex justify-between items-start pb-2 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-base text-white" x-text="selectedDevotee.subscription.customer_name"></h3>
+              <div class="text-[11px] text-slate-400 font-mono" x-text="selectedDevotee.subscription.booking_code + ' • ' + selectedDevotee.package.title"></div>
+            </div>
+            <button @click="passbookModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
           </div>
-          <p class="text-[11px] text-slate-400">The distributor must enter this OTP in their dashboard to confirm physical cash receipt.</p>
-          <button @click="handoverModalOpen = false; handoverOtp = ''" class="w-full py-2.5 bg-slate-700 text-white font-semibold text-xs rounded-xl">
+
+          <!-- Eligibility Banner -->
+          <div class="p-3 rounded-xl border flex items-center justify-between"
+               :class="selectedDevotee.is_eligible ? 'bg-emerald-950/60 border-emerald-500/50' : 'bg-slate-950 border-slate-800'">
+            <div>
+              <div class="text-[10px] uppercase font-bold text-slate-400">Golden Travel Pass Status</div>
+              <div class="text-xs font-bold mt-0.5"
+                   :class="selectedDevotee.is_eligible ? 'text-emerald-300' : 'text-amber-300'"
+                   x-text="selectedDevotee.is_eligible ? 'Unlocked (Seat Eligible)' : 'Locked (' + (selectedDevotee.min_emis_to_travel - selectedDevotee.paid_emis_count) + ' EMIs remaining)'"></div>
+            </div>
+            <div class="text-right">
+              <div class="text-[10px] text-slate-400 uppercase font-bold">Total Paid</div>
+              <div class="text-sm font-black text-white">₹<span x-text="selectedDevotee.amount_paid.toLocaleString('en-IN')"></span></div>
+            </div>
+          </div>
+
+          <!-- Schedule Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="border-b border-slate-800 text-slate-400 text-[10px] uppercase">
+                <tr>
+                  <th class="py-1.5 px-2">EMI #</th>
+                  <th class="py-1.5 px-2">Due Date</th>
+                  <th class="py-1.5 px-2 text-right">Amount</th>
+                  <th class="py-1.5 px-2 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 text-[11px]">
+                <template x-for="inst in selectedDevotee.installments" :key="inst.id">
+                  <tr>
+                    <td class="py-2 px-2 font-mono font-bold text-slate-300" x-text="'#' + inst.installment_no"></td>
+                    <td class="py-2 px-2 text-slate-400" x-text="formatDate(inst.due_date)"></td>
+                    <td class="py-2 px-2 text-right font-bold text-white">₹<span x-text="Number(inst.amount).toLocaleString('en-IN')"></span></td>
+                    <td class="py-2 px-2 text-center">
+                      <span class="rounded-full px-2 py-0.5 text-[9px] font-bold border"
+                            :class="inst.status === 'paid' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : (inst.status === 'overdue' ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-slate-800 text-slate-400 border-slate-700')"
+                            x-text="inst.status ? inst.status.toUpperCase() : 'PENDING'"></span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Devotee Agreement Actions -->
+          <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+            <button @click="downloadDevoteeAgreementPdf(selectedDevotee)" class="py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Download PDF</span>
+            </button>
+            <button @click="shareDevoteeAgreementWhatsApp(selectedDevotee)" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+              <span>WhatsApp PDF</span>
+            </button>
+          </div>
+
+          <button @click="passbookModalOpen = false" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
             Close
           </button>
         </div>
@@ -295,102 +1023,746 @@
     </div>
   </div>
 
-  <!-- Application Logic -->
+  <!-- ========================================== -->
+  <!-- MODAL 5: HUB DESK INFO MODAL -->
+  <!-- ========================================== -->
+  <div x-show="showHubModal" 
+       @click.self="showHubModal = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-2xl p-5 text-slate-100 shadow-2xl space-y-3 my-auto">
+      <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+        <h3 class="font-bold text-sm text-white">Territory Hub Desk</h3>
+        <button @click="showHubModal = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div>
+          <span class="text-slate-400 text-[10px] uppercase font-bold">Assigned Hub:</span>
+          <p class="font-bold text-white text-sm" x-text="distributorInfo.name"></p>
+        </div>
+        <div>
+          <span class="text-slate-400 text-[10px] uppercase font-bold">Helpline & Verification:</span>
+          <p class="font-mono text-amber-300 font-bold" x-text="distributorInfo.phone"></p>
+        </div>
+        <div class="pt-2 space-y-2">
+          <a :href="'tel:' + distributorInfo.phone" class="w-full py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-center font-bold text-xs rounded-xl block transition">
+            Call Hub Desk
+          </a>
+          <button @click="showHubModal = false; openChangePasswordModal()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 text-center font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+            <span>Change Security Password</span>
+          </button>
+          <button @click="showHubModal = false" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-center font-bold text-xs rounded-xl block transition">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 6: EMI DUE DETAILS MODAL -->
+  <!-- ========================================== -->
+  <div x-show="emiDetailsModalOpen" 
+       @click.self="emiDetailsModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-5 text-slate-100 shadow-2xl space-y-4 my-auto">
+      <template x-if="selectedEmiItem">
+        <div class="space-y-3.5">
+          <!-- Modal Header with Close '✕' -->
+          <div class="flex justify-between items-start pb-3 border-b border-slate-800">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 class="font-bold text-base text-white">Installment Details</h3>
+                <span class="rounded bg-amber-500/20 px-1.5 py-0.2 text-[9px] font-bold text-amber-300 border border-amber-500/30"
+                      x-text="'EMI #' + selectedEmiItem.installment.installment_no"></span>
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5" x-text="selectedEmiItem.package.title || 'Pilgrimage Package'"></p>
+            </div>
+            <button @click="emiDetailsModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+          </div>
+
+          <!-- Due Amount & Status Highlight -->
+          <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Amount Due</span>
+              <div class="text-2xl font-black text-emerald-400 mt-0.5">₹<span x-text="Number(selectedEmiItem.installment.amount).toLocaleString('en-IN')"></span></div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Due Date</span>
+              <div class="text-xs font-bold mt-0.5"
+                   :class="selectedEmiItem.installment.status === 'overdue' ? 'text-red-400' : 'text-amber-300'"
+                   x-text="formatDate(selectedEmiItem.installment.due_date)"></div>
+              <span class="rounded-full px-2 py-0.5 text-[8px] font-black uppercase tracking-wider inline-block mt-1 border"
+                    :class="selectedEmiItem.installment.status === 'overdue' ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'"
+                    x-text="selectedEmiItem.installment.status ? selectedEmiItem.installment.status.toUpperCase() : 'PENDING'"></span>
+            </div>
+          </div>
+
+          <!-- Devotee Particulars -->
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2 text-xs">
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Pilgrim Name:</span>
+              <span class="font-bold text-white" x-text="selectedEmiItem.subscription.customer_name"></span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Booking Code:</span>
+              <span class="font-mono font-bold text-amber-300" x-text="selectedEmiItem.subscription.booking_code"></span>
+            </div>
+            <div class="flex justify-between items-start">
+              <span class="text-slate-400 text-[11px]">Village / Address:</span>
+              <span class="text-right text-slate-200 max-w-[60%] leading-tight text-[11px]" x-text="selectedEmiItem.subscription.customer_address"></span>
+            </div>
+            <div class="flex justify-between items-center pt-1 border-t border-slate-800">
+              <span class="text-slate-400 text-[11px]">Phone:</span>
+              <div class="flex items-center gap-1.5">
+                <a :href="'tel:' + selectedEmiItem.subscription.customer_phone" class="font-mono font-bold text-emerald-400 hover:underline" x-text="selectedEmiItem.subscription.customer_phone"></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pilgrimage Progress Details -->
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-1.5 text-xs">
+            <div class="flex justify-between text-[11px]">
+              <span class="text-slate-400">Total Tour Price:</span>
+              <span class="font-bold text-white">₹<span x-text="Number(selectedEmiItem.package.total_price || 0).toLocaleString('en-IN')"></span></span>
+            </div>
+            <div class="flex justify-between text-[11px]">
+              <span class="text-slate-400">Tenure:</span>
+              <span class="text-slate-200" x-text="(selectedEmiItem.subscription.tenure_months || 6) + ' Months'"></span>
+            </div>
+            <div class="flex justify-between text-[11px]">
+              <span class="text-slate-400">Travel Pass Requirement:</span>
+              <span class="font-semibold text-amber-300" x-text="(selectedEmiItem.package.min_emis_to_travel || 3) + ' EMIs minimum'"></span>
+            </div>
+          </div>
+
+          <!-- Actions Inside Details Modal -->
+          <div class="space-y-2 pt-1">
+            <button @click="collectFromDetails()"
+                    class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+              <span>Collect EMI Now (₹<span x-text="Number(selectedEmiItem.installment.amount).toLocaleString('en-IN')"></span>)</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </button>
+
+            <div class="grid grid-cols-2 gap-2">
+              <a :href="getWhatsAppReminderUrl(selectedEmiItem)" target="_blank"
+                 class="py-2.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/60 text-emerald-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <span>WhatsApp</span>
+              </a>
+
+              <button @click="emiDetailsModalOpen = false" class="py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 7: LEDGER RECEIPT DETAILS MODAL -->
+  <!-- ========================================== -->
+  <div x-show="ledgerDetailModalOpen" 
+       @click.self="ledgerDetailModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-md rounded-t-3xl sm:rounded-2xl p-5 text-slate-100 shadow-2xl space-y-4 my-auto">
+      <template x-if="selectedLedgerItem">
+        <div class="space-y-3.5">
+          <!-- Modal Header with Close '✕' -->
+          <div class="flex justify-between items-start pb-3 border-b border-slate-800">
+            <div>
+              <h3 class="font-bold text-base text-white">Receipt Record Details</h3>
+              <p class="font-mono text-xs text-amber-300 mt-0.5" x-text="selectedLedgerItem.installment.receipt_slip_id || ('SLIP-' + selectedLedgerItem.installment.id.substring(0,8))"></p>
+            </div>
+            <button @click="ledgerDetailModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+          </div>
+
+          <!-- Amount Paid & Status Highlight -->
+          <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Amount Collected</span>
+              <div class="text-2xl font-black text-emerald-400 mt-0.5">₹<span x-text="Number(selectedLedgerItem.installment.amount).toLocaleString('en-IN')"></span></div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Handover Status</span>
+              <div class="mt-1">
+                <span class="rounded-full px-2.5 py-0.5 text-[9px] font-bold border"
+                      :class="selectedLedgerItem.installment.handover_status === 'distributor_confirmed' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'"
+                      x-text="selectedLedgerItem.installment.handover_status === 'distributor_confirmed' ? 'In Hub Safe' : 'In Field Custody'"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Devotee & Booking Info -->
+          <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2 text-xs">
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Pilgrim Name:</span>
+              <span class="font-bold text-white" x-text="selectedLedgerItem.subscription.customer_name"></span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Booking Code:</span>
+              <span class="font-mono font-bold text-amber-300" x-text="selectedLedgerItem.subscription.booking_code"></span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Package:</span>
+              <span class="text-slate-200" x-text="selectedLedgerItem.package.title"></span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Installment:</span>
+              <span class="font-semibold text-white" x-text="'EMI #' + selectedLedgerItem.installment.installment_no + ' of ' + (selectedLedgerItem.subscription.tenure_months || 6)"></span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Payment Mode:</span>
+              <span class="font-bold uppercase" :class="selectedLedgerItem.installment.payment_mode === 'upi' ? 'text-blue-400' : 'text-amber-300'" x-text="selectedLedgerItem.installment.payment_mode || 'CASH'"></span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-slate-400 text-[11px]">Collected On:</span>
+              <span class="text-slate-300" x-text="formatDateTime(selectedLedgerItem.installment.paid_at || selectedLedgerItem.installment.updated || selectedLedgerItem.installment.created)"></span>
+            </div>
+          </div>
+
+          <!-- Actions Grid -->
+          <div class="space-y-2 pt-1">
+            <div class="grid grid-cols-2 gap-2">
+              <button @click="downloadReceiptPdfForItem(selectedLedgerItem)" class="py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span>Download PDF</span>
+              </button>
+              <button @click="shareReceiptPdfWhatsAppForItem(selectedLedgerItem)" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5 shadow">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                <span>WhatsApp PDF</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <button @click="reprintSlip(selectedLedgerItem); ledgerDetailModalOpen = false;" class="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                <span>Thermal Slip</span>
+              </button>
+              <button @click="ledgerDetailModalOpen = false" class="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl transition">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 8: SAHAYAK CHANGE PASSWORD MODAL -->
+  <!-- ========================================== -->
+  <div x-show="changePasswordModalOpen" 
+       @click.self="changePasswordModalOpen = false"
+       class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div @click.stop class="bg-slate-900 border border-slate-700 w-full max-w-sm rounded-2xl p-5 text-slate-100 shadow-2xl space-y-4 my-auto">
+      
+      <!-- Modal Header with Close '✕' -->
+      <div class="flex justify-between items-start pb-3 border-b border-slate-800">
+        <div>
+          <div class="flex items-center gap-2">
+            <div class="p-1.5 bg-amber-500/20 rounded-lg text-amber-300 border border-amber-500/30">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+            </div>
+            <h3 class="font-bold text-base text-white">Change Password</h3>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Update your personal Sahayak portal password</p>
+        </div>
+        <button @click="changePasswordModalOpen = false" title="Close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Success Alert -->
+      <template x-if="changePasswordSuccess">
+        <div class="p-3 bg-emerald-950/80 border border-emerald-500/50 rounded-xl text-emerald-200 text-xs flex items-center gap-2">
+          <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          <span x-text="changePasswordSuccess"></span>
+        </div>
+      </template>
+
+      <!-- Error Alert -->
+      <template x-if="changePasswordError">
+        <div class="p-3 bg-red-950/80 border border-red-500/50 rounded-xl text-red-200 text-xs flex items-center gap-2">
+          <svg class="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span x-text="changePasswordError"></span>
+        </div>
+      </template>
+
+      <!-- Form Inputs -->
+      <form @submit.prevent="submitChangePassword()" class="space-y-3">
+        <!-- Current Password -->
+        <div class="space-y-1">
+          <label class="block text-[11px] font-bold text-slate-300">Current Password</label>
+          <div class="relative">
+            <input :type="showCurrentPassword ? 'text' : 'password'" 
+                   x-model="changePasswordForm.current_password" 
+                   required
+                   placeholder="Enter current password" 
+                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 pr-10">
+            <button type="button" @click="showCurrentPassword = !showCurrentPassword" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="showCurrentPassword ? 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18' : 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- New Password -->
+        <div class="space-y-1">
+          <label class="block text-[11px] font-bold text-slate-300">New Password</label>
+          <div class="relative">
+            <input :type="showNewPassword ? 'text' : 'password'" 
+                   x-model="changePasswordForm.new_password" 
+                   required
+                   minlength="8"
+                   placeholder="At least 8 characters" 
+                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500 pr-10">
+            <button type="button" @click="showNewPassword = !showNewPassword" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-200">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="showNewPassword ? 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18' : 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-[9px] text-slate-500">Must be minimum 8 characters</p>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="space-y-1">
+          <label class="block text-[11px] font-bold text-slate-300">Confirm New Password</label>
+          <input type="password" 
+                 x-model="changePasswordForm.confirm_password" 
+                 required
+                 placeholder="Re-enter new password" 
+                 class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 space-y-2">
+          <button type="submit" 
+                  :disabled="changePasswordLoading"
+                  class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center gap-1.5">
+            <svg x-show="changePasswordLoading" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            <span x-text="changePasswordLoading ? 'Updating Password...' : 'Save New Password'"></span>
+          </button>
+          <button type="button" @click="changePasswordModalOpen = false" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-bold rounded-xl transition">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- APPLICATION JAVASCRIPT CONTROLLER -->
+  <!-- ========================================== -->
   <script>
     function agentApp() {
       return {
+        activeTab: "route", // 'route' | 'new_booking' | 'collections' | 'devotees' | 'handover'
         isOnline: navigator.onLine,
         isSyncing: false,
         isSaving: false,
         isHandingOver: false,
+        bookingLoading: false,
         pendingSyncCount: 0,
         cashInHand: 0,
         cashCollectionsCount: 0,
         agentName: "",
         agentId: "",
+        distributorInfo: { name: "Puri Central Hub Desk", phone: "9861099881" },
+        
+        // Data sources
+        packages: [],
         recoveryList: [],
+        collectionsHistory: [],
+        devoteesList: [],
+        handoverHistory: [],
+        activeHandover: null,
+
+        // Filters
         searchQuery: "",
+        routeFilter: "all", // 'all' | 'overdue'
+        colFilter: "all",   // 'all' | 'custody' | 'settled'
+        devoteeSearch: "",
+
+        // Modals
         collectModalOpen: false,
         receiptModalOpen: false,
-        handoverModalOpen: false,
+        enrollmentModalOpen: false,
+        passbookModalOpen: false,
+        showHubModal: false,
+        emiDetailsModalOpen: false,
+        ledgerDetailModalOpen: false,
+        changePasswordModalOpen: false,
+
+        // Password Change State
+        changePasswordForm: {
+          current_password: "",
+          new_password: "",
+          confirm_password: ""
+        },
+        changePasswordLoading: false,
+        changePasswordError: "",
+        changePasswordSuccess: "",
+        showCurrentPassword: false,
+        showNewPassword: false,
+
+        // Settlement Passcode Expiry Countdown State
+        passcodeRemainingSeconds: 0,
+        passcodeInterval: null,
+
+        // Active items
         activeItem: null,
+        selectedDevotee: null,
+        selectedEmiItem: null,
+        selectedLedgerItem: null,
         paymentMode: "cash",
+        upiUtrNumber: "",
         receiptText: "",
         whatsAppUrl: "",
-        handoverOtp: "",
+        currentReceiptPayload: null,
+        enrollmentSlipText: "",
+        enrollmentWhatsAppUrl: "",
+        currentEnrollmentData: null,
 
-        get filteredList() {
-          if (!this.searchQuery) return this.recoveryList;
-          const q = this.searchQuery.toLowerCase();
-          return this.recoveryList.filter(i => 
-            (i.subscription.customer_name && i.subscription.customer_name.toLowerCase().includes(q)) ||
-            (i.subscription.customer_phone && i.subscription.customer_phone.includes(q)) ||
-            (i.subscription.booking_code && i.subscription.booking_code.toLowerCase().includes(q))
+        // New Booking Wizard Form
+        selectedPackage: null,
+        bookingForm: {
+          package_id: "",
+          customer_name: "",
+          customer_phone: "",
+          customer_address: "",
+          tenure_months: 6,
+          pay_initial_emi: true,
+          payment_mode: "cash"
+        },
+
+        get filteredRouteList() {
+          let list = this.recoveryList;
+          if (this.routeFilter === "overdue") {
+            list = list.filter(i => i.installment.status === "overdue");
+          }
+          if (this.searchQuery.trim()) {
+            const q = this.searchQuery.toLowerCase().trim();
+            list = list.filter(i => 
+              (i.subscription.customer_name && i.subscription.customer_name.toLowerCase().includes(q)) ||
+              (i.subscription.customer_phone && i.subscription.customer_phone.includes(q)) ||
+              (i.subscription.customer_address && i.subscription.customer_address.toLowerCase().includes(q)) ||
+              (i.subscription.booking_code && i.subscription.booking_code.toLowerCase().includes(q))
+            );
+          }
+          return list;
+        },
+
+        get filteredCollectionsHistory() {
+          let list = this.collectionsHistory;
+          if (this.colFilter === "custody") {
+            list = list.filter(i => i.installment.handover_status !== "distributor_confirmed");
+          } else if (this.colFilter === "settled") {
+            list = list.filter(i => i.installment.handover_status === "distributor_confirmed");
+          }
+          return list;
+        },
+
+        get totalHistoryCollected() {
+          return this.collectionsHistory.reduce((sum, i) => sum + (Number(i.installment.amount) || 0), 0);
+        },
+
+        get filteredDevoteesList() {
+          if (!this.devoteeSearch.trim()) return this.devoteesList;
+          const q = this.devoteeSearch.toLowerCase().trim();
+          return this.devoteesList.filter(d => 
+            (d.subscription.customer_name && d.subscription.customer_name.toLowerCase().includes(q)) ||
+            (d.subscription.customer_phone && d.subscription.customer_phone.includes(q)) ||
+            (d.subscription.booking_code && d.subscription.booking_code.toLowerCase().includes(q)) ||
+            (d.subscription.customer_address && d.subscription.customer_address.toLowerCase().includes(q))
           );
         },
 
+        get computedMonthlyEmi() {
+          if (!this.selectedPackage) return 0;
+          const price = Number(this.selectedPackage.total_price) || 0;
+          const tenure = Number(this.bookingForm.tenure_months) || 6;
+          return Math.round(price / tenure);
+        },
+
+        getPackageTenures(pkg) {
+          if (!pkg) return [6];
+          if (Array.isArray(pkg.allowed_tenures) && pkg.allowed_tenures.length > 0) {
+            return pkg.allowed_tenures;
+          }
+          return [3, 6, 9, 12];
+        },
+
+        onPackageSelect() {
+          this.selectedPackage = this.packages.find(p => p.id === this.bookingForm.package_id) || null;
+          if (this.selectedPackage) {
+            const tenures = this.getPackageTenures(this.selectedPackage);
+            if (!tenures.includes(this.bookingForm.tenure_months)) {
+              this.bookingForm.tenure_months = tenures[0];
+            }
+          }
+        },
+
+        isRealtimeConnected: false,
+        realtimeEventSource: null,
+        _realtimeTimer: null,
+
+        getAuthToken() {
+          return sessionStorage.getItem("pb_agent_token") || localStorage.getItem("pb_agent_token") || "";
+        },
+
         async initApp() {
+          const token = this.getAuthToken();
+          if (!token) {
+            console.warn("[Sahayak Portal] No agent session found. Redirecting to login.");
+            window.location.href = "/login.html?redirect=" + encodeURIComponent(window.location.pathname) + "&reason=agent_required";
+            return;
+          }
+
+          try {
+            const userJson = sessionStorage.getItem("pb_agent_user") || localStorage.getItem("pb_agent_user");
+            if (userJson) {
+              const u = JSON.parse(userJson);
+              if (u.name) this.agentName = u.name;
+              if (u.id) this.agentId = u.id;
+            }
+          } catch(e) {}
+
           window.addEventListener("online", () => { this.isOnline = true; this.flushOutbox(); });
           window.addEventListener("offline", () => { this.isOnline = false; });
 
-          // Register Service Worker (PWA-02)
+          // Service Worker
           if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/sw.js").then(() => {
-              console.log("Service Worker registered");
-            });
-            navigator.serviceWorker.addEventListener("message", (event) => {
-              if (event.data && event.data.type === "BACKGROUND_SYNC_TRIGGER") {
-                this.flushOutbox();
-              }
+            navigator.serviceWorker.register("/sw.js").then((reg) => {
+              console.log("SW active");
+              if (reg && reg.update) reg.update();
             });
           }
 
-          // Initial hydrate from local Dexie store
           await this.loadLocalData();
 
-          // If online, perform morning manifest sync
           if (this.isOnline) {
             await this.syncData();
+            await this.fetchHandovers();
+          }
+
+          this.connectRealtime();
+
+          document.addEventListener("visibilitychange", async () => {
+            if (!document.hidden && this.isOnline && this.getAuthToken()) {
+              await this.syncData();
+              await this.fetchHandovers();
+            }
+          });
+          window.addEventListener("focus", async () => {
+            if (this.isOnline && this.getAuthToken()) {
+              await this.syncData();
+              await this.fetchHandovers();
+            }
+          });
+        },
+
+        connectRealtime() {
+          if (this.realtimeEventSource) {
+            try { this.realtimeEventSource.close(); } catch(e) {}
+          }
+          const token = this.getAuthToken();
+          if (!token) return;
+
+          try {
+            const es = new EventSource("/api/realtime");
+            this.realtimeEventSource = es;
+
+            es.addEventListener("PB_CONNECT", async (e) => {
+              try {
+                const data = JSON.parse(e.data);
+                if (data.clientId) {
+                  const subRes = await fetch("/api/realtime", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify({
+                      clientId: data.clientId,
+                      subscriptions: ["installments/*", "handover_batches/*", "subscriptions/*"]
+                    })
+                  });
+                  if (subRes.ok || subRes.status === 204) {
+                    this.isRealtimeConnected = true;
+                  }
+                }
+              } catch (err) {
+                console.warn("Sahayak realtime handshake error:", err);
+              }
+            });
+
+            const onRecordChange = () => {
+              if (this._realtimeTimer) clearTimeout(this._realtimeTimer);
+              this._realtimeTimer = setTimeout(async () => {
+                if (this.isOnline) {
+                  await this.syncData();
+                  await this.fetchHandovers();
+                }
+              }, 350);
+            };
+
+            es.addEventListener("installments", onRecordChange);
+            es.addEventListener("handover_batches", onRecordChange);
+            es.addEventListener("subscriptions", onRecordChange);
+            es.onmessage = onRecordChange;
+
+            es.onerror = () => {
+              this.isRealtimeConnected = false;
+              try { es.close(); } catch(e) {}
+              setTimeout(() => {
+                if (this.getAuthToken()) this.connectRealtime();
+              }, 5000);
+            };
+          } catch (err) {
+            console.warn("Sahayak SSE error:", err);
           }
         },
 
         async loadLocalData() {
           this.recoveryList = await window.BharatYatraStore.getDailyRecoveryList();
           this.cashInHand = await window.BharatYatraStore.getCashInHandTotal();
+          this.collectionsHistory = await window.BharatYatraStore.getAgentCollectionsHistory();
+          this.devoteesList = await window.BharatYatraStore.getDevoteesWithProgress();
+          
           const outbox = await window.BharatYatraStore.getPendingOutbox();
           this.pendingSyncCount = outbox.length;
+
           const db = window.BharatYatraStore.getDB();
-          const cashPaid = await db.installments.filter(i => i.status === "paid" && i.payment_mode === "cash" && i.handover_status === "agent_custody").toArray();
-          this.cashCollectionsCount = cashPaid.length;
+          if (db) {
+            const cashPaid = await db.installments.filter(i => i.status === "paid" && i.payment_mode === "cash" && i.handover_status === "agent_custody").toArray();
+            this.cashCollectionsCount = cashPaid.length;
+            this.packages = await db.packages.toArray();
+          }
         },
 
         async syncData() {
           this.isSyncing = true;
           try {
-            const token = localStorage.getItem("by_auth_token") || "";
+            const token = this.getAuthToken();
+            if (!token) return;
             const res = await fetch("/api/agent/sync-manifest", {
-              headers: { "Authorization": token ? "Bearer " + token : "" }
+              headers: { "Authorization": "Bearer " + token }
             });
+            if (res.status === 401 || res.status === 403) {
+              console.warn("Agent session unauthorized/forbidden. Redirecting to login...");
+              localStorage.removeItem("pb_agent_token");
+              if (localStorage.getItem("pb_user_role") === "agent") {
+                localStorage.removeItem("by_auth_token");
+                localStorage.removeItem("pb_user_role");
+              }
+              window.location.href = "/login.html?redirect=" + encodeURIComponent(window.location.pathname) + "&reason=session_expired";
+              return;
+            }
             if (res.ok) {
               const data = await res.json();
               if (data.agent) {
                 this.agentName = data.agent.name;
                 this.agentId = data.agent.id;
               }
+              if (data.distributor) {
+                this.distributorInfo = data.distributor;
+              }
+              this.packages = data.packages || [];
               await window.BharatYatraStore.syncManifestDown(data);
               await this.loadLocalData();
             }
           } catch (e) {
-            console.warn("Sync failed, continuing with offline cache:", e);
+            console.warn("Sync error, using cache:", e);
           } finally {
             this.isSyncing = false;
           }
         },
 
+        async fetchHandovers() {
+          try {
+            const token = this.getAuthToken();
+            if (!token) return;
+            const res = await fetch("/api/agent/handovers", {
+              headers: { "Authorization": "Bearer " + token }
+            });
+            if (res.status === 401 || res.status === 403) {
+              console.warn("Agent handovers unauthorized/forbidden.");
+              return;
+            }
+            if (res.ok) {
+              const data = await res.json();
+              this.activeHandover = data.active_handover || null;
+              this.handoverHistory = data.history || [];
+              if (this.activeHandover && this.activeHandover.expires_in_seconds) {
+                this.startPasscodeCountdown(this.activeHandover.expires_in_seconds);
+              } else if (!this.activeHandover) {
+                this.passcodeRemainingSeconds = 0;
+                if (this.passcodeInterval) {
+                  clearInterval(this.passcodeInterval);
+                  this.passcodeInterval = null;
+                }
+              }
+            }
+          } catch (e) {}
+        },
+
         openCollectModal(item) {
           this.activeItem = item;
           this.paymentMode = "cash";
+          this.upiUtrNumber = "";
           this.collectModalOpen = true;
+        },
+
+        getUpiUri() {
+          if (!this.activeItem) return "";
+          if (window.BharatYatraReceipt && typeof window.BharatYatraReceipt.generateUpiUri === "function") {
+            return window.BharatYatraReceipt.generateUpiUri({
+              amount: this.activeItem.installment.amount,
+              refId: this.activeItem.subscription.booking_code + "-EMI" + this.activeItem.installment.installment_no,
+              note: "Yatra EMI " + this.activeItem.subscription.booking_code
+            });
+          }
+          return "";
+        },
+
+        getWhatsAppReminderUrl(item) {
+          if (!item) return "#";
+          if (window.BharatYatraReceipt && typeof window.BharatYatraReceipt.generateDueReminderWhatsAppUrl === "function") {
+            return window.BharatYatraReceipt.generateDueReminderWhatsAppUrl(item);
+          }
+          const phone = item.subscription && item.subscription.customer_phone ? String(item.subscription.customer_phone).replace(/\D/g, '') : '';
+          const num = phone.length === 10 ? '91' + phone : phone;
+          return num ? `https://wa.me/${num}` : '#';
+        },
+
+        getWhatsAppShareUrl(item) {
+          if (!item) return "#";
+          if (window.BharatYatraReceipt && typeof window.BharatYatraReceipt.generateWhatsAppShareUrl === "function") {
+            return window.BharatYatraReceipt.generateWhatsAppShareUrl({
+              receipt_slip_id: item.installment.receipt_slip_id,
+              customer_name: item.subscription.customer_name,
+              customer_phone: item.subscription.customer_phone,
+              booking_code: item.subscription.booking_code,
+              package_title: item.package.title,
+              installment_no: item.installment.installment_no,
+              amount: item.installment.amount,
+              payment_mode: item.installment.payment_mode,
+              agent_name: this.agentName
+            });
+          }
+          return "#";
         },
 
         async confirmCollection() {
@@ -408,11 +1780,11 @@
               bookingCode: this.activeItem.subscription.booking_code
             });
 
-            // Generate receipt text & WhatsApp share URL (AGNT-04)
             const receiptPayload = {
               receipt_slip_id: result.receiptSlipId,
               customer_name: this.activeItem.subscription.customer_name,
               customer_phone: this.activeItem.subscription.customer_phone,
+              customer_address: this.activeItem.subscription.customer_address,
               booking_code: this.activeItem.subscription.booking_code,
               package_title: this.activeItem.package.title,
               installment_no: this.activeItem.installment.installment_no,
@@ -420,18 +1792,24 @@
               amount: this.activeItem.installment.amount,
               payment_mode: this.paymentMode,
               status: "PAID",
-              agent_name: this.agentName || "Agent"
+              handover_status: "agent_custody",
+              agent_name: this.agentName || "Field Sahayak"
             };
 
-            this.receiptText = window.BharatYatraReceipt.formatThermalReceiptText(receiptPayload);
-            this.whatsAppUrl = window.BharatYatraReceipt.generateWhatsAppShareUrl(receiptPayload);
+            if (window.BharatYatraReceipt && typeof window.BharatYatraReceipt.formatThermalReceiptText === "function") {
+              this.receiptText = window.BharatYatraReceipt.formatThermalReceiptText(receiptPayload);
+              this.whatsAppUrl = window.BharatYatraReceipt.generateWhatsAppShareUrl(receiptPayload);
+            } else {
+              this.receiptText = "COLLECTION RECEIPT\nSlip: " + result.receiptSlipId + "\nAmount: Rs. " + this.activeItem.installment.amount;
+              this.whatsAppUrl = "#";
+            }
+            this.currentReceiptPayload = receiptPayload;
 
             this.collectModalOpen = false;
             this.receiptModalOpen = true;
 
             await this.loadLocalData();
 
-            // Attempt online flush if connected
             if (this.isOnline) {
               this.flushOutbox();
             }
@@ -442,17 +1820,323 @@
           }
         },
 
+        reprintSlip(item) {
+          const payload = {
+            receipt_slip_id: item.installment.receipt_slip_id,
+            customer_name: item.subscription.customer_name,
+            customer_phone: item.subscription.customer_phone,
+            customer_address: item.subscription.customer_address,
+            booking_code: item.subscription.booking_code,
+            package_title: item.package.title,
+            installment_no: item.installment.installment_no,
+            tenure_months: item.subscription.tenure_months,
+            amount: item.installment.amount,
+            payment_mode: item.installment.payment_mode,
+            status: "PAID",
+            handover_status: item.installment.handover_status,
+            agent_name: this.agentName,
+            date: item.installment.paid_at
+          };
+          if (window.BharatYatraReceipt && typeof window.BharatYatraReceipt.formatThermalReceiptText === "function") {
+            this.receiptText = window.BharatYatraReceipt.formatThermalReceiptText(payload);
+            this.whatsAppUrl = window.BharatYatraReceipt.generateWhatsAppShareUrl(payload);
+          } else {
+            this.receiptText = "COLLECTION RECEIPT\nSlip: " + (item.installment.receipt_slip_id || '') + "\nAmount: Rs. " + item.installment.amount;
+            this.whatsAppUrl = "#";
+          }
+          this.currentReceiptPayload = payload;
+          this.receiptModalOpen = true;
+        },
+
+        downloadReceiptPdf(data) {
+          const payload = data || this.currentReceiptPayload;
+          if (!payload) {
+            alert("No receipt loaded to download");
+            return;
+          }
+          if (!window.BharatYatraPdf || typeof window.BharatYatraPdf.generateEmiReceiptPdf !== "function") {
+            alert("PDF Generator is still loading. Please try again in a moment.");
+            return;
+          }
+          try {
+            const { doc, filename } = window.BharatYatraPdf.generateEmiReceiptPdf(payload);
+            doc.save(filename);
+          } catch (e) {
+            alert("PDF generation failed: " + e.message);
+          }
+        },
+
+        async shareReceiptPdfWhatsApp(data) {
+          const payload = data || this.currentReceiptPayload;
+          if (!payload) {
+            alert("No receipt loaded to share");
+            return;
+          }
+          if (!window.BharatYatraPdf || typeof window.BharatYatraPdf.sharePdfViaWhatsApp !== "function") {
+            alert("PDF Generator is still loading. Please try again in a moment.");
+            return;
+          }
+          try {
+            const { doc, filename, blob } = window.BharatYatraPdf.generateEmiReceiptPdf(payload);
+            const amtStr = Number(payload.amount || 0).toLocaleString('en-IN');
+            const message = `Namaste ${payload.customer_name || 'Pilgrim'} ji,\nYour EMI collection receipt #${payload.receipt_slip_id || ''} for ₹${amtStr} (Booking: ${payload.booking_code || ''}) has been confirmed. Please find your official payment slip attached.\n\nAditya Tour & Travels`;
+            await window.BharatYatraPdf.sharePdfViaWhatsApp({
+              doc,
+              filename,
+              blob,
+              message,
+              phone: payload.customer_phone
+            });
+          } catch (e) {
+            alert("WhatsApp Share error: " + e.message);
+          }
+        },
+
+        downloadReceiptPdfForItem(item) {
+          const payload = {
+            receipt_slip_id: item.installment.receipt_slip_id,
+            customer_name: item.subscription.customer_name,
+            customer_phone: item.subscription.customer_phone,
+            customer_address: item.subscription.customer_address,
+            booking_code: item.subscription.booking_code,
+            package_title: item.package.title,
+            installment_no: item.installment.installment_no,
+            tenure_months: item.subscription.tenure_months,
+            amount: item.installment.amount,
+            payment_mode: item.installment.payment_mode,
+            status: "PAID",
+            handover_status: item.installment.handover_status,
+            agent_name: this.agentName,
+            date: item.installment.paid_at
+          };
+          this.downloadReceiptPdf(payload);
+        },
+
+        shareReceiptPdfWhatsAppForItem(item) {
+          const payload = {
+            receipt_slip_id: item.installment.receipt_slip_id,
+            customer_name: item.subscription.customer_name,
+            customer_phone: item.subscription.customer_phone,
+            customer_address: item.subscription.customer_address,
+            booking_code: item.subscription.booking_code,
+            package_title: item.package.title,
+            installment_no: item.installment.installment_no,
+            tenure_months: item.subscription.tenure_months,
+            amount: item.installment.amount,
+            payment_mode: item.installment.payment_mode,
+            status: "PAID",
+            handover_status: item.installment.handover_status,
+            agent_name: this.agentName,
+            date: item.installment.paid_at
+          };
+          this.shareReceiptPdfWhatsApp(payload);
+        },
+
+        async submitNewBooking() {
+          if (!this.bookingForm.package_id) {
+            alert("Please select a tour package");
+            return;
+          }
+          this.bookingLoading = true;
+          try {
+            const token = this.getAuthToken();
+            const res = await fetch("/api/agent/subscribe", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+              },
+              body: JSON.stringify(this.bookingForm)
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+              throw new Error(data.error || "Failed to book package");
+            }
+
+            // Success! Generate Enrollment Agreement Slip
+            const enrollment = data.enrollment;
+            this.enrollmentSlipText = window.BharatYatraReceipt.formatEnrollmentSlipText(enrollment);
+            this.enrollmentWhatsAppUrl = window.BharatYatraReceipt.generateEnrollmentWhatsAppUrl(enrollment);
+            this.currentEnrollmentData = enrollment;
+            this.enrollmentModalOpen = true;
+
+            // Reset form & refresh
+            this.bookingForm.customer_name = "";
+            this.bookingForm.customer_phone = "";
+            this.bookingForm.customer_address = "";
+            this.bookingForm.pay_initial_emi = true;
+
+            await this.syncData();
+          } catch (e) {
+            alert("Booking Error: " + e.message);
+          } finally {
+            this.bookingLoading = false;
+          }
+        },
+
+        downloadEnrollmentPdf() {
+          if (!this.currentEnrollmentData) {
+            alert("No enrollment agreement loaded to download");
+            return;
+          }
+          try {
+            const { doc, filename } = window.BharatYatraPdf.generateEnrollmentAgreementPdf(this.currentEnrollmentData);
+            doc.save(filename);
+          } catch (e) {
+            alert("PDF Agreement generation failed: " + e.message);
+          }
+        },
+
+        async shareEnrollmentPdfWhatsApp() {
+          if (!this.currentEnrollmentData) {
+            alert("No enrollment agreement loaded to share");
+            return;
+          }
+          try {
+            const { doc, filename, blob } = window.BharatYatraPdf.generateEnrollmentAgreementPdf(this.currentEnrollmentData);
+            const message = `Jai Jagannath ${this.currentEnrollmentData.customer_name || 'Pilgrim'} ji!\nCongratulations on enrolling in the ${this.currentEnrollmentData.package_title || 'Pilgrimage'} tour! Your Booking Code is ${this.currentEnrollmentData.booking_code || ''}.\nAttached is your official Pilgrimage Enrollment Certificate, Micro-Collection Schedule, Payment Terms & Conditions, and Non-Payment Guidelines.\n\nAditya Tour & Travels`;
+            await window.BharatYatraPdf.sharePdfViaWhatsApp({
+              doc,
+              filename,
+              blob,
+              message,
+              phone: this.currentEnrollmentData.customer_phone
+            });
+          } catch (e) {
+            alert("WhatsApp Agreement share error: " + e.message);
+          }
+        },
+
+        buildEnrollmentFromDevotee(dev) {
+          if (!dev) return null;
+          const sub = dev.subscription || {};
+          const pkg = dev.package || {};
+          const tenure = Number(sub.tenure_months) || 6;
+          const price = Number(pkg.total_price) || 0;
+          const monthlyEmi = Math.round(price / tenure);
+
+          return {
+            booking_code: sub.booking_code,
+            certificate_id: "CERT-" + (sub.booking_code || "0000"),
+            booking_date: sub.created || new Date().toISOString(),
+            customer_name: sub.customer_name,
+            customer_phone: sub.customer_phone,
+            customer_address: sub.customer_address,
+            package_title: pkg.title,
+            package_itinerary: pkg.itinerary || "Sacred shrines, AC bus transport, darshan assistance & accommodation",
+            total_price: price,
+            tenure_months: tenure,
+            monthly_emi: monthlyEmi,
+            paid_emis_count: dev.paid_emis_count || 0,
+            min_emis_to_travel: dev.min_emis_to_travel || pkg.min_emis_to_travel || 3,
+            initial_payment_done: (dev.paid_emis_count || 0) > 0,
+            initial_payment_amount: (dev.paid_emis_count || 0) > 0 ? monthlyEmi : 0,
+            agent_name: this.agentName || "Aditya Travels Sahayak",
+            terms: [
+              "Micro-Collection Agreement: Installments are collected by authorized Sahayaks.",
+              "Travel Pass Eligibility: Seat reservation unlocks once required minimum EMIs are completed.",
+              "Digital Handover: All cash collections are recorded with verified digital receipts.",
+              "Devotee Inclusivity: Designed for financial dignity and effortless holy darshan.",
+              "Jurisdiction: All bookings subject to Aditya Tour & Travels pilgrimage terms."
+            ],
+            non_payment_guidelines: [
+              "Grace Period: A 7-day grace period is provided after each monthly due date.",
+              "Friendly Visit: Authorized Sahayak will provide field assistance for any missed installment.",
+              "No Penal Interest: Aditya Tour & Travels charges zero punitive interest or compounding penalties.",
+              "Extended Travel Lock: Seat confirmation remains paused until overdue EMIs are cleared.",
+              "Plan Rescheduling: Devotees facing hardship may request tenure restructuring through their local hub.",
+              "Contribution Protection: Deposited principal remains credited towards the yatra or transferable as per guidelines."
+            ]
+          };
+        },
+
+        downloadDevoteeAgreementPdf(dev) {
+          const enrollment = this.buildEnrollmentFromDevotee(dev);
+          if (!enrollment) return;
+          try {
+            const { doc, filename } = window.BharatYatraPdf.generateEnrollmentAgreementPdf(enrollment);
+            doc.save(filename);
+          } catch (e) {
+            alert("PDF generation failed: " + e.message);
+          }
+        },
+
+        async shareDevoteeAgreementWhatsApp(dev) {
+          const enrollment = this.buildEnrollmentFromDevotee(dev);
+          if (!enrollment) return;
+          try {
+            const { doc, filename, blob } = window.BharatYatraPdf.generateEnrollmentAgreementPdf(enrollment);
+            const message = `Jai Jagannath ${enrollment.customer_name || 'Pilgrim'} ji!\nAttached is your official Pilgrimage Enrollment Certificate & Agreement for ${enrollment.package_title || 'Pilgrimage'} tour (Booking: ${enrollment.booking_code}).\n\nAditya Tour & Travels`;
+            await window.BharatYatraPdf.sharePdfViaWhatsApp({
+              doc,
+              filename,
+              blob,
+              message,
+              phone: enrollment.customer_phone
+            });
+          } catch (e) {
+            alert("WhatsApp Agreement share error: " + e.message);
+          }
+        },
+
+        openDevoteePassbook(dev) {
+          this.selectedDevotee = dev;
+          this.passbookModalOpen = true;
+        },
+
+        async initiateHandover() {
+          this.isHandingOver = true;
+          try {
+            const token = this.getAuthToken();
+            const res = await fetch("/api/handover/initiate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+              }
+            });
+
+            if (res.ok) {
+              const data = await res.json();
+              this.activeHandover = {
+                id: data.handover_id,
+                passcode: data.passcode || data.otp_code,
+                total_amount: data.total_amount,
+                installments_count: data.installments_count,
+                created: data.created,
+                expires_at: data.expires_at,
+                expired: false
+              };
+              const remaining = data.expires_in_seconds || 900;
+              this.startPasscodeCountdown(remaining);
+              if (data.already_active) {
+                alert("Settlement Passcode is already active: " + (data.passcode || data.otp_code) + "\nValid for another " + this.formatCountdown(remaining) + ". Please share this code with your hub distributor.");
+              } else {
+                alert("Handover Passcode Generated! Valid for 15 minutes. Share with your distributor at the hub desk.");
+              }
+            } else {
+              const err = await res.json();
+              alert(err.error || "Failed to initiate handover");
+            }
+          } catch (e) {
+            alert("Network error: Connect to internet to generate settlement passcode.");
+          } finally {
+            this.isHandingOver = false;
+          }
+        },
+
         async flushOutbox() {
           const outbox = await window.BharatYatraStore.getPendingOutbox();
           if (outbox.length === 0) return;
 
-          const token = localStorage.getItem("by_auth_token") || "";
+          const token = this.getAuthToken();
           try {
             const res = await fetch("/api/agent/batch-sync", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": token ? "Bearer " + token : ""
+                "Authorization": "Bearer " + token
               },
               body: JSON.stringify({ items: outbox })
             });
@@ -464,39 +2148,173 @@
               await this.loadLocalData();
             }
           } catch (e) {
-            console.warn("Outbox flush will retry:", e);
+            console.warn("Outbox sync will retry:", e);
           }
         },
 
-        openHandoverModal() {
-          this.handoverOtp = "";
-          this.handoverModalOpen = true;
+        openEmiDetailsModal(item) {
+          this.selectedEmiItem = item;
+          this.emiDetailsModalOpen = true;
         },
 
-        async initiateHandover() {
-          this.isHandingOver = true;
+        collectFromDetails() {
+          const item = this.selectedEmiItem;
+          this.emiDetailsModalOpen = false;
+          if (item) {
+            this.openCollectModal(item);
+          }
+        },
+
+        openLedgerDetailModal(item) {
+          this.selectedLedgerItem = item;
+          this.ledgerDetailModalOpen = true;
+        },
+
+        formatDate(dateStr) {
+          if (!dateStr) return "N/A";
           try {
-            const token = localStorage.getItem("by_auth_token") || "";
-            const res = await fetch("/api/handover/initiate", {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+          } catch(e) {
+            return dateStr;
+          }
+        },
+
+        formatDateTime(dateStr) {
+          if (!dateStr) return "N/A";
+          try {
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+          } catch(e) {
+            return dateStr;
+          }
+        },
+
+        formatCountdown(sec) {
+          const s = Math.max(0, Math.floor(Number(sec) || 0));
+          const mins = Math.floor(s / 60);
+          const rem = s % 60;
+          return (mins < 10 ? "0" : "") + mins + ":" + (rem < 10 ? "0" : "") + rem;
+        },
+
+        startPasscodeCountdown(sec) {
+          if (this.passcodeInterval) {
+            clearInterval(this.passcodeInterval);
+            this.passcodeInterval = null;
+          }
+          this.passcodeRemainingSeconds = Math.max(0, Math.floor(sec || 0));
+          if (this.passcodeRemainingSeconds <= 0) {
+            if (this.activeHandover) this.activeHandover.expired = true;
+            return;
+          }
+
+          this.passcodeInterval = setInterval(() => {
+            if (this.passcodeRemainingSeconds > 0) {
+              this.passcodeRemainingSeconds--;
+            } else {
+              clearInterval(this.passcodeInterval);
+              this.passcodeInterval = null;
+              if (this.activeHandover) {
+                this.activeHandover.expired = true;
+              }
+            }
+          }, 1000);
+        },
+
+        openChangePasswordModal() {
+          this.changePasswordForm.current_password = "";
+          this.changePasswordForm.new_password = "";
+          this.changePasswordForm.confirm_password = "";
+          this.changePasswordError = "";
+          this.changePasswordSuccess = "";
+          this.showCurrentPassword = false;
+          this.showNewPassword = false;
+          this.changePasswordModalOpen = true;
+        },
+
+        async submitChangePassword() {
+          this.changePasswordError = "";
+          this.changePasswordSuccess = "";
+
+          const cur = (this.changePasswordForm.current_password || "").trim();
+          const np = (this.changePasswordForm.new_password || "").trim();
+          const cp = (this.changePasswordForm.confirm_password || "").trim();
+
+          if (!cur) {
+            this.changePasswordError = "Please enter your current password.";
+            return;
+          }
+          if (!np || np.length < 8) {
+            this.changePasswordError = "New password must be at least 8 characters.";
+            return;
+          }
+          if (np !== cp) {
+            this.changePasswordError = "New password and confirmation do not match.";
+            return;
+          }
+          if (cur === np) {
+            this.changePasswordError = "New password must be different from current password.";
+            return;
+          }
+
+          this.changePasswordLoading = true;
+          try {
+            const token = this.getAuthToken();
+            const res = await fetch("/api/agent/change-password", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": token ? "Bearer " + token : ""
-              }
+                "Authorization": "Bearer " + token
+              },
+              body: JSON.stringify({
+                current_password: cur,
+                new_password: np,
+                confirm_password: cp
+              })
             });
 
+            const data = await res.json();
             if (res.ok) {
-              const data = await res.json();
-              this.handoverOtp = data.otp_code;
+              this.changePasswordSuccess = "Password changed successfully!";
+              this.changePasswordForm.current_password = "";
+              this.changePasswordForm.new_password = "";
+              this.changePasswordForm.confirm_password = "";
+              setTimeout(() => {
+                this.changePasswordModalOpen = false;
+                this.changePasswordSuccess = "";
+              }, 2000);
             } else {
-              const err = await res.json();
-              alert(err.error || "Failed to initiate handover");
+              this.changePasswordError = data.error || data.message || "Failed to change password.";
             }
           } catch (e) {
-            alert("Network error: Handover initiation requires connectivity to generate OTP.");
+            this.changePasswordError = "Network error: " + e.message;
           } finally {
-            this.isHandingOver = false;
+            this.changePasswordLoading = false;
           }
+        },
+
+        closeAllModals() {
+          this.collectModalOpen = false;
+          this.receiptModalOpen = false;
+          this.enrollmentModalOpen = false;
+          this.passbookModalOpen = false;
+          this.showHubModal = false;
+          this.emiDetailsModalOpen = false;
+          this.ledgerDetailModalOpen = false;
+          this.changePasswordModalOpen = false;
+        },
+
+        logout() {
+          if (this.realtimeEventSource) {
+            try { this.realtimeEventSource.close(); } catch(e) {}
+          }
+          sessionStorage.removeItem("pb_agent_token");
+          sessionStorage.removeItem("pb_agent_user");
+          localStorage.removeItem("pb_agent_token");
+          localStorage.removeItem("pb_agent_user");
+          window.location.href = "/login.html?redirect=/agent/index.html";
         }
       };
     }

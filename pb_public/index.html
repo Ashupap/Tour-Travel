@@ -924,7 +924,7 @@
   <script src="/js/htmx.min.js"></script>
   <script src="/js/reveal.js"></script>
   <script src="/js/vanilla-tilt.min.js"></script>
-  <script src="/js/landing.js?v=20260930_v2"></script>
+  <script src="/js/landing.js?v=20261001_v1"></script>
   <script defer src="/js/alpine.min.js"></script>
 </head>
 
@@ -946,11 +946,17 @@
         <a href="#circuits">Sacred Circuits</a>
         <a href="#emi-calculator-section">EMI Calculator</a>
         <a href="#pass">Travel Pass</a>
+        <a href="/login.html" style="color:var(--accent);font-weight:700">Staff Portal</a>
       </div>
 
-      <button class="nav__cta" type="button" @click="statusModalOpen = true">
-        <span>Check Pass</span> &nbsp;↗
-      </button>
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="/login.html" class="nav__cta" style="background:transparent;border:1px solid rgba(245,158,11,.4);color:var(--accent);text-decoration:none;display:inline-flex;align-items:center">
+          <span>Staff Login</span>
+        </a>
+        <button class="nav__cta" type="button" @click="statusModalOpen = true">
+          <span>Check Pass</span> &nbsp;↗
+        </button>
+      </div>
     </nav>
   </header>
 
@@ -1455,9 +1461,10 @@
         <div class="footer__col">
           <h4>Portals &amp; Head Office</h4>
           <ul>
-            <li><a href="/agent/dashboard">Sahayak (Agent) Portal</a></li>
-            <li><a href="/distributor/dashboard">Distributor Management</a></li>
-            <li><a href="/_/">Admin Central Operations</a></li>
+            <li><a href="/login.html" style="color:var(--accent);font-weight:700">Unified Staff Login (All Roles)</a></li>
+            <li><a href="/agent/index.html">Sahayak (Agent) Portal</a></li>
+            <li><a href="/distributor/index.html">Distributor Management</a></li>
+            <li><a href="/admin/index.html">Admin Central Operations</a></li>
             <li><span>Head Office: Master Canteen, Bhubaneswar - 751001</span></li>
             <li><span class="text-amber-400 font-odia">ଜୟ ଜଗନ୍ନାଥ • ହର ଗାଁ ରୁ ଚାରିଧାମ</span></li>
           </ul>
