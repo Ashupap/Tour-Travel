@@ -111,66 +111,62 @@ async function ensurePackages(adminToken) {
     return;
   }
 
-  console.log("  + Seeding initial pilgrimage packages...");
+  console.log("  + Ensuring initial pilgrimage packages in database...");
   const samplePackages = [
     {
-      name: "Chardham Mahayatra Express",
-      destination: "Yamunotri - Gangotri - Kedarnath - Badrinath",
+      title: "Char Dham Himalayan Yatra",
+      destination: "Yamunotri • Gangotri • Kedarnath • Badrinath",
       duration_days: 12,
       total_price: 36000,
-      emi_amount: 3000,
-      emi_frequency: "monthly",
-      total_emis: 12,
-      min_emis_to_travel: 4,
-      is_active: true,
-      description: "Complete spiritual circuit covering all 4 holy Himalayan dhams with premium AC bus and stay."
-    },
-    {
-      name: "Puri Rath Yatra & Konark Special",
-      destination: "Puri - Konark - Bhubaneswar - Chilika",
-      duration_days: 5,
-      total_price: 15000,
-      emi_amount: 2500,
-      emi_frequency: "monthly",
-      total_emis: 6,
+      allowed_tenures: [6, 9, 12],
       min_emis_to_travel: 2,
       is_active: true,
-      description: "Sacred Jagannath darshan, Chandrabhaga beach sunrise, and Konark Sun Temple heritage tour."
+      itinerary: "Complete spiritual circuit covering all 4 holy Himalayan dhams with premium AC bus and stay."
     },
     {
-      name: "Kashi Vishwanath & Ayodhya Ram Mandir",
-      destination: "Varanasi - Prayagraj - Ayodhya",
-      duration_days: 7,
-      total_price: 21000,
-      emi_amount: 3000,
-      emi_frequency: "monthly",
-      total_emis: 7,
-      min_emis_to_travel: 3,
-      is_active: true,
-      description: "Holy Ganga Aarti at Dashashwamedh Ghat, Triveni Sangam snan, and magnificent Ram Mandir darshan."
-    },
-    {
-      name: "Tirupati Balaji Darshan Express",
-      destination: "Tirupati - Kalahasti - Kanchipuram",
-      duration_days: 4,
-      total_price: 12000,
-      emi_amount: 2000,
-      emi_frequency: "monthly",
-      total_emis: 6,
+      title: "Ayodhya & Kashi Vishwanath Darshan",
+      destination: "Ayodhya Ram Mandir • Kashi Vishwanath • Prayagraj",
+      duration_days: 6,
+      total_price: 18000,
+      allowed_tenures: [3, 6, 9],
       min_emis_to_travel: 2,
       is_active: true,
-      description: "Special VIP darshan at Tirumala Sri Venkateswara Temple with AC bus travel."
+      itinerary: "Ram Lalla VIP darshan, Ganga Maha Aarti boat ride, and Triveni Sangam holy snan."
+    },
+    {
+      title: "12 Jyotirlinga Mahayatra",
+      destination: "Somnath • Mahakaleshwar Ujjain • Omkareshwar • Nageshwar",
+      duration_days: 9,
+      total_price: 27000,
+      allowed_tenures: [6, 9, 12],
+      min_emis_to_travel: 2,
+      is_active: true,
+      itinerary: "Bhasma Aarti access, Purohit special puja service, and deluxe coach travel."
+    },
+    {
+      title: "South India & Rameswaram Circuit",
+      destination: "Rameswaram Ramanathaswamy • Madurai Meenakshi • Kanyakumari",
+      duration_days: 8,
+      total_price: 24000,
+      allowed_tenures: [6, 9, 12],
+      min_emis_to_travel: 2,
+      is_active: true,
+      itinerary: "22 Holy Theertham snan, Odisha special satvik cooks, and Pamban sea bridge view."
     }
   ];
 
   for (const pkg of samplePackages) {
-    await fetch(`${BASE_URL}/api/collections/packages/records`, {
+    const res = await fetch(`${BASE_URL}/api/collections/packages/records`, {
       method: "POST",
       headers,
       body: JSON.stringify(pkg)
     });
+    if (!res.ok) {
+      console.warn(`  ⚠ Warning creating package '${pkg.title}':`, res.status, await res.text());
+    } else {
+      console.log(`  + Seeded package: ${pkg.title}`);
+    }
   }
-  console.log(`  ✓ Seeded 4 initial pilgrimage packages.`);
 }
 
 async function run() {

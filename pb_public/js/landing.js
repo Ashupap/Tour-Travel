@@ -202,72 +202,8 @@ const STAT_META = {
   stat4: { value: 100, format: "int", suffix: "%" }
 };
 
-const TOUR_PACKAGES = [
-  {
-    id: "pkg-chardham",
-    title: "Char Dham Himalayan Yatra",
-    odia_title: "ଚାରିଧାମ ମହାଯାତ୍ରା (Char Dham)",
-    destination: "Bhubaneswar/Cuttack ru direct → Yamunotri • Gangotri • Kedarnath • Badrinath",
-    odia_destination: "ଭୁବନେଶ୍ୱର/କଟକରୁ ସିଧାସଳଖ → ଯମୁନୋତ୍ରୀ • ଗଙ୍ଗୋତ୍ରୀ • କେଦାରନାଥ • ବଦ୍ରିନାଥ",
-    pickup_points: "Bhubaneswar, Cuttack, Balasore, Berhampur",
-    duration_days: 12,
-    total_price: 36000,
-    allowed_tenures: [6, 9, 12],
-    min_emis_to_travel: 2,
-    badge: "Most Sacred • ବହୁତ ଲୋକପ୍ରିୟ",
-    style: "devotion",
-    image: "/images/pkg-chardham.jpg",
-    highlights: ["Premium Deluxe Bus with Blanket", "VIP Kedarnath Helipad/Pony Support", "Pure Satvik Aahar (No Onion-Garlic)"]
-  },
-  {
-    id: "pkg-ayodhya-kashi",
-    title: "Ayodhya & Kashi Vishwanath Darshan",
-    odia_title: "ଅଯୋଧ୍ୟା ଓ କାଶୀ ବିଶ୍ୱନାଥ (Ayodhya-Kashi)",
-    destination: "Odisha ru direct → Ayodhya Ram Mandir • Kashi Vishwanath • Prayagraj Triveni Sangam",
-    odia_destination: "ଓଡ଼ିଶାରୁ ସିଧାସଳଖ → ଅଯୋଧ୍ୟା ରାମ ମନ୍ଦିର • କାଶୀ ବିଶ୍ୱନାଥ • ପ୍ରୟାଗରାଜ ସଙ୍ଗମ",
-    pickup_points: "Bhubaneswar, Sambalpur, Rourkela, Cuttack",
-    duration_days: 6,
-    total_price: 18000,
-    allowed_tenures: [3, 6, 9],
-    min_emis_to_travel: 2,
-    badge: "Ram Lalla Special • ରାମ ଦର୍ଶନ",
-    style: "devotion",
-    image: "/images/pkg-kashi.jpg",
-    highlights: ["Ram Lalla VIP Darshan", "Ganga Maha Aarti Boat Ride", "Elderly Special Care (Zero Walk)"]
-  },
-  {
-    id: "pkg-jyotirlinga",
-    title: "12 Jyotirlinga Mahayatra (Phase 1)",
-    odia_title: "୧୨ ଜ୍ୟୋତିର୍ଲିଙ୍ଗ ଯାତ୍ରା (Jyotirlinga)",
-    destination: "Somnath • Mahakaleshwar Ujjain • Omkareshwar • Nageshwar",
-    odia_destination: "ସୋମନାଥ • ମହାକାଳେଶ୍ୱର ଉଜ୍ଜୟିନୀ • ଓଁକାରେଶ୍ୱର • ନାଗେଶ୍ୱର",
-    pickup_points: "Bhubaneswar, Angul, Sambalpur, Jharsuguda",
-    duration_days: 9,
-    total_price: 27000,
-    allowed_tenures: [6, 9, 12],
-    min_emis_to_travel: 2,
-    badge: "Shiva Mahayatra • ମହାକାଳ ଦର୍ଶନ",
-    style: "devotion",
-    image: "/images/pkg-jyotirlinga.jpg",
-    highlights: ["Bhasma Aarti Access", "Premium Deluxe Bus Comfort", "Purohit Special Puja Service"]
-  },
-  {
-    id: "pkg-south-circuit",
-    title: "South India & Rameswaram Circuit",
-    odia_title: "ଦକ୍ଷିଣ ଭାରତ ଓ ରାମେଶ୍ୱରମ୍ (Rameswaram)",
-    destination: "Rameswaram Ramanathaswamy • Madurai Meenakshi • Kanyakumari",
-    odia_destination: "ରାମେଶ୍ୱରମ୍ ରାମନାଥସ୍ୱାମୀ • ମଦୁରାଇ ମୀନାକ୍ଷୀ • କନ୍ୟାକୁମାରୀ",
-    pickup_points: "Berhampur, Bhubaneswar, Balasore",
-    duration_days: 8,
-    total_price: 24000,
-    allowed_tenures: [6, 9, 12],
-    min_emis_to_travel: 2,
-    badge: "Coastal Dham • ପବିତ୍ର ତୀର୍ଥ",
-    style: "coastal",
-    image: "/images/pkg-south.jpg",
-    highlights: ["22 Holy Theertham Snan", "Odisha Special Satvik Cooks", "Pamban Sea Bridge View"]
-  }
-];
+// Tour packages catalog loaded dynamically from PocketBase (/api/public/packages)
+const TOUR_PACKAGES = [];
 
 function prefersReducedMotion() {
   return (
@@ -280,8 +216,8 @@ function prefersReducedMotion() {
 function landingApp() {
   return {
     lang: "odia", // 'odia' or 'en'
-    packages: TOUR_PACKAGES,
-    selectedPackage: TOUR_PACKAGES[0],
+    packages: [],
+    selectedPackage: null,
     selectedTenure: 9,
     finderDest: "all",
     finderStyle: "all",
@@ -402,16 +338,19 @@ function landingApp() {
     async loadServerPackages() {
       try {
         const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-        const timeoutId = controller ? setTimeout(() => controller.abort(), 3500) : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 4000) : null;
         const res = await fetch("/api/public/packages", {
           cache: "no-store",
           signal: controller ? controller.signal : undefined
         });
         if (timeoutId) clearTimeout(timeoutId);
-        if (!res.ok) return;
+        if (!res.ok) {
+          this.packages = [];
+          this.selectedPackage = null;
+          return;
+        }
         const data = await res.json();
         const serverPkgs = Array.isArray(data.packages) ? data.packages : [];
-        if (!serverPkgs.length) return;
 
         // Filter out test dummy packages from automated test suites
         const isTestDummy = (p) => {
@@ -419,77 +358,54 @@ function landingApp() {
           return t.startsWith("manifest yatra") || t.startsWith("portfolio yatra") || t.startsWith("test ") || t.includes("phase 3");
         };
 
-        const staticPkgs = Array.isArray(TOUR_PACKAGES) ? [...TOUR_PACKAGES] : [];
-
-        // Update static packages if server has updated details for them
-        const merged = staticPkgs.map((base) => {
-          const matching = serverPkgs.find((sp) => {
-            if (sp.id && sp.id === base.id) return true;
-            const spTitle = (sp.title || "").toLowerCase().trim();
-            const baseTitle = (base.title || "").toLowerCase().trim();
-            return spTitle === baseTitle || (spTitle.length > 5 && baseTitle.length > 5 && (spTitle.startsWith(baseTitle) || baseTitle.startsWith(spTitle)));
-          });
-          if (!matching) return base;
-          const tenures = Array.isArray(matching.allowed_tenures) && matching.allowed_tenures.length
-            ? matching.allowed_tenures.map((x) => Number(x)).filter((n) => !isNaN(n) && n > 0)
-            : base.allowed_tenures;
-          return {
-            ...base,
-            id: matching.id || base.id,
-            total_price: Number(matching.total_price) || base.total_price,
-            duration_days: Number(matching.duration_days) || base.duration_days,
-            allowed_tenures: tenures && tenures.length ? tenures : base.allowed_tenures,
-            min_emis_to_travel: Number(matching.min_emis_to_travel) || base.min_emis_to_travel || 2,
-            image: matching.cover_image_url || base.image
-          };
-        });
-
-        // Add any non-test genuine packages from server
+        const list = [];
         for (const sp of serverPkgs) {
           if (isTestDummy(sp)) continue;
-          const already = merged.some((m) => m.id === sp.id || (m.title || "").toLowerCase() === (sp.title || "").toLowerCase());
-          if (!already) {
-            const tenures = Array.isArray(sp.allowed_tenures) && sp.allowed_tenures.length
-              ? sp.allowed_tenures.map((x) => Number(x)).filter((n) => !isNaN(n) && n > 0)
-              : [6, 9, 12];
-            merged.push({
-              id: sp.id,
-              title: sp.title || "Pilgrimage Yatra",
-              destination: sp.destination || "Odisha direct pilgrimage",
-              duration_days: Number(sp.duration_days) || 7,
-              total_price: Number(sp.total_price) || 20000,
-              allowed_tenures: tenures,
-              min_emis_to_travel: Number(sp.min_emis_to_travel) || 2,
-              image: sp.cover_image_url || "/images/pkg-kashi.jpg",
-              badge: "Odisha Circuit",
-              style: "devotion",
-              highlights: [],
-              odia_title: sp.title || "",
-              odia_destination: sp.destination || ""
-            });
-          }
+          const tenures = Array.isArray(sp.allowed_tenures) && sp.allowed_tenures.length
+            ? sp.allowed_tenures.map((x) => Number(x)).filter((n) => !isNaN(n) && n > 0)
+            : [6, 9, 12];
+          list.push({
+            id: sp.id,
+            title: sp.title || "Pilgrimage Yatra",
+            destination: sp.destination || "Odisha direct pilgrimage",
+            duration_days: Number(sp.duration_days) || 7,
+            total_price: Number(sp.total_price) || 20000,
+            allowed_tenures: tenures,
+            min_emis_to_travel: Number(sp.min_emis_to_travel) || 2,
+            image: sp.cover_image_url || "/images/hero-1.jpg",
+            badge: "Sacred Yatra",
+            style: "devotion",
+            highlights: [],
+            odia_title: sp.title || "",
+            odia_destination: sp.destination || ""
+          });
         }
 
-        this.packages = merged;
-        // Keep selectedPackage valid
-        const stillSelected = merged.find((p) => this.selectedPackage && (p.id === this.selectedPackage.id || p.title === this.selectedPackage.title));
-        this.selectedPackage = stillSelected || merged[0];
-        const validTenures = (this.selectedPackage && Array.isArray(this.selectedPackage.allowed_tenures) && this.selectedPackage.allowed_tenures.length)
-          ? this.selectedPackage.allowed_tenures
-          : [6, 9, 12];
-        if (!validTenures.includes(this.selectedTenure)) {
-          this.selectedTenure = validTenures[0];
+        this.packages = list;
+        if (list.length > 0) {
+          const stillSelected = list.find((p) => this.selectedPackage && p.id === this.selectedPackage.id);
+          this.selectedPackage = stillSelected || list[0];
+          const validTenures = (this.selectedPackage && Array.isArray(this.selectedPackage.allowed_tenures) && this.selectedPackage.allowed_tenures.length)
+            ? this.selectedPackage.allowed_tenures
+            : [6, 9, 12];
+          if (!validTenures.includes(this.selectedTenure)) {
+            this.selectedTenure = validTenures[0];
+          }
+        } else {
+          this.selectedPackage = null;
         }
         this.$nextTick(() => this.initTilt());
       } catch (err) {
-        // Offline or server unavailable: keep the static catalog
+        console.warn("Could not load packages from server:", err);
+        this.packages = [];
+        this.selectedPackage = null;
       }
     },
 
     get filteredPackages() {
       const dest = this.finderDest;
       const style = this.finderStyle;
-      const list = (this.packages && this.packages.length) ? this.packages : TOUR_PACKAGES;
+      const list = Array.isArray(this.packages) ? this.packages : [];
       return list.filter((p) => {
         const destOk = dest === "all" || (p.destination || "").toLowerCase().includes(dest.toLowerCase()) || (p.title || "").toLowerCase().includes(dest.toLowerCase());
         const styleOk = style === "all" || (p.style || "") === style;
@@ -499,7 +415,7 @@ function landingApp() {
 
     // Limit calculator to 3-4 curated packages only
     get calculatorPackages() {
-      const base = (this.packages && this.packages.length) ? this.packages : TOUR_PACKAGES;
+      const base = Array.isArray(this.packages) ? this.packages : [];
       const core = base.slice(0, 4);
       // If user selected a package outside the first 4, include it so the selected card is visible
       if (this.selectedPackage && !core.some((p) => p.id === this.selectedPackage.id)) {

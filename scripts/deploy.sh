@@ -92,10 +92,10 @@ done
 if [ "${HEALTH}" = "200" ]; then
   echo -e "${GREEN}[✓] PocketBase backend is LIVE and responding (HTTP 200 OK)!${NC}"
   
-  # Ensure development test users are seeded
+  # Ensure development test users & initial packages are seeded
   if command -v node >/dev/null 2>&1 && [ -f "scripts/seed-test-users.js" ]; then
-    echo -e "${CYAN}[INFO] Verifying test users in database...${NC}"
-    node scripts/seed-test-users.js 2>/dev/null || true
+    echo -e "${CYAN}[INFO] Verifying test users & initial packages in database...${NC}"
+    node scripts/seed-test-users.js || true
   fi
 
   echo -e "\n${GREEN}================================================================${NC}"

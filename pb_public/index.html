@@ -924,7 +924,7 @@
   <script src="/js/htmx.min.js"></script>
   <script src="/js/reveal.js"></script>
   <script src="/js/vanilla-tilt.min.js"></script>
-  <script src="/js/landing.js?v=20261001_v1"></script>
+  <script src="/js/landing.js?v=20261012_v1"></script>
   <script defer src="/js/alpine.min.js"></script>
 </head>
 
@@ -1121,7 +1121,7 @@
           <p>Premium deluxe bus, VIP darshan, and pure satvik meals on every journey.</p>
         </div>
 
-        <div class="package-grid" id="package-grid">
+        <div class="package-grid" id="package-grid" x-show="filteredPackages.length">
           <template x-for="pkg in filteredPackages" :key="pkg.id">
             <article
               class="package-card package-tilt-card"
@@ -1152,7 +1152,7 @@
           </template>
         </div>
 
-        <p class="empty-state" id="empty-state" :class="filteredPackages.length ? '' : 'is-visible'">No trips match that combination. Try another destination or travel style.</p>
+        <p class="empty-state" id="empty-state" :class="filteredPackages.length ? '' : 'is-visible'" x-text="packages.length ? 'No trips match that combination. Try another destination or travel style.' : 'No pilgrimage packages currently available. Please check back shortly or consult your local Sahayak.'"></p>
       </div>
     </section>
 
@@ -1166,7 +1166,12 @@
         </div>
 
         <div class="calculator__card">
-          <div class="calc-grid">
+          <div x-show="!packages.length" style="padding: 48px 24px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 12px;">🛕</div>
+            <h3 style="font-size: 16px; font-weight: 700; color: white; margin-bottom: 6px;">No Packages Published Yet</h3>
+            <p style="font-size: 13px; color: rgba(255,255,255,0.7); max-width: 480px; margin: 0 auto;">Tour packages configured in the Admin portal will appear here dynamically with live micro-EMI calculations.</p>
+          </div>
+          <div class="calc-grid" x-show="packages.length">
             <div>
               <p class="calc-label">1. Choose Pilgrimage Circuit</p>
               <div class="circuit-selector" id="circuit-selector">
