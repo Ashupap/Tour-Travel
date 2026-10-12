@@ -66,7 +66,9 @@ async function ensureUser(adminToken, userData) {
   }
 
   // Create new user
+  const username = userData.email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
   const payload = {
+    username,
     email: userData.email,
     password: userData.password,
     passwordConfirm: userData.password,

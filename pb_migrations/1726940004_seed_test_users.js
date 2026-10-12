@@ -27,6 +27,8 @@ migrate((db) => {
       return dao.findAuthRecordByEmail("users", email);
     } catch (e) {
       const rec = new Record(usersCol);
+      const username = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+      rec.setUsername(username);
       rec.setEmail(email);
       rec.setPassword(password);
       rec.set("name", name);
