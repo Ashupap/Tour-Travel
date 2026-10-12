@@ -4,8 +4,10 @@
   "description": "BharatYatra PWA — Offline-First EMI-Based Bus Tour & Micro-Collection System",
   "type": "module",
   "scripts": {
+    "start": "./pocketbase serve --http=0.0.0.0:8090",
     "test": "node tests/phase1_verification.js",
     "pb": "pocketbase.exe serve --http=127.0.0.1:8090",
+    "pb:linux": "./pocketbase serve --http=127.0.0.1:8090",
     "build": "npm run build:css",
     "build:css": "node ./node_modules/tailwindcss/lib/cli.js -i ./pb_public/css/input.css -o ./pb_public/css/tailwind.css --minify",
     "watch:css": "node ./node_modules/tailwindcss/lib/cli.js -i ./pb_public/css/input.css -o ./pb_public/css/tailwind.css --watch"

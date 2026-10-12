@@ -131,6 +131,30 @@ async function run() {
   const initialHandovers = await initialHandoversRes.json();
   console.log("  Initial active handover:", initialHandovers.active_handover ? initialHandovers.active_handover.passcode : "none");
 
+  // Check agent custody / manifest to ensure cashInHand > 0
+  const manifestRes = await fetch(`${baseUrl}/api/agent/sync-manifest`, { headers: freshAgentHeaders });
+  const manifest = await manifestRes.json();
+  const pendingInst = manifest.installments ? manifest.installments.find(i => i.status !== "paid") : null;
+
+  if (pendingInst) {
+    console.log("  Seeding payment for installment:", pendingInst.id);
+    const syncRes = await fetch(`${baseUrl}/api/agent/batch-sync`, {
+      method: "POST",
+      headers: freshAgentHeaders,
+      body: JSON.stringify({
+        items: [{
+          installment_id: pendingInst.id,
+          payment_mode: "cash",
+          amount: pendingInst.amount || 4000,
+          paid_at: new Date().toISOString().replace("T", " "),
+          receipt_slip_id: `TEST-${Date.now()}`,
+          idempotency_key: `seed-${Date.now()}`
+        }]
+      })
+    });
+    console.log("  Seed sync response status:", syncRes.status);
+  }
+
   // Initiate handover
   const initRes1 = await fetch(`${baseUrl}/api/handover/initiate`, {
     method: "POST",

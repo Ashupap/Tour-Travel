@@ -6,6 +6,7 @@ pb_data/
 
 # Executables & archives
 *.exe
+pocketbase
 *.zip
 *.tar.gz
 

@@ -1,0 +1,37 @@
+[Unit]
+Description=BharatYatra PWA — Offline-First Tour & Travel System (PocketBase)
+Documentation=https://github.com/Ashupap/Tour-Travel
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Change User/Group to your server's non-root deploy user or bharatyatra
+User=bharatyatra
+Group=bharatyatra
+
+# Adjust WorkingDirectory and ExecStart to your absolute installation path
+WorkingDirectory=/var/www/bharatyatra
+ExecStart=/var/www/bharatyatra/pocketbase serve --http=127.0.0.1:8090 --dir=/var/www/bharatyatra/pb_data --hooksDir=/var/www/bharatyatra/pb_hooks --migrationsDir=/var/www/bharatyatra/pb_migrations --publicDir=/var/www/bharatyatra/pb_public
+
+# Robust auto-restart policy
+Restart=always
+RestartSec=5s
+
+# Logging to systemd journal
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bharatyatra
+
+# High file descriptor limit for real-time SSE & concurrent connections
+LimitNOFILE=65535
+
+# Linux process security sandboxing
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/var/www/bharatyatra/pb_data
+
+[Install]
+WantedBy=multi-user.target

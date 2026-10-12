@@ -1,7 +1,7 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "aditya-travels-v27-bharatyatra-cache-v3-v6";
+const CACHE_NAME = "aditya-travels-v27-bharatyatra-cache-v3-v7";
 const STATIC_ASSETS = [
   "/",
   "/index.html",

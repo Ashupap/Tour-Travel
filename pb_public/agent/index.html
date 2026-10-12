@@ -100,7 +100,7 @@
   <header class="sticky top-0 z-30 bg-slate-900 border-b border-slate-800 px-3 sm:px-4 py-2.5 shadow-md">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <!-- Left Brand & Agent Info -->
-      <div class="flex items-center space-x-2 min-w-0 flex-1 mr-2">
+      <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
         <a href="/" class="shrink-0 flex items-center">
           <img src="/images/logo.png" alt="Aditya Logo" class="h-8 w-auto object-contain filter drop-shadow rounded-lg p-0.5 bg-white/10" />
         </a>
@@ -113,40 +113,15 @@
         </div>
       </div>
 
-      <!-- Quick Actions (Clean & Compact on Mobile) -->
+      <!-- Right: Minimal Clean Connectivity Status (All action menus placed comfortably at the bottom) -->
       <div class="flex items-center space-x-1.5 shrink-0">
-        <!-- Outbox Sync Pill -->
-        <template x-if="pendingSyncCount > 0">
-          <span class="px-1.5 py-0.5 rounded-full text-[9px] bg-red-600 text-white font-black" x-text="pendingSyncCount + ' unsynced'"></span>
-        </template>
-
-        <!-- Sync Button -->
-        <button @click="syncData()" :disabled="isSyncing" title="Sync Route Data" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-slate-200 transition active:scale-95">
-          <svg class="w-4 h-4" :class="isSyncing ? 'animate-spin text-amber-400' : 'text-slate-300'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
-        </button>
-
-        <!-- Hub Desk Info Trigger -->
-        <button @click="showHubModal = true" title="Territory Hub Desk Info" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-amber-400 transition active:scale-95">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-          </svg>
-        </button>
-
-        <!-- Change Password Trigger -->
-        <button @click="openChangePasswordModal()" title="Change Portal Password" class="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-amber-300 transition active:scale-95">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-          </svg>
-        </button>
-
-        <!-- Logout Button -->
-        <button @click="logout()" title="Sign Out" class="p-1.5 bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 rounded-lg text-red-300 transition active:scale-95">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-          </svg>
-        </button>
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800/90 border border-slate-700/70 text-[10px] font-semibold text-slate-300">
+          <span class="w-1.5 h-1.5 rounded-full" :class="isOnline ? 'bg-emerald-400' : 'bg-amber-400'"></span>
+          <span x-text="isOnline ? 'Online' : 'Offline'"></span>
+          <template x-if="pendingSyncCount > 0">
+            <span class="ml-0.5 px-1.5 py-0.2 rounded-full text-[9px] bg-red-600 text-white font-black animate-pulse" x-text="pendingSyncCount + ' outbox'"></span>
+          </template>
+        </div>
       </div>
     </div>
   </header>
@@ -705,6 +680,114 @@
 
     </div>
 
+    <!-- ========================================== -->
+    <!-- TAB 6: MENU & SETTINGS (BOTTOM PLACED) -->
+    <!-- ========================================== -->
+    <div x-show="activeTab === 'menu'" x-cloak class="space-y-4">
+      <!-- Agent Profile Card -->
+      <div class="p-4 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-900/90 border border-slate-800 shadow-xl space-y-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-black text-lg">
+            <span x-text="(agentName || 'S').charAt(0)">S</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-base font-black text-white truncate" x-text="agentName || 'Field Route Sahayak'"></h3>
+            <p class="text-xs text-amber-300 font-semibold" x-text="distributorInfo ? (distributorInfo.agency_name || distributorInfo.name || 'Puri Central Hub') : 'Authorized Territory Agent'"></p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-medium flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active Sahayak
+              </span>
+              <span class="text-[10px] text-slate-400" x-text="isOnline ? 'Online Synced' : 'Offline Mode'"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations & Quick Actions -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Operations &amp; Tools</h4>
+
+        <!-- 1. Sync Route Data -->
+        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between hover:border-slate-700 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <svg class="w-5 h-5" :class="isSyncing ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white flex items-center gap-2">
+                <span>Sync Route Data</span>
+                <template x-if="pendingSyncCount > 0">
+                  <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-red-600 text-white font-black" x-text="pendingSyncCount + ' pending'"></span>
+                </template>
+              </div>
+              <p class="text-[10px] text-slate-400" x-text="lastSyncTime ? 'Last synced: ' + lastSyncTime : 'Sync manifest and offline slips'"></p>
+            </div>
+          </div>
+          <button @click="syncData()" :disabled="isSyncing" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-950 font-bold text-xs rounded-lg transition active:scale-95 flex items-center gap-1.5 shadow">
+            <svg class="w-3.5 h-3.5" :class="isSyncing ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span x-text="isSyncing ? 'Syncing...' : 'Sync Now'"></span>
+          </button>
+        </div>
+
+        <!-- 2. Territory Hub Desk Info -->
+        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between hover:border-slate-700 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Territory Hub Desk</div>
+              <p class="text-[10px] text-slate-400" x-text="distributorInfo ? (distributorInfo.agency_name || distributorInfo.name || 'Puri Central Hub') : 'Distributor office details'"></p>
+            </div>
+          </div>
+          <button @click="showHubModal = true" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-lg border border-slate-700 transition active:scale-95">
+            View Hub
+          </button>
+        </div>
+
+        <!-- 3. Change Security Password -->
+        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between hover:border-slate-700 transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">Security Password</div>
+              <p class="text-[10px] text-slate-400">Change your Sahayak login password</p>
+            </div>
+          </div>
+          <button @click="openChangePasswordModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs rounded-lg border border-slate-700 transition active:scale-95">
+            Change
+          </button>
+        </div>
+      </div>
+
+      <!-- Account Session -->
+      <div class="space-y-2 pt-2">
+        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Session Management</h4>
+        <button @click="logout()" class="w-full p-3.5 rounded-xl bg-red-950/30 hover:bg-red-950/60 border border-red-500/30 flex items-center justify-center space-x-2 text-red-300 font-bold text-xs transition active:scale-95 shadow">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+          </svg>
+          <span>Sign Out of Sahayak Portal</span>
+        </button>
+      </div>
+
+      <!-- System Credits -->
+      <div class="pt-3 pb-2 text-center space-y-1">
+        <p class="text-[10px] text-slate-500 font-medium">BharatYatra PWA • Aditya Travels Sahayak Portal</p>
+        <p class="text-[9px] text-slate-600">Offline-first local Dexie.js + Background Sync active</p>
+      </div>
+    </div>
+
   </main>
 
   <!-- ========================================== -->
@@ -712,8 +795,8 @@
   <!-- ========================================== -->
   <nav class="mobile-bottom-nav fixed bottom-0 left-0 right-0 z-50 px-2 py-1.5 shadow-2xl"
        style="position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 50 !important; background-color: #0f172a !important; border-top: 1px solid #1e293b !important;">
-    <div class="mobile-bottom-grid max-w-md mx-auto grid grid-cols-5 gap-1 text-center"
-         style="display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; width: 100% !important; margin: 0 auto !important;">
+    <div class="mobile-bottom-grid max-w-md mx-auto grid grid-cols-6 gap-1 text-center"
+         style="display: grid !important; grid-template-columns: repeat(6, minmax(0, 1fr)) !important; width: 100% !important; margin: 0 auto !important;">
       <!-- 1. Route -->
       <button @click="activeTab = 'route'"
               :class="activeTab === 'route' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
@@ -752,6 +835,22 @@
               class="flex flex-col items-center py-1 transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         <span class="text-[10px] font-bold mt-0.5">Handover</span>
+      </button>
+
+      <!-- 6. Menu (Settings & Operations) -->
+      <button @click="activeTab = 'menu'"
+              :class="activeTab === 'menu' ? 'text-amber-400' : 'text-slate-400 hover:text-slate-200'"
+              class="flex flex-col items-center py-1 transition relative">
+        <div class="relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <template x-if="pendingSyncCount > 0">
+            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+          </template>
+          <template x-if="pendingSyncCount > 0">
+            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500"></span>
+          </template>
+        </div>
+        <span class="text-[10px] font-bold mt-0.5">Menu</span>
       </button>
     </div>
   </nav>
@@ -1368,7 +1467,7 @@
   <script>
     function agentApp() {
       return {
-        activeTab: "route", // 'route' | 'new_booking' | 'collections' | 'devotees' | 'handover'
+        activeTab: "route", // 'route' | 'new_booking' | 'collections' | 'devotees' | 'handover' | 'menu'
         isOnline: navigator.onLine,
         isSyncing: false,
         isSaving: false,
@@ -1379,6 +1478,7 @@
         cashCollectionsCount: 0,
         agentName: "",
         agentId: "",
+        lastSyncTime: null,
         distributorInfo: { name: "Puri Central Hub Desk", phone: "9861099881" },
         
         // Data sources
@@ -1682,6 +1782,7 @@
               this.packages = data.packages || [];
               await window.BharatYatraStore.syncManifestDown(data);
               await this.loadLocalData();
+              this.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
           } catch (e) {
             console.warn("Sync error, using cache:", e);
