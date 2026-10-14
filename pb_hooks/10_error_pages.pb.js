@@ -26,6 +26,7 @@ $app.onBeforeServe().preAdd(function (e) {
 
   e.router.use(function (next) {
     return function (c) {
+      let is404Target = false;
       try {
         let method = "";
         try { method = c.request().method || ""; } catch (err) {}
@@ -44,32 +45,27 @@ $app.onBeforeServe().preAdd(function (e) {
           while (p.length > 0 && p.charCodeAt(p.length - 1) === 47) p = p.slice(0, -1);
 
           // Fast path: skip root, pb_public root index, api, admin, or empty
-          if (!p || p === "index.html" || p.indexOf("_") === 0 || p.indexOf("api") === 0 || p.indexOf("..") !== -1) {
-            return next(c);
-          }
+          if (p && p !== "index.html" && p.indexOf("_") !== 0 && p.indexOf("api") !== 0 && p.indexOf("..") === -1) {
+            let lastSlash = p.lastIndexOf("/");
+            let lastSeg = lastSlash === -1 ? p : p.slice(lastSlash + 1);
+            if (lastSeg.indexOf(".") === -1) {
+              let dirExists = false;
+              try {
+                fsys.stat(p + "/index.html");
+                dirExists = true;
+              } catch (err) {}
 
-          // Any static file with an extension (.js, .css, .html, .png, .jpg, .svg, .json, .ico, etc.)
-          // must be served directly by PocketBase's native static file server without Goja interference.
-          let lastSlash = p.lastIndexOf("/");
-          let lastSeg = lastSlash === -1 ? p : p.slice(lastSlash + 1);
-          if (lastSeg.indexOf(".") !== -1) {
-            return next(c);
-          }
-
-          // Path has no extension (e.g. /definitely-missing, /admin, /agent, /foo/bar).
-          // Check if an index.html directory exists for this path (e.g. agent -> agent/index.html)
-          let dirExists = false;
-          try {
-            fsys.stat(p + "/index.html");
-            dirExists = true;
-          } catch (err) {}
-
-          if (!dirExists) {
-            // No matching directory with index.html -> return branded 404 page
-            return c.html(404, cached404);
+              if (!dirExists) {
+                is404Target = true;
+              }
+            }
           }
         }
       } catch (err) {}
+
+      if (is404Target) {
+        return c.html(404, cached404);
+      }
 
       return next(c);
     };

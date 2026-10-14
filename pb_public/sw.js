@@ -1,7 +1,7 @@
 // pb_public/sw.js
 // Service Worker with Cache-First static caching & Background Sync (PWA-02, PWA-03)
 
-const CACHE_NAME = "aditya-travels-v28-bharatyatra-cache-v3-v8";
+const CACHE_NAME = "aditya-travels-v33-bharatyatra-cache-v3-v15";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -29,14 +29,7 @@ const STATIC_ASSETS = [
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",
   "/images/logo.png",
-  "/images/logo-white.png",
-  "/images/hero-1.jpg",
-  "/images/hero-2.jpg",
-  "/images/hero-3.jpg",
-  "/images/pkg-chardham.jpg",
-  "/images/pkg-jyotirlinga.jpg",
-  "/images/pkg-kashi.jpg",
-  "/images/pkg-south.jpg"
+  "/images/logo-white.png"
 ];
 
 // Install: Pre-cache static app shell
@@ -124,42 +117,105 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // For JS, CSS, images, fonts: Cache-First with network fallback and background revalidation
+  // For JS files: Network-first to always run latest validated script, with safe cache fallback
+  if (url.pathname.endsWith(".js")) {
+    event.respondWith(
+      fetch(event.request)
+        .then(async (networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const netCt = networkResponse.headers.get("content-type") || "";
+            if (netCt.includes("javascript")) {
+              const clone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+              return networkResponse;
+            }
+          }
+
+          // If network returned non-200 or non-javascript (e.g. 400 Bad Request JSON),
+          // DO NOT return JSON as a script! Fall back to clean cached JS or clean pathname.
+          const cached = await caches.match(event.request, { ignoreSearch: true });
+          if (cached) {
+            const ct = cached.headers.get("content-type") || "";
+            if (ct.includes("javascript")) {
+              return cached;
+            }
+          }
+
+          if (url.search) {
+            try {
+              const cleanRes = await fetch(url.pathname);
+              if (cleanRes && cleanRes.status === 200) {
+                const ct = cleanRes.headers.get("content-type") || "";
+                if (ct.includes("javascript")) return cleanRes;
+              }
+            } catch (e) {}
+          }
+
+          return networkResponse;
+        })
+        .catch(async () => {
+          const cached = await caches.match(event.request, { ignoreSearch: true });
+          if (cached) {
+            const ct = cached.headers.get("content-type") || "";
+            if (ct.includes("javascript")) {
+              return cached;
+            }
+            // Purge invalid cached script
+            caches.open(CACHE_NAME).then((cache) => cache.delete(event.request));
+          }
+          return new Response("// Offline", {
+            status: 200,
+            headers: { "Content-Type": "application/javascript; charset=utf-8" }
+          });
+        })
+    );
+    return;
+  }
+
+  // For images: Network-first to prevent ERR_CONTENT_LENGTH_MISMATCH, fallback to cache
+  if (url.pathname.match(/\.(jpg|jpeg|png|webp|svg|gif|ico)$/i)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => caches.match(event.request, { ignoreSearch: true }))
+    );
+    return;
+  }
+
+  // For CSS, fonts: Cache-First with network fallback and background revalidation
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
-      const isJs = url.pathname.endsWith(".js");
-
-      if (cachedResponse) {
+      if (cachedResponse && cachedResponse.status === 200) {
         const ct = cachedResponse.headers.get("content-type") || "";
-        // If an old corrupted response cached JSON for a JS file, purge it immediately
-        if (isJs && ct.includes("application/json")) {
-          console.warn("[SW] Purging corrupted JSON cache for JS script:", url.pathname);
-          caches.open(CACHE_NAME).then((cache) => cache.delete(event.request));
-        } else {
-          // Fetch fresh copy in background to revalidate cache
+        // If cached entry has valid content-type, serve and revalidate in background
+        if (ct && !ct.includes("application/json")) {
           fetch(event.request)
             .then((networkResponse) => {
               if (networkResponse && networkResponse.status === 200) {
-                const netCt = networkResponse.headers.get("content-type") || "";
-                if (!isJs || !netCt.includes("application/json")) {
-                  const clone = networkResponse.clone();
-                  caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, clone);
-                  });
-                }
+                const clone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
               }
             })
             .catch(() => {});
           return cachedResponse;
+        } else {
+          // Bad cache entry: purge
+          caches.open(CACHE_NAME).then((cache) => cache.delete(event.request));
         }
       }
 
-      // Not in cache or corrupted cache purged: fetch from network
+      // Not in cache or purged: fetch from network
       return fetch(event.request)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const netCt = networkResponse.headers.get("content-type") || "";
-            if (!isJs || !netCt.includes("application/json")) {
+            if (!netCt.includes("application/json")) {
               const responseToCache = networkResponse.clone();
               caches.open(CACHE_NAME).then((cache) => {
                 cache.put(event.request, responseToCache);
@@ -169,13 +225,9 @@ self.addEventListener("fetch", (event) => {
           return networkResponse;
         })
         .catch(async () => {
-          // Network failed and not in exact cache: try matching pathname without query params
           const pathnameMatch = await caches.match(url.pathname, { ignoreSearch: true });
-          if (pathnameMatch) {
-            const ct = pathnameMatch.headers.get("content-type") || "";
-            if (!isJs || !ct.includes("application/json")) {
-              return pathnameMatch;
-            }
+          if (pathnameMatch && pathnameMatch.status === 200) {
+            return pathnameMatch;
           }
           return new Response("", { status: 408, statusText: "Offline Network Timeout" });
         });
